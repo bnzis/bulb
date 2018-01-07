@@ -177,7 +177,15 @@ obj_t *generate_ast(char *exp, unsigned len, unsigned *offset)
     return tree;   
 }
 
-void print_ast(obj_t *tree) {
+obj_t *parse(char *exp)
+{
+    unsigned i = 0, len = strlen(exp);
+    obj_t *ast = generate_ast(exp, len, &i);
+    return ast;
+}
+
+void print_ast(obj_t *tree) 
+{
     if (tree) {
         if (tree->type == SYMBOL || tree->type == STRING) 
             printf("%s\n", tree->data.symbol.buff);
@@ -194,9 +202,8 @@ void print_ast(obj_t *tree) {
 
 int main()
 {
-    unsigned i = 0;
-    unsigned len = strlen(str);
-    obj_t *tree = generate_ast(str, len, &i);
+    char *program = "(define (square x) (* x x)) (square 2)";
+    obj_t *tree = parse(program);
     print_ast(tree);
     return 0;
 }
