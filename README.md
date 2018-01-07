@@ -1,5 +1,5 @@
 ## Bulb
-Bulb is a simple dialect derived from **Lisp** very similar to **Scheme** on which I work in my free time. 
+Bulb is a simple **Lisp** dialect very similar to **Scheme** on which I work in my free time. 
 The ultimate goal of the project is to create a modular interpreter with **statically linked components** (modules)
 in order to reduce the amount of bloat. Here are some examples of the syntax:
 ## Basics
