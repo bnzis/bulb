@@ -78,8 +78,8 @@ bool is_int(char *exp, unsigned len)
     char c = exp[0];
     bool f;
     while ((f = c >= '0' && c <= '9') && i < len - 1) {
-         i++;
-         c = exp[i];
+        i++;
+        c = exp[i];
     }
     return f;
 }
@@ -88,9 +88,9 @@ bool is_float(char *exp, unsigned len)
 {
     unsigned i = 0, dots = 0;
     while (i < len - 1 && ((exp[i] >= '0' && exp[i]) <= '9') ||
-            exp[i] == '.' && dots < 2)  {
-            if (exp[i] == '.') dots++;
-            i++;
+        exp[i] == '.' && dots < 2)  {
+        if (exp[i] == '.') dots++;
+        i++;
     }
     if (i > len)  i = len - 1;
     return exp[i] >= '0' && exp[i] <= '9' && dots <= 1; 
