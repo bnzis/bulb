@@ -80,19 +80,3 @@ typedef struct hashmap {
 } hashmap_t;
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
