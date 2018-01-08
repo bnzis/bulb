@@ -44,9 +44,8 @@ int main()
     print_ast(tree);*/
     hashmap_t *map = malloc(sizeof(hashmap_t));
     map->data = malloc(sizeof(void*) * HMAP_ROWS);
-    obj_t *obj = malloc(sizeof(obj));
-    *obj = atom("3.141592", strlen("3.141592"));
-    put(map, "pi", obj);
+    obj_t obj = atom("3.141592", strlen("3.141592"));
+    put(map, "pi", &obj);
     printf("pi: %f\n", get(map, "pi")->data.floating);
     return 0;
 }
