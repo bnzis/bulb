@@ -1,4 +1,4 @@
 .DEFAULT_GOAL := all
-all: bulb.c
-	@ gcc $^ -o bulb
+all: src/*.c
+	@ gcc $^ -o bulb -Iinclude/
 	@ echo done.
