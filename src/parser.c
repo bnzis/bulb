@@ -1,7 +1,8 @@
 /*
  *  Bulb - the Lisp Interpreter
  *  Copyright (C) 2018-2019 bnzis (bonzisoft@protonmail.com)
- *
+ *  Copyright (C) 2012-2016, Yann Collet (xxhash)
+ *  
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -15,62 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdio.h>
-
-/* base types */
-enum {
-    NIL, 
-    SYMBOL, 
-    STRING, 
-    INT, 
-    FLOAT, 
-    BOOL, 
-    CONS, 
-    PROCEDURE, 
-};
-
-/* token types */
-enum {
-    OPEN_BLOCK = 8, 
-    CLOSE_BLOCK, 
-    OTHER, 
-};
-
-struct obj;
-typedef struct obj obj_t;
-
-struct cons {
-   obj_t *car;
-   obj_t *cdr;
-};
-
-struct procedure {
-    obj_t *args;
-    obj_t *body;
-    // env_t *env;
-};
-
-typedef struct obj {
-    short type;
-    union obj_data {
-        struct {
-            char *buff;
-            unsigned len;
-        } symbol;
-        struct {
-            char *buff;
-            unsigned len;
-        } string;
-        int integer;
-        float floating;
-        bool boolean;
-        struct cons cons;
-        struct procedure procedure;
-    } data;
-} obj_t;
+#include "parser.h"
 
 bool is_int(char *exp, unsigned len)
 {
@@ -200,26 +146,3 @@ obj_t *parse(char *exp)
     return ast;
 }
 
-void print_ast(obj_t *tree) 
-{
-    if (tree) {
-        if (tree->type == SYMBOL || tree->type == STRING) 
-            printf("%s\n", tree->data.symbol.buff);
-        else if (tree->type == INT)
-            printf("%i\n", tree->data.integer);
-        else if (tree->type == FLOAT)
-            printf("%f\n", tree->data.floating);
-        else if(tree->type == CONS) {
-            print_ast(tree->data.cons.car);
-            print_ast(tree->data.cons.cdr);
-        }
-    }
-}
-
-int main()
-{
-    char *program = "(define (square x) (* x x)) (square 2)";
-    obj_t *tree = parse(program);
-    print_ast(tree);
-    return 0;
-}
