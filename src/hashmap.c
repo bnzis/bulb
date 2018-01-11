@@ -65,5 +65,23 @@ obj_t *get(hashmap_t *map, char *key)
         }
         return ptr->data.cons.car->data.cons.cdr;
     }
+}
 
+void set(hashmap_t *map, char *key, obj_t *obj)
+{
+    unsigned index = hash(key, strlen(key));
+    index %= HMAP_ROWS;
+    char *t = map->data[index]->data.cons.car->data.cons.car->data.symbol.buff;
+    if (strcmp(t, key) == 0)
+        map->data[index]->data.cons.car->data.cons.cdr = obj;
+    else {
+        obj_t *ptr = map->data[index]->data.cons.cdr;
+        while (strcmp(t, key) != 0) {
+            t = ptr->data.cons.car->data.cons.car->data.symbol.buff;
+            if (strcmp(t, key) == 0)
+                break;
+            ptr = ptr->data.cons.cdr;
+        }
+        ptr->data.cons.car->data.cons.cdr = obj;
+    }
 }
