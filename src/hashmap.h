@@ -29,4 +29,6 @@ void put(hashmap_t *map, char *key, obj_t *obj);
 
 obj_t *get(hashmap_t *map, char *key);
 
+void set(hashmap_t *map, char *key, obj_t *obj);
+
 #endif 
