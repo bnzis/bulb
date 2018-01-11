@@ -27,17 +27,43 @@ unsigned long long hash(const void* buffer, int length)
 
 void put(hashmap_t *map, char *key, obj_t *obj)
 {
-    unsigned index = hash(key, strlen(key));
+    unsigned len = strlen(key), index = hash(key, len);
     index %= HMAP_ROWS;
     obj_t *pair = malloc(sizeof(obj_t));
     pair->type = CONS;
-    pair->data.cons.car = obj;
-    map->data[index] = pair;
+    pair->data.cons.car = malloc(sizeof(obj_t));
+    pair->data.cons.car->type = CONS;
+    pair->data.cons.car->data.cons.car = malloc(sizeof(obj_t));
+    pair->data.cons.car->data.cons.car->type = SYMBOL;
+    pair->data.cons.car->data.cons.car->data.symbol.buff = key;
+    pair->data.cons.car->data.cons.car->data.symbol.len = len;
+    pair->data.cons.car->data.cons.cdr = obj;
+    if (map->data[index] == NULL)
+        map->data[index] = pair;
+    else {
+        obj_t **ptr = &map->data[index]->data.cons.cdr;
+        while ((*ptr) != NULL)
+            ptr = &((*ptr)->data.cons.cdr);
+        (*ptr) = pair;
+    }
 }
 
 obj_t *get(hashmap_t *map, char *key)
 {
     unsigned index = hash(key, strlen(key));
     index %= HMAP_ROWS;
-    return map->data[index]->data.cons.car;
+    char *t = map->data[index]->data.cons.car->data.cons.car->data.symbol.buff;
+    if (strcmp(t, key) == 0)
+        return map->data[index]->data.cons.car->data.cons.cdr;
+    else {
+        obj_t *ptr = map->data[index]->data.cons.cdr;
+        while (strcmp(t, key) != 0) {    
+            t = ptr->data.cons.car->data.cons.car->data.symbol.buff;
+            if (strcmp(t, key) == 0) 
+                break;
+            ptr = ptr->data.cons.cdr;
+        }
+        return ptr->data.cons.car->data.cons.cdr;
+    }
+
 }
