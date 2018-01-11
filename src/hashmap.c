@@ -59,8 +59,6 @@ obj_t *get(hashmap_t *map, char *key)
         obj_t *ptr = map->data[index]->data.cons.cdr;
         while (strcmp(t, key) != 0) {    
             t = ptr->data.cons.car->data.cons.car->data.symbol.buff;
-            if (strcmp(t, key) == 0) 
-                break;
             ptr = ptr->data.cons.cdr;
         }
         return ptr->data.cons.car->data.cons.cdr;
@@ -78,8 +76,6 @@ void set(hashmap_t *map, char *key, obj_t *obj)
         obj_t *ptr = map->data[index]->data.cons.cdr;
         while (strcmp(t, key) != 0) {
             t = ptr->data.cons.car->data.cons.car->data.symbol.buff;
-            if (strcmp(t, key) == 0)
-                break;
             ptr = ptr->data.cons.cdr;
         }
         ptr->data.cons.car->data.cons.cdr = obj;
