@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "hashmap.h"
-
+#include <stdio.h>
 unsigned long long hash(const void* buffer, int length)
 {
     unsigned long long const seed = 0;  
@@ -73,11 +73,33 @@ void set(hashmap_t *map, char *key, obj_t *obj)
     if (strcmp(t, key) == 0)
         map->data[index]->data.cons.car->data.cons.cdr = obj;
     else {
-        obj_t *ptr = map->data[index]->data.cons.cdr;
+        obj_t **ptr = &map->data[index];
+        ptr = &((*ptr)->data.cons.cdr);
+        t = (*ptr)->data.cons.car->data.cons.car->data.symbol.buff;
         while (strcmp(t, key) != 0) {
-            t = ptr->data.cons.car->data.cons.car->data.symbol.buff;
-            ptr = ptr->data.cons.cdr;
+            t = (*ptr)->data.cons.car->data.cons.car->data.symbol.buff;
+            ptr = &((*ptr)->data.cons.cdr);
         }
-        ptr->data.cons.car->data.cons.cdr = obj;
+        (*ptr)->data.cons.car->data.cons.cdr = obj;
+    }
+}
+
+void delete(hashmap_t *map, char *key)
+{
+    unsigned index = hash(key, strlen(key));
+    index %= HMAP_ROWS;
+    obj_t *tmp;
+    char *t = map->data[index]->data.cons.car->data.cons.car->data.symbol.buff;
+    if (strcmp(t, key) == 0) {
+        tmp = map->data[index]->data.cons.car;
+        map->data[index] = map->data[index]->data.cons.cdr;
+        free(tmp);
+    } else {
+        obj_t **ptr = &map->data[index];
+        do {
+            ptr = &((*ptr)->data.cons.cdr);
+            t = (*ptr)->data.cons.car->data.cons.car->data.symbol.buff;
+        } while (strcmp(t, key) != 0);
+        (*ptr) = (*ptr)->data.cons.cdr;
     }
 }
