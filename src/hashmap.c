@@ -25,7 +25,7 @@ unsigned long long hash(const void* buffer, int length)
     return hash;
 }
 
-void put(hashmap_t *map, char *key, obj_t *obj)
+void append(hashmap_t *map, char *key, obj_t *obj)
 {
     unsigned len = strlen(key), index = hash(key, len);
     index %= HMAP_ROWS;
@@ -71,6 +71,7 @@ void set(hashmap_t *map, char *key, obj_t *obj)
 {
     unsigned index = hash(key, strlen(key));
     index %= HMAP_ROWS;
+    if (map->data[index] == NULL) append(map, key, obj);
     char *t = map->data[index]->data.cons.car->data.cons.car->data.symbol.buff;
     if (strcmp(t, key) == 0)
         map->data[index]->data.cons.car->data.cons.cdr = obj;
@@ -78,8 +79,13 @@ void set(hashmap_t *map, char *key, obj_t *obj)
         obj_t **ptr = &map->data[index];
         do {
             ptr = &((*ptr)->data.cons.cdr);
+            if(*ptr == NULL) break;
             t = (*ptr)->data.cons.car->data.cons.car->data.symbol.buff;
-        } while (strcmp(t, key) != 0 && ptr != NULL);
+        } while (strcmp(t, key) != 0);
+        if (*ptr == NULL) {
+            append(map, key, obj);
+            return;
+        }
         (*ptr)->data.cons.car->data.cons.cdr = obj;
     }
 }
@@ -88,7 +94,7 @@ void delete(hashmap_t *map, char *key)
 {
     unsigned index = hash(key, strlen(key));
     index %= HMAP_ROWS;
-    obj_t *tmp;
+    if (map->data[index] == NULL) return;
     char *t = map->data[index]->data.cons.car->data.cons.car->data.symbol.buff;
     if (strcmp(t, key) == 0) {
         map->data[index] = map->data[index]->data.cons.cdr;
@@ -96,8 +102,10 @@ void delete(hashmap_t *map, char *key)
         obj_t **ptr = &map->data[index];
         do {
             ptr = &((*ptr)->data.cons.cdr);
+            if (*ptr == NULL) break;
             t = (*ptr)->data.cons.car->data.cons.car->data.symbol.buff;
-        } while (strcmp(t, key) != 0 && ptr != NULL);
+        } while (strcmp(t, key) != 0);
+        if (*ptr == NULL) return;
         (*ptr) = (*ptr)->data.cons.cdr;
     }
 }

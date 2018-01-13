@@ -25,10 +25,12 @@
 
 unsigned long long hash(const void* buffer, int length);
 
-void put(hashmap_t *map, char *key, obj_t *obj);
+void append(hashmap_t *map, char *key, obj_t *obj);
 
 obj_t *get(hashmap_t *map, char *key);
 
 void set(hashmap_t *map, char *key, obj_t *obj);
+
+void delete(hashmap_t *map, char *key);
 
 #endif 
