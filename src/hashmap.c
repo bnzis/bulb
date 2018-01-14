@@ -1,7 +1,7 @@
 /*
  *  Bulb - the Lisp Interpreter
  *  Copyright (C) 2018-2019 bnzis (bonzisoft@protonmail.com)
- *  Copyright (C) 2012-2016, Yann Collet (xxhash)
+ *  Copyright (C) 2012-2016 Yann Collet (xxhash)
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "hashmap.h"
-#include <stdio.h>
+
 unsigned long long hash(const void* buffer, int length)
 {
     unsigned long long const seed = 0;  
@@ -52,6 +52,7 @@ obj_t *get(hashmap_t *map, char *key)
 {
     unsigned index = hash(key, strlen(key));
     index %= HMAP_ROWS;
+    printf("%p\n", map->data[index]);
     if (map->data[index] == NULL) return NULL;
     char *t = map->data[index]->data.cons.car->data.cons.car->data.symbol.buff;
     if (strcmp(t, key) == 0)
