@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include "hashmap.h"
 #include "parser.h"
-/* #include "evaluator.h" */
+#include "evaluator.h" 
 
 void print_ast(obj_t *tree)
 {
@@ -39,15 +39,10 @@ void print_ast(obj_t *tree)
 
 int main() 
 {
-    /*char *program = "(define (square x) (* x x)) (square 2)";
+    char *program = "(square x) (pounds x)";
     obj_t *tree = parse(program);
-    print_ast(tree);*/
-    hashmap_t *map = malloc(sizeof(hashmap_t));
-    map->data = malloc(sizeof(void*) * HMAP_ROWS);
-    obj_t obj = atom("3.14", strlen("3.14"));
-    put(map, "pi", &obj);
-    obj_t newpi = atom("3.141592", strlen("3.141592"));
-    set(map, "pi", &newpi);
-    printf("pi: %f\n", get(map, "pi")->data.floating);
+    hashmap_t *env = malloc(sizeof(hashmap_t));
+    env->data = malloc(sizeof(void*) * HMAP_ROWS);
+    eval(tree, env);
     return 0;
 }

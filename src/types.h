@@ -73,7 +73,7 @@ typedef struct obj {
 } obj_t;
 
 /* HASHMAP SECTION */
-#define HMAP_ROWS 2048 /* must be a power of 2. */
+#define HMAP_ROWS 512 /* must be a power of 2. */
 
 typedef struct hashmap {
     obj_t **data;
