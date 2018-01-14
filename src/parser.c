@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "parser.h"
-
+#include <stdio.h>
 bool is_int(char *exp, unsigned len)
 {
     unsigned i = 0;
@@ -85,9 +85,9 @@ unsigned get_token(char *exp, unsigned len, unsigned *offset, obj_t *out)
         len--;
         if (first == '\n') comm = false;
         else if (!str && first == ';') comm = true;
-        else if (!comm && !str && i == 0 && first == '(')
+        else if (!comm && !str && first == '(')
             return OPEN_BLOCK;
-        else if (!comm && !str && i == 0 && first == ')')
+        else if (!comm && !str && first == ')')
             return CLOSE_BLOCK;
         else if (!str && !comm && (first == '(' || first == ')'))
             break;
@@ -136,6 +136,7 @@ obj_t *generate_ast(char *exp, unsigned len, unsigned *offset)
         front->type = CONS;
         ttype = get_token(exp, len, offset, front);
     }
+    /* free(front); */
     return tree;   
 }
 
