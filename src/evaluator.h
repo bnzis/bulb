@@ -25,4 +25,6 @@ obj_t *eval(obj_t *ast, hashmap_t *env);
 
 obj_t *apply(obj_t *ast, hashmap_t *env);
 
+obj_t *eval_sequence(obj_t *ast, hashmap_t *env);
+
 #endif
