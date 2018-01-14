@@ -85,13 +85,15 @@ unsigned get_token(char *exp, unsigned len, unsigned *offset, obj_t *out)
         len--;
         if (first == '\n') comm = false;
         else if (!str && first == ';') comm = true;
-        else if (!comm && !str && first == '(')
+        else if (!comm && !str && (i == 0 || len == 1) && first == '(')
             return OPEN_BLOCK;
-        else if (!comm && !str && first == ')')
+        else if (!comm && !str && i == 0  && first == ')')
             return CLOSE_BLOCK;
-        else if (!str && !comm && (first == '(' || first == ')'))
+        else if (!str && !comm && (first == '(' || first == ')')) {
+            (*offset)--;
+            len++;
             break;
-        else if (((first != ' ' && first != '\t' && first != '\\') || str) && !comm) {
+        } else if (((first != ' ' && first != '\t' && first != '\\') || str) && !comm) {
             if (first == '\"' && prev != '\\') str = !str;
             if (i >= len) {
                 aclen *= 2;
@@ -136,7 +138,7 @@ obj_t *generate_ast(char *exp, unsigned len, unsigned *offset)
         front->type = CONS;
         ttype = get_token(exp, len, offset, front);
     }
-    /* free(front); */
+    front->type = NIL;
     return tree;   
 }
 

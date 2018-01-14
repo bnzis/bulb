@@ -52,7 +52,6 @@ obj_t *get(hashmap_t *map, char *key)
 {
     unsigned index = hash(key, strlen(key));
     index %= HMAP_ROWS;
-    printf("%p\n", map->data[index]);
     if (map->data[index] == NULL) return NULL;
     char *t = map->data[index]->data.cons.car->data.cons.car->data.symbol.buff;
     if (strcmp(t, key) == 0)
