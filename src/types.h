@@ -29,7 +29,8 @@ enum {
     FLOAT, 
     BOOL, 
     CONS, 
-    PROCEDURE, 
+    PROCEDURE,
+    PRIMITIVE, 
 };
 
 /* token types */
@@ -69,14 +70,24 @@ typedef struct obj {
         bool boolean;
         struct cons cons;
         struct procedure procedure;
+        void *primitive;
     } data;
 } obj_t;
 
 /* HASHMAP SECTION */
-#define HMAP_ROWS 512 /* must be a power of 2. */
+#define HMAP_ROWS 128 /* must be a power of 2. */
 
 typedef struct hashmap {
     obj_t **data;
 } hashmap_t;
+
+/* ENVIRONMENT SECTION */
+struct environment;
+typedef struct env env_t;
+
+typedef struct env {
+    hashmap_t *local;
+    env_t *upper_level;
+} env_t;
 
 #endif
