@@ -76,6 +76,8 @@ obj_t *eval(obj_t *ast, env_t *env)
                     /* LAMBDA */
                 } else if (strcmp(op, "begin") == 0) 
                     return eval_sequence(ast->data.cons.cdr, env);
+                else if(strcmp(op, "quote") == 0)
+                    return ast->data.cons.cdr;
             }
             /* return apply(ast, env); */
     }
