@@ -122,11 +122,9 @@ obj_t *generate_ast(char *exp, unsigned len, unsigned *offset)
     obj_t *tree = malloc(sizeof(obj_t)), *front = tree;
     tree->type = CONS;
     unsigned ttype = get_token(exp, len, offset, front);
-    while (ttype != NIL) {
+    while (ttype != NIL && ttype != CLOSE_BLOCK) {
         if (ttype == OPEN_BLOCK) {
             front->data.cons.car = generate_ast(exp, len, offset);
-        } else if (ttype == CLOSE_BLOCK) {
-            return tree;
         } else {
             obj_t *tmp = malloc(sizeof(obj_t));
             memcpy(tmp, front, sizeof(obj_t)); 
