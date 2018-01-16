@@ -28,4 +28,8 @@ obj_t *apply(obj_t *ast, env_t *env);
 
 obj_t *eval_sequence(obj_t *ast, env_t *env);
 
+obj_t *eval_if(obj_t *ast, env_t *env);
+
+obj_t *eval_define(obj_t *ast, env_t *env);
+
 #endif
