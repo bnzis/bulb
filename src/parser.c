@@ -78,7 +78,7 @@ unsigned get_token(char *exp, unsigned len, unsigned *offset, obj_t *out)
     char *acc = malloc(aclen);
     bool str = false, comm = false;
     exp = exp + *offset;
-    len -= *offset;
+    len -= (*offset);
     while (len > 0 && ((first != ' ' && first != '\t') || i == 0 || comm || str)) {
         first = exp[0];
         exp++;
@@ -91,6 +91,7 @@ unsigned get_token(char *exp, unsigned len, unsigned *offset, obj_t *out)
         else if (!comm && !str && i == 0  && first == ')')
             return CLOSE_BLOCK;
         else if (!str && !comm && (first == '(' || first == ')')) {
+            (*offset)--;
             break;
         } else if (((first != ' ' && first != '\t' && first != '\\') || str) && !comm) {
             if (first == '\"' && prev != '\\') str = !str;
