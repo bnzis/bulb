@@ -78,11 +78,14 @@ unsigned get_token(char *exp, unsigned len, unsigned *offset, obj_t *out)
     char *acc = malloc(aclen);
     bool str = false, comm = false;
     exp = exp + *offset;
+    len -= *offset;
+    printf("++1++\n");
     while (len > 0 && ((first != ' ' && first != '\t') || i == 0 || comm || str)) {
         first = exp[0];
         exp++;
         (*offset)++;
         len--;
+        printf("%u\n", len);
         if (first == '\n') comm = false;
         else if (!str && first == ';') comm = true;
         else if (!comm && !str && (i == 0 || len == 1) && first == '(')
@@ -90,8 +93,6 @@ unsigned get_token(char *exp, unsigned len, unsigned *offset, obj_t *out)
         else if (!comm && !str && i == 0  && first == ')')
             return CLOSE_BLOCK;
         else if (!str && !comm && (first == '(' || first == ')')) {
-            (*offset)--;
-            len++;
             break;
         } else if (((first != ' ' && first != '\t' && first != '\\') || str) && !comm) {
             if (first == '\"' && prev != '\\') str = !str;
@@ -112,6 +113,7 @@ unsigned get_token(char *exp, unsigned len, unsigned *offset, obj_t *out)
         prev = first;
     }
     acc = realloc(acc, i);
+    printf("++2++ acc: %s\n", acc);
     out = realloc(out, sizeof(obj_t));
     *out = atom(acc, i);
     return OTHER;
