@@ -17,9 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include <stdio.h>
-#include "hashmap.h"
-#include "parser.h"
-#include "evaluator.h" 
+#include "bulb.h"
 
 void print_ast(obj_t *tree)
 {
@@ -39,10 +37,13 @@ void print_ast(obj_t *tree)
 
 int main() 
 {
-    char *program = "(square x) (pounds x)";
+    char *program = "(+ 10 20)";
     obj_t *tree = parse(program);
-    hashmap_t *env = malloc(sizeof(hashmap_t));
-    env->data = malloc(sizeof(void*) * HMAP_ROWS);
-    eval(tree, env);
+    env_t *env = malloc(sizeof(env_t));
+    env->local = malloc(sizeof(hashmap_t));
+    env->local->data = malloc(sizeof(obj_t*) * HMAP_ROWS);
+    obj_t module = atom("core", strlen("core"));
+    load_module(env, &module);
+    printf("%d\n", eval_sequence(tree, env)->data.integer);
     return 0;
 }
