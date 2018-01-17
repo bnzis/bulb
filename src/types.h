@@ -43,6 +43,21 @@ enum {
 struct obj;
 typedef struct obj obj_t;
 
+/* HASHMAP SECTION */
+#define HMAP_ROWS 128 /* must be a power of 2. */
+
+typedef struct hashmap {
+    obj_t **data;
+} hashmap_t;
+
+/* ENVIRONMENT SECTION */
+typedef struct env env_t;
+
+typedef struct env {
+    hashmap_t *local;
+    env_t *upper_level;
+} env_t;
+
 struct cons {
    obj_t *car;
    obj_t *cdr;
@@ -51,7 +66,7 @@ struct cons {
 struct procedure {
     obj_t *args;
     obj_t *body;
-    // env_t *env;
+    env_t *env;
 };
 
 typedef struct obj {
@@ -70,24 +85,8 @@ typedef struct obj {
         bool boolean;
         struct cons cons;
         struct procedure procedure;
-        void *primitive;
+        obj_t* (*primitive)(obj_t *args, env_t *env);
     } data;
 } obj_t;
-
-/* HASHMAP SECTION */
-#define HMAP_ROWS 128 /* must be a power of 2. */
-
-typedef struct hashmap {
-    obj_t **data;
-} hashmap_t;
-
-/* ENVIRONMENT SECTION */
-struct environment;
-typedef struct env env_t;
-
-typedef struct env {
-    hashmap_t *local;
-    env_t *upper_level;
-} env_t;
 
 #endif
