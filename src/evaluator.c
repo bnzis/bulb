@@ -79,6 +79,14 @@ obj_t *eval(obj_t *ast, env_t *env)
                 else if(strcmp(op, "quote") == 0)
                     return ast->data.cons.cdr;
             }
-            /* return apply(ast, env); */
+            return apply(ast, env);
+    }
+}
+
+obj_t *apply(obj_t *ast, env_t *env)
+{
+    obj_t *proc = eval(ast->data.cons.car, env);
+    if (proc->type == PRIMITIVE) {
+        return (proc->data.primitive)(ast->data.cons.cdr, env);
     }
 }
