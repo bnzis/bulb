@@ -70,7 +70,7 @@ typedef struct obj {
         bool boolean;
         struct cons cons;
         struct procedure procedure;
-        void *primitive;
+        obj_t* (*primitive)();
     } data;
 } obj_t;
 
