@@ -23,13 +23,13 @@
 
 void err_module_not_compiled(char *name)
 {
-    printf("Exception in load: module %s not compiled.", name);
+    printf("Exception in load: module %s not compiled.\n", name);
     exit(1);
 }
 
 void err_module_not_found(char *name)
 {
-    printf("Exception in load: module %s not found.", name);
+    printf("Exception in load: module %s not found.\n", name);
     exit(1);
 }
 
