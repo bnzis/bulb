@@ -87,7 +87,8 @@ void set(hashmap_t *map, char *key, obj_t *obj)
         if (*ptr == NULL) {
             *ptr = malloc(sizeof(obj_t));
             (*ptr)->type = CONS;
-            (*ptr)->data.cons.car = malloc(sizeof(obj_t));
+            set_car(*ptr, malloc(sizeof(obj_t)));
+            //(*ptr)->data.cons.car = malloc(sizeof(obj_t));
             (*ptr)->data.cons.car->type = CONS;
             (*ptr)->data.cons.car->data.cons.car = malloc(sizeof(obj_t));
             (*ptr)->data.cons.car->data.cons.car->type = SYMBOL;
