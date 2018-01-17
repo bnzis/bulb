@@ -22,7 +22,15 @@
 
 obj_t *car(obj_t *list);
 
+void set_car(obj_t *list, obj_t *val);
+
 obj_t *cdr(obj_t *list);
+
+void set_cdr(obj_t *list, obj_t *val);
+
+obj_t *cdar(obj_t *list);
+
+void set_cdar(obj_t *list, obj_t* val);
 
 unsigned list_len(obj_t *list);
 

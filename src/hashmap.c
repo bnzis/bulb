@@ -17,6 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "hashmap.h"
+#include <stdio.h>
 
 unsigned long long hash(const void* buffer, int length)
 {
@@ -57,13 +58,14 @@ obj_t *get(hashmap_t *map, char *key)
     if (strcmp(t, key) == 0)
         return map->data[index]->data.cons.car->data.cons.cdr;
     else {
-        obj_t *ptr = map->data[index]->data.cons.cdr;
-        while (strcmp(t, key) != 0 && ptr != NULL) {    
-            t = ptr->data.cons.car->data.cons.car->data.symbol.buff;
+        obj_t *ptr = map->data[index];
+        while (strcmp(t, key) != 0) {  
             ptr = ptr->data.cons.cdr;
+            if (ptr == NULL) break;
+            t = car(car(ptr))->data.symbol.buff;
         }
         if (ptr == NULL) return NULL;
-        return ptr->data.cons.car->data.cons.cdr;
+        return cdar(ptr);
     }
 }
 
@@ -79,14 +81,23 @@ void set(hashmap_t *map, char *key, obj_t *obj)
         obj_t **ptr = &map->data[index];
         do {
             ptr = &((*ptr)->data.cons.cdr);
-            if(*ptr == NULL) break;
-            t = (*ptr)->data.cons.car->data.cons.car->data.symbol.buff;
+            if (*ptr == NULL) break;
+            t = car(car(*ptr))->data.symbol.buff;
         } while (strcmp(t, key) != 0);
         if (*ptr == NULL) {
-            append(map, key, obj);
+            *ptr = malloc(sizeof(obj_t));
+            (*ptr)->type = CONS;
+            set_car(*ptr, malloc(sizeof(obj_t)));
+            //(*ptr)->data.cons.car = malloc(sizeof(obj_t));
+            (*ptr)->data.cons.car->type = CONS;
+            (*ptr)->data.cons.car->data.cons.car = malloc(sizeof(obj_t));
+            (*ptr)->data.cons.car->data.cons.car->type = SYMBOL;
+            (*ptr)->data.cons.car->data.cons.car->data.symbol.buff = key;
+            (*ptr)->data.cons.car->data.cons.car->data.symbol.len = strlen(key);
+            (*ptr)->data.cons.car->data.cons.cdr = obj;
             return;
         }
-        (*ptr)->data.cons.car->data.cons.cdr = obj;
+        set_cdar(*ptr, obj);
     }
 }
 
