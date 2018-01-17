@@ -54,6 +54,23 @@ struct procedure {
     // env_t *env;
 };
 
+/* HASHMAP SECTION */
+#define HMAP_ROWS 128 /* must be a power of 2. */
+
+typedef struct hashmap {
+    obj_t **data;
+} hashmap_t;
+
+/* ENVIRONMENT SECTION */
+struct environment;
+typedef struct env env_t;
+
+typedef struct env {
+    hashmap_t *local;
+    env_t *upper_level;
+} env_t;
+
+
 typedef struct obj {
     short type;
     union obj_data {
@@ -70,24 +87,8 @@ typedef struct obj {
         bool boolean;
         struct cons cons;
         struct procedure procedure;
-        obj_t* (*primitive)();
+        obj_t* (*primitive)(obj_t *args, env_t *env);
     } data;
 } obj_t;
-
-/* HASHMAP SECTION */
-#define HMAP_ROWS 128 /* must be a power of 2. */
-
-typedef struct hashmap {
-    obj_t **data;
-} hashmap_t;
-
-/* ENVIRONMENT SECTION */
-struct environment;
-typedef struct env env_t;
-
-typedef struct env {
-    hashmap_t *local;
-    env_t *upper_level;
-} env_t;
 
 #endif
