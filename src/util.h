@@ -18,7 +18,14 @@
 */
 #ifndef UTIL_H
 #define UTIL_H
+#include <stdio.h>
 #include "types.h"
+
+bool is_atom(obj_t *obj);
+
+void print_atom(obj_t *obj);
+
+void print_ast(obj_t *obj);
 
 obj_t *car(obj_t *list);
 
@@ -27,6 +34,24 @@ void set_car(obj_t *list, obj_t *val);
 obj_t *cdr(obj_t *list);
 
 void set_cdr(obj_t *list, obj_t *val);
+
+obj_t *caar(obj_t *list);
+
+void set_caar(obj_t *list, obj_t *val);
+
+obj_t *caadr(obj_t *list);
+
+void set_caadr(obj_t *list, obj_t *val);
+
+obj_t *cadr(obj_t *list);
+
+void set_cadr(obj_t *list, obj_t *val);;
+
+obj_t *caddr(obj_t *list);
+
+void set_caddr(obj_t *list, obj_t *val);
+
+obj_t *cadddr(obj_t *list);
 
 obj_t *cdar(obj_t *list);
 
