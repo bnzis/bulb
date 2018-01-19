@@ -54,8 +54,9 @@ obj_t *eval_define(obj_t *ast, env_t *env)
 {
     obj_t *val;
     char *sym;
+    unsigned len = list_len(ast);
+    if (len > 3 || len < 2) err_invalid_syntax(ast);
     if (cadr(ast)->type == SYMBOL) {
-        if (list_len(ast) != 3) err_invalid_syntax(ast);
         sym = cadr(ast)->data.symbol.buff;
         val = eval(caddr(ast), env);
         env_set(env, sym, val);
@@ -68,16 +69,22 @@ obj_t *eval_define(obj_t *ast, env_t *env)
         val->data.procedure.args = args;
         val->data.procedure.body = body;
         env_set(env, sym, val);
-    }
-    
+    } else 
+        err_invalid_syntax(ast);
     return val;
 }
 
 obj_t *eval_if(obj_t *ast, env_t *env)
 {
     obj_t *tmp;
+    unsigned len = list_len(ast);
+    if (len < 3 || len > 4) err_invalid_syntax(ast);
     if (eval(cadr(ast), env)->data.boolean == true) tmp = caddr(ast);
-    else tmp = cadddr(ast);
+    else if (len == 3) {
+        tmp = malloc(sizeof(obj_t));
+        tmp->type = NIL;
+    } else
+        tmp = cadddr(ast);
     return eval(tmp, env);
 }
 
@@ -101,7 +108,7 @@ obj_t *eval(obj_t *ast, env_t *env)
                     /* LAMBDA */
                 } else if (strcmp(op, "begin") == 0) 
                     return eval_sequence(cdr(ast), env);
-                else if(strcmp(op, "quote") == 0)
+                else if(strcmp(op, "qu") == 0)
                     if (list_len(cdr(ast)) == 1) return cdr(ast);
                     else err_invalid_syntax(ast);
             }
@@ -131,8 +138,8 @@ void err_non_procedure(obj_t *proc)
 
 void err_invalid_syntax(obj_t *tree)
 {
-    printf("Exception: invalid syntax:\n(");
+    printf("Exception: invalid syntax: (");
     print_ast(tree);
-    printf(")\n");
+    printf(").\n");
     exit(1);
 }
