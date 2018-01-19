@@ -19,6 +19,7 @@
 #ifndef BULB_H
 #define BULB_H
 #include "types.h"
+#include "util.h"
 #include "hashmap.h"
 #include "environment.h"
 #include "parser.h"
