@@ -17,57 +17,82 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "evaluator.h"
-#include <stdio.h>
 
 obj_t *eval_sequence(obj_t *ast, env_t *env) 
 {
     if (ast->type == CONS) {
-        unsigned cdr_type = ast->data.cons.cdr->type;
+        unsigned cdr_type = cdr(ast)->type;
         if (ast->data.cons.cdr != NULL && cdr_type != NIL) {
-            eval(ast->data.cons.car, env);
-            return eval_sequence(ast->data.cons.cdr, env); 
+            eval(car(ast), env);
+            return eval_sequence(cdr(ast), env); 
         } else 
-            return eval(ast->data.cons.car, env);
+            return eval(car(ast), env);
     } else 
         return eval(ast, env);
+}
+
+obj_t *eval_args(obj_t *ast, env_t *env)
+{
+    obj_t *args = malloc(sizeof(obj_t));
+    obj_t *front = args;
+    args->type = CONS;
+    if (ast->type != CONS)
+        return eval(ast, env);
+    while (ast != NULL) {
+        free(car(front));
+        set_car(front, eval(car(ast), env));
+        set_cdr(front, malloc(sizeof(obj_t)));
+        front = cdr(front);
+        front->type = CONS;
+        ast = cdr(ast);
+    }
+    free(front);
+    return args;
 }
 
 obj_t *eval_define(obj_t *ast, env_t *env)
 {
     obj_t *val;
-    if (ast->data.cons.cdr->data.cons.car->type == SYMBOL) {
-        char *sym = ast->data.cons.cdr->data.cons.car->data.symbol.buff;
-        val = ast->data.cons.cdr->data.cons.cdr->data.cons.car;
-        val = eval(val, env);
+    char *sym;
+    if (cadr(ast)->type == SYMBOL) {
+        if (list_len(ast) != 3) err_invalid_syntax(ast);
+        sym = cadr(ast)->data.symbol.buff;
+        val = eval(caddr(ast), env);
+        env_set(env, sym, val);
+    } else if (cadr(ast)->type == CONS) {
+        sym = caadr(ast)->data.symbol.buff;
+        obj_t *args = cdr(cadr(ast));
+        obj_t *body = cdr(cdr(ast));
+        val = malloc(sizeof(obj_t));
+        val->type = PROCEDURE;
+        val->data.procedure.args = args;
+        val->data.procedure.body = body;
         env_set(env, sym, val);
     }
-    /* if procedure */
+    
     return val;
 }
 
 obj_t *eval_if(obj_t *ast, env_t *env)
 {
-    if (eval(ast->data.cons.cdr->data.cons.car, env)->data.boolean == true) { 
-        obj_t *out = ast->data.cons.cdr->data.cons.cdr->data.cons.car;
-        return eval(out, env);
-    } else {
-        obj_t *out = ast->data.cons.cdr->data.cons.cdr->data.cons.cdr->data.cons.car;
-        return eval(out, env);
-    }
+    obj_t *tmp;
+    if (eval(cadr(ast), env)->data.boolean == true) tmp = caddr(ast);
+    else tmp = cadddr(ast);
+    return eval(tmp, env);
 }
 
 obj_t *eval(obj_t *ast, env_t *env)
 {
     if (!ast) return NULL;
     switch(ast->type) {
-        case STRING: case INT: case FLOAT: case PROCEDURE: case BOOL:
+        case STRING: case INT: case FLOAT: case PROCEDURE: case BOOL: case NIL:
             return ast;
         case SYMBOL:
-            return env_get(env, ast->data.symbol.buff);
+                return env_get(env, ast->data.symbol.buff);
         case CONS:
-            if (ast->data.cons.car == NULL) return NULL;
-            if (ast->data.cons.car->type == SYMBOL) {
-                char *op = ast->data.cons.car->data.symbol.buff;
+            if (car(ast) == NULL) return NULL;
+            if (car(ast)->type == SYMBOL) {
+                char *op = car(ast)->data.symbol.buff;
                 if (strcmp(op, "def") == 0)
                     return eval_define(ast, env);
                 else if (strcmp(op, "if") == 0) {
@@ -75,9 +100,10 @@ obj_t *eval(obj_t *ast, env_t *env)
                 } else if (strcmp(op, "lambda") == 0) {
                     /* LAMBDA */
                 } else if (strcmp(op, "begin") == 0) 
-                    return eval_sequence(ast->data.cons.cdr, env);
+                    return eval_sequence(cdr(ast), env);
                 else if(strcmp(op, "quote") == 0)
-                    return ast->data.cons.cdr;
+                    if (list_len(cdr(ast)) == 1) return cdr(ast);
+                    else err_invalid_syntax(ast);
             }
             return apply(ast, env);
     }
@@ -85,8 +111,28 @@ obj_t *eval(obj_t *ast, env_t *env)
 
 obj_t *apply(obj_t *ast, env_t *env)
 {
-    obj_t *proc = eval(ast->data.cons.car, env);
+    obj_t *proc = eval(car(ast), env);
+    obj_t *args = eval_args(cdr(ast), env);
     if (proc->type == PRIMITIVE) {
-        return (proc->data.primitive)(ast->data.cons.cdr, env);
-    }
+        return (proc->data.primitive)(args, env);
+    } else if (proc->type == PROCEDURE) {
+        /* to implement */
+    } else 
+        err_non_procedure(proc);
+}
+
+void err_non_procedure(obj_t *proc)
+{
+    printf("Exception: attemp to apply non-procedure ");
+    print_ast(proc);
+    printf(".\n");
+    exit(1);
+}
+
+void err_invalid_syntax(obj_t *tree)
+{
+    printf("Exception: invalid syntax:\n(");
+    print_ast(tree);
+    printf(")\n");
+    exit(1);
 }
