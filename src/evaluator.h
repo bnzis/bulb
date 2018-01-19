@@ -37,4 +37,6 @@ void err_non_procedure(obj_t *proc);
 
 void err_invalid_syntax(obj_t *tree);
 
+void err_invalid_parameter_bool(obj_t *tree);
+
 #endif
