@@ -18,6 +18,7 @@
 */
 #ifndef EVALUATOR_H
 #define EVALUATOR_H
+#include <stdio.h>
 #include "types.h"
 #include "hashmap.h"
 #include "environment.h"
@@ -31,5 +32,9 @@ obj_t *eval_sequence(obj_t *ast, env_t *env);
 obj_t *eval_if(obj_t *ast, env_t *env);
 
 obj_t *eval_define(obj_t *ast, env_t *env);
+
+void err_non_procedure(obj_t *proc);
+
+void err_invalid_syntax(obj_t *tree);
 
 #endif
