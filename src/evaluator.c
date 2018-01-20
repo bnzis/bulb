@@ -89,6 +89,16 @@ obj_t *eval_if(obj_t *ast, env_t *env)
     return eval(tmp, env);
 }
 
+obj_t *eval_lambda(obj_t *ast, env_t *env)
+{
+    obj_t *proc = malloc(sizeof(obj_t));
+    proc->type = PROCEDURE;
+    proc->data.procedure.args = car(ast);
+    proc->data.procedure.body = cdr(ast);
+    proc->data.procedure.env = env;
+    return proc;
+}
+
 obj_t *eval(obj_t *ast, env_t *env)
 {
     if (!ast) {
@@ -110,7 +120,7 @@ obj_t *eval(obj_t *ast, env_t *env)
                 else if (strcmp(op, "if") == 0) {
                     return eval_if(ast, env);
                 } else if (strcmp(op, "lambda") == 0) {
-                    /* LAMBDA */
+                    return eval_lambda(cdr(ast), env);
                 } else if (strcmp(op, "begin") == 0) 
                     return eval_sequence(cdr(ast), env);
                 else if(strcmp(op, "qu") == 0)
