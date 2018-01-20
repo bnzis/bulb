@@ -25,7 +25,7 @@ obj_t *eval_sequence(obj_t *ast, env_t *env)
         if (ast->data.cons.cdr != NULL && cdr_type != NIL) {
             eval(car(ast), env);
             return eval_sequence(cdr(ast), env); 
-        } else 
+        } else  
             return eval(car(ast), env);
     } else 
         return eval(ast, env);
@@ -55,7 +55,7 @@ obj_t *eval_define(obj_t *ast, env_t *env)
     obj_t *val;
     char *sym;
     unsigned len = list_len(ast);
-    if (len > 3 || len < 2) err_invalid_syntax(ast);
+    if (len < 2) err_invalid_syntax(ast);
     if (cadr(ast)->type == SYMBOL) {
         sym = cadr(ast)->data.symbol.buff;
         val = eval(caddr(ast), env);
@@ -68,6 +68,7 @@ obj_t *eval_define(obj_t *ast, env_t *env)
         val->type = PROCEDURE;
         val->data.procedure.args = args;
         val->data.procedure.body = body;
+        val->data.procedure.env = env;
         env_set(env, sym, val);
     } else 
         err_invalid_syntax(ast);
@@ -90,7 +91,11 @@ obj_t *eval_if(obj_t *ast, env_t *env)
 
 obj_t *eval(obj_t *ast, env_t *env)
 {
-    if (!ast) return NULL;
+    if (!ast) {
+        obj_t *tmp = malloc(sizeof(obj_t));
+        tmp->type = NIL;
+        return tmp;
+    }
     switch(ast->type) {
         case STRING: case INT: case FLOAT: case PROCEDURE: case BOOL: case NIL:
             return ast;
@@ -116,6 +121,28 @@ obj_t *eval(obj_t *ast, env_t *env)
     }
 }
 
+void expand_env(obj_t *obj, obj_t *args, env_t *upper_level)
+{
+    if (obj->type != PROCEDURE) err_non_procedure(obj);
+    proc_t *proc = &obj->data.procedure;
+    // if (list_len(proc->data.procedure.args) != list_len(args)) 
+        // err_invalid_len(procedure->data.procedure.args, list_len(args)) ...
+    if (proc->env == NULL) {
+        proc->env = malloc(sizeof(env_t));
+        proc->env->local = malloc(sizeof(hashmap_t));
+        proc->env->local->data = malloc(sizeof(obj_t*) * HMAP_ROWS);
+    }
+    proc->env->upper_level = upper_level;
+    unsigned i = 0, len = list_len(args) - 1;
+    obj_t *tmp = proc->args;
+    while (i < len) {
+        env_set(proc->env, car(tmp)->data.symbol.buff, car(args));
+        tmp = cdr(tmp);
+        args = cdr(args);
+        i++;
+    }
+}
+
 obj_t *apply(obj_t *ast, env_t *env)
 {
     obj_t *proc = eval(car(ast), env);
@@ -123,7 +150,8 @@ obj_t *apply(obj_t *ast, env_t *env)
     if (proc->type == PRIMITIVE) {
         return (proc->data.primitive)(args, env);
     } else if (proc->type == PROCEDURE) {
-        /* to implement */
+        expand_env(proc, args, env);
+        return eval_sequence(proc->data.procedure.body, proc->data.procedure.env);
     } else 
         err_non_procedure(proc);
 }
