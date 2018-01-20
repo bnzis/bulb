@@ -1,4 +1,6 @@
 .DEFAULT_GOAL := all
-all: src/*.c
-	@ gcc $^ -o bulb -Iinclude/
+SOURCE = $(wildcard src/*c)
+
+all: $(SOURCE)
+	@ gcc $^ -o bulb -I./src/modules
 	@ echo done.
