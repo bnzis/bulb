@@ -44,7 +44,7 @@ struct obj;
 typedef struct obj obj_t;
 
 /* HASHMAP SECTION */
-#define HMAP_ROWS 128 /* must be a power of 2. */
+#define HMAP_ROWS 65536 /* must be a power of 2. */
 
 typedef struct hashmap {
     obj_t **data;
@@ -63,11 +63,11 @@ struct cons {
    obj_t *cdr;
 };
 
-struct procedure {
+typedef struct procedure {
     obj_t *args;
     obj_t *body;
     env_t *env;
-};
+} proc_t;
 
 typedef struct obj {
     short type;
@@ -84,7 +84,7 @@ typedef struct obj {
         float floating;
         bool boolean;
         struct cons cons;
-        struct procedure procedure;
+        proc_t procedure;
         obj_t* (*primitive)(obj_t *args, env_t *env);
     } data;
 } obj_t;
