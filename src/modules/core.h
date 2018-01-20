@@ -20,12 +20,8 @@
 #define MODULES_CORE_H
 #include "../bulb.h"
 
-obj_t *sum(obj_t *args, env_t *env)
-{
-    /* random code */
-    obj_t *result = malloc(sizeof(obj_t));
-    result->data.integer = 12;
-    return result;
-}
+obj_t *sum(obj_t *args, env_t *env);
+
+obj_t *multiply(obj_t *args, env_t *env);
 
 #endif

@@ -18,7 +18,6 @@
 */
 #ifndef MODULES_H
 #define MODULES_H
-#include "bulb.h"
 #include "modules/core.h"
 
 void err_module_not_compiled(char *name)
@@ -40,7 +39,7 @@ obj_t *alloc_primitive()
     return primitive;
 }
 
-void load_module(env_t *env, obj_t *module)
+obj_t *load_module(obj_t *module, env_t *env)
 {
     char *module_name;
     if (module->type == SYMBOL)
@@ -50,6 +49,9 @@ void load_module(env_t *env, obj_t *module)
         obj_t *primitive = alloc_primitive();
         primitive->data.primitive = sum;
         env_set(env, "+", primitive);
+        primitive = alloc_primitive();
+        primitive->data.primitive = multiply;
+        env_set(env, "*", primitive);
 #else
         err_module_not_compiled(module_name);
 #endif
