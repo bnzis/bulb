@@ -111,12 +111,11 @@ unsigned get_token(char *exp, unsigned len, unsigned *offset, obj_t *out)
         }
         prev = first;
     } 
-    if (i > 0) {
-        acc = realloc(acc, i);
-        *out = atom(acc, i);
-    } else {
-        out->type = NIL;
-    }
+    out = realloc(out, sizeof(obj_t));
+    if (acc[0] == 0 || i < 0)
+        return NIL;    
+    acc = realloc(acc, i);
+    *out = atom(acc, i);
     return OTHER;
 }
 
