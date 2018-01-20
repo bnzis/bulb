@@ -25,6 +25,7 @@ obj_t *env_get(env_t *env, char *symbol)
         obj = get(env->local, symbol);
         env = env->upper_level;
     }
+    if (obj == NULL) err_variable_not_bound(symbol);
     return obj;
 }
 
@@ -36,4 +37,10 @@ void env_set(env_t *env, char *symbol, obj_t *obj)
 void env_delete(env_t *env, char *symbol)
 {
     delete(env->local, symbol);
+}
+
+void err_variable_not_bound(char *name)
+{
+    printf("Exception: variable %s is not bound.\n", name);
+    exit(1);
 }

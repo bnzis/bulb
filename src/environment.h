@@ -18,6 +18,7 @@
 */
 #ifndef ENVIRONMENT_H
 #define ENVIRONMENT_H
+#include <stdio.h>
 #include "types.h"
 #include "hashmap.h"
 
@@ -26,5 +27,7 @@ obj_t *env_get(env_t *env, char *symbol);
 void env_set(env_t *env, char *symbol, obj_t *obj);
 
 void env_delete(env_t *env, char *symbol);
+
+void err_variable_not_bound(char *name);
 
 #endif

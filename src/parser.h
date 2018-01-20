@@ -21,6 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "types.h"
+#include "util.h"
 
 /* Acquires the AST from string */
 obj_t *parse(char *exp);
