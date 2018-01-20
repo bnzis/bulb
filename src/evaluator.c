@@ -131,26 +131,25 @@ obj_t *eval(obj_t *ast, env_t *env)
     }
 }
 
-void expand_env(obj_t *obj, obj_t *args, env_t *upper_level)
+env_t *expand_env(obj_t *obj, obj_t *args, env_t *upper_level)
 {
     if (obj->type != PROCEDURE) err_non_procedure(obj);
     proc_t *proc = &obj->data.procedure;
     // if (list_len(proc->data.procedure.args) != list_len(args)) 
         // err_invalid_len(procedure->data.procedure.args, list_len(args)) ...
-    if (proc->env == NULL) {
-        proc->env = malloc(sizeof(env_t));
-        proc->env->local = malloc(sizeof(hashmap_t));
-        proc->env->local->data = malloc(sizeof(obj_t*) * HMAP_ROWS);
-    }
-    proc->env->upper_level = upper_level;
+    env_t *new_env = malloc(sizeof(env_t));
+    new_env->local = malloc(sizeof(hashmap_t));
+    new_env->local->data = malloc(sizeof(obj_t*) * HMAP_ROWS);
+    new_env->upper_level = upper_level;
     unsigned i = 0, len = list_len(args) - 1;
     obj_t *tmp = proc->args;
     while (i < len) {
-        env_set(proc->env, car(tmp)->data.symbol.buff, car(args));
+        env_set(new_env, car(tmp)->data.symbol.buff, car(args));
         tmp = cdr(tmp);
         args = cdr(args);
         i++;
     }
+    return new_env;
 }
 
 obj_t *apply(obj_t *ast, env_t *env)
@@ -160,8 +159,8 @@ obj_t *apply(obj_t *ast, env_t *env)
     if (proc->type == PRIMITIVE) {
         return (proc->data.primitive)(args, env);
     } else if (proc->type == PROCEDURE) {
-        expand_env(proc, args, env);
-        return eval_sequence(proc->data.procedure.body, proc->data.procedure.env);
+        env_t *new_env = expand_env(proc, args, env);
+        return eval_sequence(proc->data.procedure.body, new_env);
     } else 
         err_non_procedure(proc);
 }
