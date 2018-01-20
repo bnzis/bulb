@@ -18,10 +18,11 @@
 */
 #include <stdio.h>
 #include "bulb.h"
+#include "modules/core.c" //to fix, ignore
 
 int main() 
 {
-    char *program = "(def a (+ 1 2)) (+ a 20)";
+    char *program = "(def sum (lambda (x y) (+ x y))) (sum 1 (sum 2 3))";
     obj_t *tree = parse(program);
     env_t *env = malloc(sizeof(env_t));
     env->local = malloc(sizeof(hashmap_t));
