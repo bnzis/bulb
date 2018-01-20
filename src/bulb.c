@@ -22,14 +22,20 @@
 
 int main() 
 {
-    char *program = "(def sum (lambda (x y) (+ x y))) (sum 1 (sum 2 3))";
-    obj_t *tree = parse(program);
+    char program[256];
     env_t *env = malloc(sizeof(env_t));
+    env->upper_level = NULL;
     env->local = malloc(sizeof(hashmap_t));
     env->local->data = malloc(sizeof(obj_t*) * HMAP_ROWS);
     obj_t module = atom("core", strlen("core"));
     load_module(&module, env);
-    print_ast(eval_sequence(tree, env));
-    printf("\n");
-    return 0;
+    printf("BULB v0.0.1\n");
+    for (;;) {
+        printf("> ");
+        fgets(program, 256, stdin);
+        obj_t *tree = parse(program);
+        print_ast(eval_sequence(tree, env));
+        printf("\n");
+    }
+    return 1;
 }

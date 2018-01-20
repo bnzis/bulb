@@ -30,6 +30,8 @@ void print_atom(obj_t *obj)
     else if (obj->type == SYMBOL) printf("%s", obj->data.symbol.buff);
     else if (obj->type == STRING) printf("\"%s\"", obj->data.string.buff);
     else if (obj->type == BOOL) printf((obj->data.boolean)? "#t" : "#f");
+    else if (obj->type == PROCEDURE) printf("#<PROCEDURE>");
+    else if (obj->type == PRIMITIVE) printf("#<PRIMITIVE>");
 }
 
 void print_ast(obj_t *tree)
