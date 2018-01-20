@@ -17,7 +17,7 @@
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "parser.h"
-#include <stdio.h>
+
 bool is_int(char *exp, unsigned len)
 {
     unsigned i = 0;
@@ -110,9 +110,11 @@ unsigned get_token(char *exp, unsigned len, unsigned *offset, obj_t *out)
             i++;
         }
         prev = first;
-    }
-    acc = realloc(acc, i);
+    } 
     out = realloc(out, sizeof(obj_t));
+    if (acc[0] == 0 || i < 0)
+        return NIL;    
+    acc = realloc(acc, i);
     *out = atom(acc, i);
     return OTHER;
 }
@@ -124,14 +126,14 @@ obj_t *generate_ast(char *exp, unsigned len, unsigned *offset)
     unsigned ttype = get_token(exp, len, offset, front);
     while (ttype != NIL && ttype != CLOSE_BLOCK) {
         if (ttype == OPEN_BLOCK) {
-            front->data.cons.car = generate_ast(exp, len, offset);
+            set_car(front, generate_ast(exp, len, offset));
         } else {
             obj_t *tmp = malloc(sizeof(obj_t));
             memcpy(tmp, front, sizeof(obj_t)); 
             front->type = CONS;
-            front->data.cons.car = tmp;
+            set_car(front, tmp);
         }
-        front->data.cons.cdr = malloc(sizeof(obj_t));
+        set_cdr(front, malloc(sizeof(obj_t)));
         front = front->data.cons.cdr;
         front->type = CONS;
         ttype = get_token(exp, len, offset, front);
