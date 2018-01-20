@@ -40,13 +40,14 @@ obj_t *eval_args(obj_t *ast, env_t *env)
         return eval(ast, env);
     while (ast != NULL) {
         free(car(front));
-        set_car(front, eval(car(ast), env));
+        obj_t *val = malloc(sizeof(obj_t));
+        memcpy(val, eval(car(ast), env), sizeof(obj_t));
+        set_car(front, val);
         set_cdr(front, malloc(sizeof(obj_t)));
         front = cdr(front);
         front->type = CONS;
         ast = cdr(ast);
     }
-    free(front);
     return args;
 }
 
@@ -68,7 +69,6 @@ obj_t *eval_define(obj_t *ast, env_t *env)
         val->type = PROCEDURE;
         val->data.procedure.args = args;
         val->data.procedure.body = body;
-        val->data.procedure.env = env;
         env_set(env, sym, val);
     } else 
         err_invalid_syntax(ast);
@@ -95,7 +95,6 @@ obj_t *eval_lambda(obj_t *ast, env_t *env)
     proc->type = PROCEDURE;
     proc->data.procedure.args = car(ast);
     proc->data.procedure.body = cdr(ast);
-    proc->data.procedure.env = env;
     return proc;
 }
 
@@ -107,7 +106,9 @@ obj_t *eval(obj_t *ast, env_t *env)
         return tmp;
     }
     switch(ast->type) {
-        case STRING: case INT: case FLOAT: case PROCEDURE: case BOOL: case NIL:
+        case STRING: case INT: case FLOAT: case BOOL: case NIL:
+            return ast;
+        case PROCEDURE:
             return ast;
         case SYMBOL:
                 return env_get(env, ast->data.symbol.buff);
