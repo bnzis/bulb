@@ -80,6 +80,7 @@ unsigned char countd_d(void* decimal, enum DECTYPE type)
     default: /* This is not supposed to happen */
         fprintf(stderr, "Error: countd_d: Unknown decimal type.");
 
+        return 0;
         break;
     }
 
