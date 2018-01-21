@@ -5,7 +5,7 @@
 #ifndef H_DIGITS_INT
 #define H_DIGITS_INT
 
-enum eDECTYPE
+enum DECTYPE
 {
     DECTYPE_CHR,        /* char */
     DECTYPE_UCHR,       /* unsigned char */
@@ -17,9 +17,9 @@ enum eDECTYPE
 
     DECTYPE_USRT,       /* unsigned short */
     DECTYPE_UINT,       /* unsigned int */
-    DECTYPE_ULONG,      /* unsigned long */
-    DECTYPE_ULONGLONG   /* unsigned long long */
-} DECTYPE;
+    DECTYPE_ULNG,      /* unsigned long */
+    DECTYPE_ULNGLNG   /* unsigned long long */
+} ;
 
 #endif // H_DIGITS_INT
 

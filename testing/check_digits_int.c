@@ -31,7 +31,7 @@ int main(void)
     printf("Digits count of %lu is %d\n", ul, countd_d(&ul, DECTYPE_ULNG));
 
     long long ll = 623689109;
-    printf("Digits count of %lld is %d\n" ll, countd_d(&ll, DECTYPE_LNGLNG));
+    printf("Digits count of %lld is %d\n", ll, countd_d(&ll, DECTYPE_LNGLNG));
     unsigned long long ull = 1234567890;
     printf("Digits count of %llu is %d\n", ull, countd_d(&ull, DECTYPE_ULNGLNG));
 
