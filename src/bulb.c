@@ -18,7 +18,7 @@
 */
 #include <stdio.h>
 #include "bulb.h"
-#include "modules/core.c" //to fix, ignore
+/* #include "modules/core.c" //to fix, ignore */
 
 int main() 
 {
