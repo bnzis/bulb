@@ -18,10 +18,14 @@
 */
 #ifndef MODULES_CORE_H
 #define MODULES_CORE_H
-#include "../bulb.h"
+#include <stdlib.h>
+#include "../types.h"
+#include "../util.h"
 
 obj_t *sum(obj_t *args, env_t *env);
 
 obj_t *multiply(obj_t *args, env_t *env);
+
+obj_t *operator_equal(obj_t *args, env_t *env);
 
 #endif

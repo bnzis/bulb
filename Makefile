@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := all
-SOURCE = $(wildcard src/*c)
+SOURCE = $(wildcard src/modules/*c src/*c)
 
 all: $(SOURCE)
-	@ gcc $^ -o bulb -I./src/modules
+	@ gcc $^ -o bulb
 	@ echo done.
