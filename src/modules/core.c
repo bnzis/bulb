@@ -21,8 +21,8 @@
 obj_t *sum(obj_t *args, env_t *env)
 {
     obj_t *result = malloc(sizeof(obj_t));
-    result = car(args);
-    args = cdr(args);
+    result->type = INT;
+    result->data.integer = 0;
     while (car(args) != NULL) {
         if (car(args)->type == FLOAT) {
             if (result->type == INT) {
@@ -44,8 +44,8 @@ obj_t *sum(obj_t *args, env_t *env)
 obj_t *multiply(obj_t *args, env_t *env)
 {
     obj_t *result = malloc(sizeof(obj_t));
-    result = car(args);
-    args = cdr(args);
+    result->type = INT;
+    result->data.integer = 1;
     while (car(args) != NULL) {
         if (car(args)->type == FLOAT) {
             if (result->type == INT) {
