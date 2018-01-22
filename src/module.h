@@ -52,6 +52,15 @@ obj_t *load_module(obj_t *module, env_t *env)
         primitive = alloc_primitive();
         primitive->data.primitive = multiply;
         env_set(env, "*", primitive);
+        primitive = alloc_primitive();
+        primitive->data.primitive = substract;
+        env_set(env, "-", primitive);
+        primitive = alloc_primitive();
+        primitive->data.primitive = divide;
+        env_set(env, "/", primitive);
+        primitive = alloc_primitive();
+        primitive->data.primitive = operator_equal;
+        env_set(env, "=", primitive);
 #else
         err_module_not_compiled(module_name);
 #endif

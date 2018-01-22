@@ -64,3 +64,67 @@ obj_t *multiply(obj_t *args, env_t *env)
     return result;
 }
 
+obj_t *substract(obj_t *args, env_t *env)
+{
+    obj_t *result = malloc(sizeof(obj_t));
+    memcpy(result, car(args), sizeof(obj_t));
+    args = cdr(args);
+    while (car(args) != NULL) {
+        if (car(args)->type == FLOAT) {
+            if (result->type == INT) {
+                int tmp = result->data.integer;
+                result->data.floating = tmp;
+                result->type = FLOAT;
+            }
+            result->data.floating -= car(args)->data.floating;
+        } else if (args->data.cons.car->type == INT) 
+            if (result->type == FLOAT)
+                result->data.floating -= car(args)->data.integer;
+            else
+                result->data.integer -= car(args)->data.integer;
+        args = cdr(args);
+    }
+    return result;
+}
+
+obj_t *divide(obj_t *args, env_t *env)
+{
+    obj_t *result = car(args);
+    args = cdr(args);
+    while (car(args) != NULL) {
+        if (car(args)->type == FLOAT) {
+            if (result->type == INT) {
+                int tmp = result->data.integer;
+                result->data.floating = tmp;
+                result->type = FLOAT;
+            }
+            result->data.floating /= car(args)->data.floating;
+        } else if (args->data.cons.car->type == INT)
+            if (result->type == FLOAT)
+                result->data.floating /= car(args)->data.integer;
+            else
+                result->data.integer /= car(args)->data.integer;
+        args = cdr(args);
+    }
+    return result;
+}
+
+obj_t *operator_equal(obj_t *args, env_t *env)
+{
+    obj_t *result = malloc(sizeof(obj_t));
+    bool res = true;
+    result->type = BOOL;
+    while (cdr(args) != NULL && res) {
+        if (car(args)->type == INT && cadr(args)->type == INT)
+            res = car(args)->data.integer == cadr(args)->data.integer;
+        if (car(args)->type == FLOAT && cadr(args)->type == FLOAT)
+            res = car(args)->data.floating == cadr(args)->data.floating;
+        if (car(args)->type == INT && cadr(args)->type == FLOAT)
+            res = car(args)->data.integer == cadr(args)->data.floating;
+        if (car(args)->type == FLOAT && cadr(args)->type == INT)
+            res = car(args)->data.floating == cadr(args)->data.integer;
+        args = cdr(args);
+    }
+    result->data.boolean = res;
+    return result;
+}

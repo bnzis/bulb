@@ -19,12 +19,17 @@
 #ifndef MODULES_CORE_H
 #define MODULES_CORE_H
 #include <stdlib.h>
+#include <string.h>
 #include "../types.h"
 #include "../util.h"
 
 obj_t *sum(obj_t *args, env_t *env);
 
 obj_t *multiply(obj_t *args, env_t *env);
+
+obj_t *substract(obj_t *args, env_t *env);
+
+obj_t *divide(obj_t *args, env_t *env);
 
 obj_t *operator_equal(obj_t *args, env_t *env);
 
