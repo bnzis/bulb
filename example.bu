@@ -1,0 +1,10 @@
+;; This is just an example
+;; sample implementation of cons
+(def (cons x y)
+    (lambda (i)
+        (if (= i 0)
+        x
+        y)))
+
+(def a (cons 1 (cons 2 3)))
+((a 1) 0) ;; should print 2
