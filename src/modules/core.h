@@ -33,4 +33,14 @@ obj_t *divide(obj_t *args, env_t *env);
 
 obj_t *operator_equal(obj_t *args, env_t *env);
 
+obj_t *operator_not_equal(obj_t *args, env_t *env);
+
+obj_t *operator_bigger(obj_t *args, env_t *env);
+
+obj_t *operator_smaller(obj_t *args, env_t *env);
+
+obj_t *operator_bigger_equal(obj_t *args, env_t *env);
+
+obj_t *operator_smaller_equal(obj_t *args, env_t *env);
+
 #endif

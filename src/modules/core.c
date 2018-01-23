@@ -128,3 +128,103 @@ obj_t *operator_equal(obj_t *args, env_t *env)
     result->data.boolean = res;
     return result;
 }
+
+obj_t *operator_not_equal(obj_t *args, env_t *env)
+{
+    obj_t *result = malloc(sizeof(obj_t));
+    bool res = true;
+    result->type = BOOL;
+    while (cdr(args) != NULL && res) {
+        if (car(args)->type == INT && cadr(args)->type == INT)
+            res = car(args)->data.integer != cadr(args)->data.integer;
+        if (car(args)->type == FLOAT && cadr(args)->type == FLOAT)
+            res = car(args)->data.floating != cadr(args)->data.floating;
+        if (car(args)->type == INT && cadr(args)->type == FLOAT)
+            res = car(args)->data.integer != cadr(args)->data.floating;
+        if (car(args)->type == FLOAT && cadr(args)->type == INT)
+            res = car(args)->data.floating != cadr(args)->data.integer;
+        args = cdr(args);
+    }
+    result->data.boolean = res;
+    return result;
+}
+
+obj_t *operator_bigger(obj_t *args, env_t *env)
+{
+    obj_t *result = malloc(sizeof(obj_t));
+    bool res = true;
+    result->type = BOOL;
+    while (cdr(args) != NULL && res) {
+        if (car(args)->type == INT && cadr(args)->type == INT)
+            res = car(args)->data.integer > cadr(args)->data.integer;
+        if (car(args)->type == FLOAT && cadr(args)->type == FLOAT)
+            res = car(args)->data.floating > cadr(args)->data.floating;
+        if (car(args)->type == INT && cadr(args)->type == FLOAT)
+            res = car(args)->data.integer > cadr(args)->data.floating;
+        if (car(args)->type == FLOAT && cadr(args)->type == INT)
+            res = car(args)->data.floating > cadr(args)->data.integer;
+        args = cdr(args);
+    }
+    result->data.boolean = res;
+    return result;
+}
+
+obj_t *operator_smaller(obj_t *args, env_t *env)
+{
+    obj_t *result = malloc(sizeof(obj_t));
+    bool res = true;
+    result->type = BOOL;
+    while (cdr(args) != NULL && res) {
+        if (car(args)->type == INT && cadr(args)->type == INT)
+            res = car(args)->data.integer < cadr(args)->data.integer;
+        if (car(args)->type == FLOAT && cadr(args)->type == FLOAT)
+            res = car(args)->data.floating < cadr(args)->data.floating;
+        if (car(args)->type == INT && cadr(args)->type == FLOAT)
+            res = car(args)->data.integer < cadr(args)->data.floating;
+        if (car(args)->type == FLOAT && cadr(args)->type == INT)
+            res = car(args)->data.floating < cadr(args)->data.integer;
+        args = cdr(args);
+    }
+    result->data.boolean = res;
+    return result;
+}
+
+obj_t *operator_bigger_equal(obj_t *args, env_t *env)
+{
+    obj_t *result = malloc(sizeof(obj_t));
+    bool res = true;
+    result->type = BOOL;
+    while (cdr(args) != NULL && res) {
+        if (car(args)->type == INT && cadr(args)->type == INT)
+            res = car(args)->data.integer >= cadr(args)->data.integer;
+        if (car(args)->type == FLOAT && cadr(args)->type == FLOAT)
+            res = car(args)->data.floating >= cadr(args)->data.floating;
+        if (car(args)->type == INT && cadr(args)->type == FLOAT)
+            res = car(args)->data.integer >= cadr(args)->data.floating;
+        if (car(args)->type == FLOAT && cadr(args)->type == INT)
+            res = car(args)->data.floating >= cadr(args)->data.integer;
+        args = cdr(args);
+    }
+    result->data.boolean = res;
+    return result;
+}
+
+obj_t *operator_smaller_equal(obj_t *args, env_t *env)
+{
+    obj_t *result = malloc(sizeof(obj_t));
+    bool res = true;
+    result->type = BOOL;
+    while (cdr(args) != NULL && res) {
+        if (car(args)->type == INT && cadr(args)->type == INT)
+            res = car(args)->data.integer <= cadr(args)->data.integer;
+        if (car(args)->type == FLOAT && cadr(args)->type == FLOAT)
+            res = car(args)->data.floating <= cadr(args)->data.floating;
+        if (car(args)->type == INT && cadr(args)->type == FLOAT)
+            res = car(args)->data.integer <= cadr(args)->data.floating;
+        if (car(args)->type == FLOAT && cadr(args)->type == INT)
+            res = car(args)->data.floating <= cadr(args)->data.integer;
+        args = cdr(args);
+    }
+    result->data.boolean = res;
+    return result;
+}
