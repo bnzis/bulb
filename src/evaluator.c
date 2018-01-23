@@ -69,6 +69,7 @@ obj_t *eval_define(obj_t *ast, env_t *env)
         val->type = PROCEDURE;
         val->data.procedure.args = args;
         val->data.procedure.body = body;
+        val->data.procedure.env = env;
         env_set(env, sym, val);
     } else 
         err_invalid_syntax(ast);
@@ -95,6 +96,7 @@ obj_t *eval_lambda(obj_t *ast, env_t *env)
     proc->type = PROCEDURE;
     proc->data.procedure.args = car(ast);
     proc->data.procedure.body = cdr(ast);
+    proc->data.procedure.env = env;
     return proc;
 }
 
@@ -160,7 +162,7 @@ obj_t *apply(obj_t *ast, env_t *env)
     if (proc->type == PRIMITIVE) {
         return (proc->data.primitive)(args, env);
     } else if (proc->type == PROCEDURE) {
-        env_t *new_env = expand_env(proc, args, env);
+        env_t *new_env = expand_env(proc, args, proc->data.procedure.env);
         return eval_sequence(proc->data.procedure.body, new_env);
     } else 
         err_non_procedure(proc);
