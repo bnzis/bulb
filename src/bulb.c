@@ -16,25 +16,74 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "bulb.h"
+#ifdef _WIN32
 
-int main() 
+static char buffer[256];
+
+/* Fake readline function */
+char* readline(char* prompt) {
+  fputs(prompt, stdout);
+  fgets(buffer, 256, stdin);
+  char* cpy = malloc(strlen(buffer)+1);
+  strcpy(cpy, buffer);
+  cpy[strlen(cpy)-1] = '\0';
+  return cpy;
+}
+
+/* Fake add_history function */
+void add_history(char* unused) {}
+
+#else
+#include<readline/readline.h>
+#include<readline/history.h>
+#endif
+
+int main(int argc, char **argv) 
 {
-    char program[256];
+    char *program;
     env_t *env = malloc(sizeof(env_t));
     env->upper_level = NULL;
     env->local = malloc(sizeof(hashmap_t));
     env->local->data = malloc(sizeof(obj_t*) * HMAP_ROWS);
     obj_t module = atom("core", strlen("core"));
     load_module(&module, env);
-    printf("BULB v0.0.1\n");
-    for (;;) {
-        printf("> ");
-        fgets(program, 256, stdin);
-        obj_t *tree = parse(program);
-        print_ast(eval_sequence(tree, env));
-        printf("\n");
+    if (argc == 1) {  
+        printf("BULB v0.0.2\n");
+        for (;;) {
+            program = readline("> ");
+            add_history(program);
+            obj_t *tree = parse(program);
+            print_ast(eval_sequence(tree, env));
+            printf("\n");
+            free(program);
+        }
+    } else {
+        if (strcmp(argv[1], "-h") == 0) {   
+            printf("BULB v0.0.2\n");
+            printf("usage: bulb [file]\tload specified file\n"
+                   "   or: bulb\t        open the repl\n");
+        } else {
+            FILE *f = fopen(argv[1], "r");
+            if(f == NULL)
+            {
+                printf("Exception: failed to open file.\n");
+                exit(1);
+            }
+            fseek(f, 0L, SEEK_END);
+            long size = ftell(f);
+            fseek(f, 0L, SEEK_SET);
+            program = malloc(size);
+            size = fread(program, sizeof(char), size, f);
+            obj_t *tree = parse(program);
+            print_ast(eval_sequence(tree, env));
+            printf("\n");
+            fclose(f);
+            free(program);
+        }
     }
-    return 1;
+    return 0;
 }
