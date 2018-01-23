@@ -61,6 +61,21 @@ obj_t *load_module(obj_t *module, env_t *env)
         primitive = alloc_primitive();
         primitive->data.primitive = operator_equal;
         env_set(env, "=", primitive);
+        primitive = alloc_primitive();
+        primitive->data.primitive = operator_not_equal;
+        env_set(env, "!=", primitive);
+        primitive = alloc_primitive();
+        primitive->data.primitive = operator_bigger;
+        env_set(env, ">", primitive);
+        primitive = alloc_primitive();
+        primitive->data.primitive = operator_smaller;
+        env_set(env, "<", primitive);
+        primitive = alloc_primitive();
+        primitive->data.primitive = operator_bigger_equal;
+        env_set(env, ">=", primitive);
+        primitive = alloc_primitive();
+        primitive->data.primitive = operator_smaller_equal;
+        env_set(env, "<=", primitive);
 #else
         err_module_not_compiled(module_name);
 #endif
