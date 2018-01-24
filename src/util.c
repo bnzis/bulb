@@ -25,11 +25,11 @@ bool is_atom(obj_t *obj)
 
 void print_atom(obj_t *obj)
 {
-    if (obj->type == INT) printf("%i", obj->data.integer);
-    else if (obj->type == FLOAT) printf("%f", obj->data.floating);
-    else if (obj->type == SYMBOL) printf("%s", obj->data.symbol.buff);
-    else if (obj->type == STRING) printf("\"%s\"", obj->data.string.buff);
-    else if (obj->type == BOOL) printf((obj->data.boolean)? "#t" : "#f");
+    if (obj->type == INT) printf("%i", obj->integer);
+    else if (obj->type == FLOAT) printf("%f", obj->floating);
+    else if (obj->type == SYMBOL) printf("%s", obj->symbol.buff);
+    else if (obj->type == STRING) printf("\"%s\"", obj->string.buff);
+    else if (obj->type == BOOL) printf((obj->boolean)? "#t" : "#f");
     else if (obj->type == PROCEDURE) printf("#<PROCEDURE>");
     else if (obj->type == PRIMITIVE) printf("#<PRIMITIVE>");
 }
@@ -54,67 +54,67 @@ void print_ast(obj_t *tree)
 
 obj_t *car(obj_t *list)
 {
-    return list->data.cons.car;
+    return list->cons.car;
 }
 
 void set_car(obj_t *list, obj_t *val)
 {
-    list->data.cons.car = val;
+    list->cons.car = val;
 }
 
 obj_t *cdr(obj_t *list)
 {
-    return list->data.cons.cdr;
+    return list->cons.cdr;
 }
 
 void set_cdr(obj_t *list, obj_t *val)
 {
-    list->data.cons.cdr = val;
+    list->cons.cdr = val;
 }
 
 obj_t *caar(obj_t *list)
 {
-    return list->data.cons.car->data.cons.car;
+    return list->cons.car->cons.car;
 }
 
 void set_caar(obj_t *list, obj_t *val)
 {
-    list->data.cons.car->data.cons.car = val;
+    list->cons.car->cons.car = val;
 }
 
 obj_t *caadr(obj_t *list)
 {
-    return list->data.cons.cdr->data.cons.car->data.cons.car;
+    return list->cons.cdr->cons.car->cons.car;
 }
 
 obj_t *cadr(obj_t *list)
 {
-    return list->data.cons.cdr->data.cons.car;
+    return list->cons.cdr->cons.car;
 }
 
 obj_t *caddr(obj_t *list)
 {
-    return list->data.cons.cdr->data.cons.cdr->data.cons.car;
+    return list->cons.cdr->cons.cdr->cons.car;
 }
 
 void set_caddr(obj_t *list, obj_t *obj)
 {
-    list->data.cons.cdr->data.cons.cdr->data.cons.car = obj;
+    list->cons.cdr->cons.cdr->cons.car = obj;
 }
 
 obj_t *cadddr(obj_t *list)
 {
-    return list->data.cons.cdr->data.cons.cdr->data.cons.cdr->data.cons.car;
+    return list->cons.cdr->cons.cdr->cons.cdr->cons.car;
 }
 
 obj_t *cdar(obj_t *list)
 {
-    return list->data.cons.car->data.cons.cdr;
+    return list->cons.car->cons.cdr;
 }
 
 void set_cdar(obj_t *list, obj_t *val)
 {
-    list->data.cons.car->data.cons.cdr = val;
+    list->cons.car->cons.cdr = val;
 }
 
 unsigned list_len(obj_t *list)

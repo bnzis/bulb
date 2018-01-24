@@ -22,7 +22,7 @@ obj_t *eval_sequence(obj_t *ast, env_t *env)
 {
     if (ast->type == CONS) {
         unsigned cdr_type = cdr(ast)->type;
-        if (ast->data.cons.cdr != NULL && cdr_type != NIL) {
+        if (ast->cons.cdr != NULL && cdr_type != NIL) {
             eval(car(ast), env);
             return eval_sequence(cdr(ast), env); 
         } else  
@@ -33,6 +33,7 @@ obj_t *eval_sequence(obj_t *ast, env_t *env)
 
 obj_t *eval_args(obj_t *ast, env_t *env)
 {
+    if (ast == NULL) return NULL;
     obj_t *args = malloc(sizeof(obj_t));
     obj_t *front = args;
     args->type = CONS;
@@ -58,18 +59,18 @@ obj_t *eval_define(obj_t *ast, env_t *env)
     unsigned len = list_len(ast);
     if (len < 2) err_invalid_syntax(ast);
     if (cadr(ast)->type == SYMBOL) {
-        sym = cadr(ast)->data.symbol.buff;
+        sym = cadr(ast)->symbol.buff;
         val = eval(caddr(ast), env);
         env_set(env, sym, val);
     } else if (cadr(ast)->type == CONS) {
-        sym = caadr(ast)->data.symbol.buff;
+        sym = caadr(ast)->symbol.buff;
         obj_t *args = cdr(cadr(ast));
         obj_t *body = cdr(cdr(ast));
         val = malloc(sizeof(obj_t));
         val->type = PROCEDURE;
-        val->data.procedure.args = args;
-        val->data.procedure.body = body;
-        val->data.procedure.env = env;
+        val->procedure.args = args;
+        val->procedure.body = body;
+        val->procedure.env = env;
         env_set(env, sym, val);
     } else 
         err_invalid_syntax(ast);
@@ -81,7 +82,7 @@ obj_t *eval_if(obj_t *ast, env_t *env)
     obj_t *tmp;
     unsigned len = list_len(ast);
     if (len < 3 || len > 4) err_invalid_syntax(ast);
-    if (eval(cadr(ast), env)->data.boolean == true) tmp = caddr(ast);
+    if (eval(cadr(ast), env)->boolean == true) tmp = caddr(ast);
     else if (len == 3) {
         tmp = malloc(sizeof(obj_t));
         tmp->type = NIL;
@@ -94,9 +95,9 @@ obj_t *eval_lambda(obj_t *ast, env_t *env)
 {
     obj_t *proc = malloc(sizeof(obj_t));
     proc->type = PROCEDURE;
-    proc->data.procedure.args = car(ast);
-    proc->data.procedure.body = cdr(ast);
-    proc->data.procedure.env = env;
+    proc->procedure.args = car(ast);
+    proc->procedure.body = cdr(ast);
+    proc->procedure.env = env;
     return proc;
 }
 
@@ -113,11 +114,11 @@ obj_t *eval(obj_t *ast, env_t *env)
         case PROCEDURE:
             return ast;
         case SYMBOL:
-                return env_get(env, ast->data.symbol.buff);
+                return env_get(env, ast->symbol.buff);
         case CONS:
             if (car(ast) == NULL) return NULL;
             if (car(ast)->type == SYMBOL) {
-                char *op = car(ast)->data.symbol.buff;
+                char *op = car(ast)->symbol.buff;
                 if (strcmp(op, "def") == 0)
                     return eval_define(ast, env);
                 else if (strcmp(op, "if") == 0) {
@@ -136,8 +137,9 @@ obj_t *eval(obj_t *ast, env_t *env)
 
 env_t *expand_env(obj_t *obj, obj_t *args, env_t *upper_level)
 {
+    if (args->type == NIL) return upper_level;
     if (obj->type != PROCEDURE) err_non_procedure(obj);
-    proc_t *proc = &obj->data.procedure;
+    proc_t *proc = &obj->procedure;
     // if (list_len(proc->data.procedure.args) != list_len(args)) 
         // err_invalid_len(procedure->data.procedure.args, list_len(args)) ...
     env_t *new_env = malloc(sizeof(env_t));
@@ -147,7 +149,7 @@ env_t *expand_env(obj_t *obj, obj_t *args, env_t *upper_level)
     unsigned i = 0, len = list_len(args) - 1;
     obj_t *tmp = proc->args;
     while (i < len) {
-        env_set(new_env, car(tmp)->data.symbol.buff, car(args));
+        env_set(new_env, car(tmp)->symbol.buff, car(args));
         tmp = cdr(tmp);
         args = cdr(args);
         i++;
@@ -160,10 +162,10 @@ obj_t *apply(obj_t *ast, env_t *env)
     obj_t *proc = eval(car(ast), env);
     obj_t *args = eval_args(cdr(ast), env);
     if (proc->type == PRIMITIVE) {
-        return (proc->data.primitive)(args, env);
+        return (proc->primitive)(args, env);
     } else if (proc->type == PROCEDURE) {
-        env_t *new_env = expand_env(proc, args, proc->data.procedure.env);
-        return eval_sequence(proc->data.procedure.body, new_env);
+        env_t *new_env = expand_env(proc, args, proc->procedure.env);
+        return eval_sequence(proc->procedure.body, new_env);
     } else 
         err_non_procedure(proc);
 }
