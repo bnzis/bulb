@@ -43,38 +43,38 @@ obj_t *load_module(obj_t *module, env_t *env)
 {
     char *module_name;
     if (module->type == SYMBOL)
-       module_name = module->data.symbol.buff;
+       module_name = module->symbol.buff;
     if (strcmp(module_name, "core") == 0) {
 #ifdef MODULES_CORE_H
         obj_t *primitive = alloc_primitive();
-        primitive->data.primitive = sum;
+        primitive->primitive = sum;
         env_set(env, "+", primitive);
         primitive = alloc_primitive();
-        primitive->data.primitive = multiply;
+        primitive->primitive = multiply;
         env_set(env, "*", primitive);
         primitive = alloc_primitive();
-        primitive->data.primitive = substract;
+        primitive->primitive = substract;
         env_set(env, "-", primitive);
         primitive = alloc_primitive();
-        primitive->data.primitive = divide;
+        primitive->primitive = divide;
         env_set(env, "/", primitive);
         primitive = alloc_primitive();
-        primitive->data.primitive = operator_equal;
+        primitive->primitive = operator_equal;
         env_set(env, "=", primitive);
         primitive = alloc_primitive();
-        primitive->data.primitive = operator_not_equal;
+        primitive->primitive = operator_not_equal;
         env_set(env, "!=", primitive);
         primitive = alloc_primitive();
-        primitive->data.primitive = operator_bigger;
+        primitive->primitive = operator_bigger;
         env_set(env, ">", primitive);
         primitive = alloc_primitive();
-        primitive->data.primitive = operator_smaller;
+        primitive->primitive = operator_smaller;
         env_set(env, "<", primitive);
         primitive = alloc_primitive();
-        primitive->data.primitive = operator_bigger_equal;
+        primitive->primitive = operator_bigger_equal;
         env_set(env, ">=", primitive);
         primitive = alloc_primitive();
-        primitive->data.primitive = operator_smaller_equal;
+        primitive->primitive = operator_smaller_equal;
         env_set(env, "<=", primitive);
 #else
         err_module_not_compiled(module_name);

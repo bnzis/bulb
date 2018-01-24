@@ -2,5 +2,5 @@
 SOURCE = $(wildcard src/modules/*c src/*c)
 
 all: $(SOURCE)
-	@ gcc $^ -o bulb
+	@ gcc $^ -lreadline -o bulb 
 	@ echo done.

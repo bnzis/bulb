@@ -48,24 +48,24 @@ obj_t atom(char *exp, unsigned len)
     if (is_int(exp, len)) {
         int x = atoi(exp);
         o.type = INT;
-        o.data.integer = x;
+        o.integer = x;
     } else if (is_float(exp, len)) {
         float x = atof(exp);
         o.type = FLOAT;
-        o.data.floating = x;
+        o.floating = x;
     } else if (exp[0] == '\"') {
         o.type = STRING;
-        o.data.string.len = len - 2;
-        o.data.string.buff = malloc(sizeof(char) * (len - 2));
-        memcpy(o.data.string.buff, exp + 1, len - 2);
+        o.string.len = len - 2;
+        o.string.buff = malloc(sizeof(char) * (len - 2));
+        memcpy(o.string.buff, exp + 1, len - 2);
     } else if (exp[0] == '#' && (exp[1] == 't' || exp[1] == 'f')) {
         o.type = BOOL;
-        o.data.boolean = exp[1] == 't';
+        o.boolean = exp[1] == 't';
     } else {
         o.type = SYMBOL;
-        o.data.symbol.len = len;
-        o.data.symbol.buff = malloc(sizeof(char) * len);
-        memcpy(o.data.symbol.buff, exp, len);
+        o.symbol.len = len;
+        o.symbol.buff = malloc(sizeof(char) * len);
+        memcpy(o.symbol.buff, exp, len);
     }  
     return o;
 }
@@ -134,7 +134,7 @@ obj_t *generate_ast(char *exp, unsigned len, unsigned *offset)
             set_car(front, tmp);
         }
         set_cdr(front, malloc(sizeof(obj_t)));
-        front = front->data.cons.cdr;
+        front = front->cons.cdr;
         front->type = CONS;
         ttype = get_token(exp, len, offset, front);
     }

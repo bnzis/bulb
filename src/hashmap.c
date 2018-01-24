@@ -32,19 +32,19 @@ void append(hashmap_t *map, char *key, obj_t *obj)
     index %= HMAP_ROWS;
     obj_t *pair = malloc(sizeof(obj_t));
     pair->type = CONS;
-    pair->data.cons.car = malloc(sizeof(obj_t));
-    pair->data.cons.car->type = CONS;
-    pair->data.cons.car->data.cons.car = malloc(sizeof(obj_t));
-    pair->data.cons.car->data.cons.car->type = SYMBOL;
-    pair->data.cons.car->data.cons.car->data.symbol.buff = key;
-    pair->data.cons.car->data.cons.car->data.symbol.len = len;
-    pair->data.cons.car->data.cons.cdr = obj;
+    pair->cons.car = malloc(sizeof(obj_t));
+    pair->cons.car->type = CONS;
+    pair->cons.car->cons.car = malloc(sizeof(obj_t));
+    pair->cons.car->cons.car->type = SYMBOL;
+    pair->cons.car->cons.car->symbol.buff = key;
+    pair->cons.car->cons.car->symbol.len = len;
+    pair->cons.car->cons.cdr = obj;
     if (map->data[index] == NULL)
         map->data[index] = pair;
     else {
-        obj_t **ptr = &map->data[index]->data.cons.cdr;
+        obj_t **ptr = &map->data[index]->cons.cdr;
         while ((*ptr) != NULL)
-            ptr = &((*ptr)->data.cons.cdr);
+            ptr = &((*ptr)->cons.cdr);
         (*ptr) = pair;
     }
 }
@@ -54,15 +54,15 @@ obj_t *get(hashmap_t *map, char *key)
     unsigned index = hash(key, strlen(key));
     index %= HMAP_ROWS;
     if (map->data[index] == NULL) return NULL;
-    char *t = map->data[index]->data.cons.car->data.cons.car->data.symbol.buff;
+    char *t = map->data[index]->cons.car->cons.car->symbol.buff;
     if (strcmp(t, key) == 0)
-        return map->data[index]->data.cons.car->data.cons.cdr;
+        return map->data[index]->cons.car->cons.cdr;
     else {
         obj_t *ptr = map->data[index];
         while (strcmp(t, key) != 0) {  
-            ptr = ptr->data.cons.cdr;
+            ptr = ptr->cons.cdr;
             if (ptr == NULL) break;
-            t = car(car(ptr))->data.symbol.buff;
+            t = car(car(ptr))->symbol.buff;
         }
         if (ptr == NULL) return NULL;
         return cdar(ptr);
@@ -74,27 +74,26 @@ void set(hashmap_t *map, char *key, obj_t *obj)
     unsigned index = hash(key, strlen(key));
     index %= HMAP_ROWS;
     if (map->data[index] == NULL) append(map, key, obj);
-    char *t = map->data[index]->data.cons.car->data.cons.car->data.symbol.buff;
+    char *t = map->data[index]->cons.car->cons.car->symbol.buff;
     if (strcmp(t, key) == 0)
-        map->data[index]->data.cons.car->data.cons.cdr = obj;
+        map->data[index]->cons.car->cons.cdr = obj;
     else {
         obj_t **ptr = &map->data[index];
         do {
-            ptr = &((*ptr)->data.cons.cdr);
+            ptr = &((*ptr)->cons.cdr);
             if (*ptr == NULL) break;
-            t = car(car(*ptr))->data.symbol.buff;
+            t = car(car(*ptr))->symbol.buff;
         } while (strcmp(t, key) != 0);
         if (*ptr == NULL) {
             *ptr = malloc(sizeof(obj_t));
             (*ptr)->type = CONS;
             set_car(*ptr, malloc(sizeof(obj_t)));
-            //(*ptr)->data.cons.car = malloc(sizeof(obj_t));
-            (*ptr)->data.cons.car->type = CONS;
-            (*ptr)->data.cons.car->data.cons.car = malloc(sizeof(obj_t));
-            (*ptr)->data.cons.car->data.cons.car->type = SYMBOL;
-            (*ptr)->data.cons.car->data.cons.car->data.symbol.buff = key;
-            (*ptr)->data.cons.car->data.cons.car->data.symbol.len = strlen(key);
-            (*ptr)->data.cons.car->data.cons.cdr = obj;
+            (*ptr)->cons.car->type = CONS;
+            (*ptr)->cons.car->cons.car = malloc(sizeof(obj_t));
+            (*ptr)->cons.car->cons.car->type = SYMBOL;
+            (*ptr)->cons.car->cons.car->symbol.buff = key;
+            (*ptr)->cons.car->cons.car->symbol.len = strlen(key);
+            (*ptr)->cons.car->cons.cdr = obj;
             return;
         }
         set_cdar(*ptr, obj);
@@ -106,17 +105,17 @@ void delete(hashmap_t *map, char *key)
     unsigned index = hash(key, strlen(key));
     index %= HMAP_ROWS;
     if (map->data[index] == NULL) return;
-    char *t = map->data[index]->data.cons.car->data.cons.car->data.symbol.buff;
+    char *t = map->data[index]->cons.car->cons.car->symbol.buff;
     if (strcmp(t, key) == 0) {
-        map->data[index] = map->data[index]->data.cons.cdr;
+        map->data[index] = map->data[index]->cons.cdr;
     } else {
         obj_t **ptr = &map->data[index];
         do {
-            ptr = &((*ptr)->data.cons.cdr);
+            ptr = &((*ptr)->cons.cdr);
             if (*ptr == NULL) break;
-            t = (*ptr)->data.cons.car->data.cons.car->data.symbol.buff;
+            t = (*ptr)->cons.car->cons.car->symbol.buff;
         } while (strcmp(t, key) != 0);
         if (*ptr == NULL) return;
-        (*ptr) = (*ptr)->data.cons.cdr;
+        (*ptr) = (*ptr)->cons.cdr;
     }
 }
