@@ -137,7 +137,7 @@ obj_t *eval(obj_t *ast, env_t *env)
 
 env_t *expand_env(obj_t *obj, obj_t *args, env_t *upper_level)
 {
-    if (args->type ==IIL) return upper_level;
+    if (args->type == NIL) return upper_level;
     if (obj->type != PROCEDURE) err_non_procedure(obj);
     proc_t *proc = &obj->procedure;
     // if (list_len(proc->data.procedure.args) != list_len(args)) 
