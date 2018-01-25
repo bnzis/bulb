@@ -43,6 +43,10 @@ obj_t atom(char *exp, unsigned len);
 unsigned get_token(char *exp, unsigned len, unsigned *offset, obj_t *out);
 
 /* Generates an AST starting from the provided offset. */
-obj_t *generate_ast(char *exp, unsigned len, unsigned *offset);
+obj_t *generate_ast(char *exp, unsigned len, unsigned *offset, bool open);
+
+void err_missing_close_block();
+
+void err_missing_open_block();
 
 #endif

@@ -64,6 +64,7 @@ obj_t *eval_define(obj_t *ast, env_t *env)
         env_set(env, sym, val);
     } else if (cadr(ast)->type == CONS) {
         sym = caadr(ast)->symbol.buff;
+        if (!not_a_keyword(sym)) err_invalid_syntax(ast);
         obj_t *args = cdr(cadr(ast));
         obj_t *body = cdr(cdr(ast));
         val = malloc(sizeof(obj_t));
@@ -125,7 +126,7 @@ obj_t *eval(obj_t *ast, env_t *env)
                     return eval_if(ast, env);
                 } else if (strcmp(op, "lambda") == 0) {
                     return eval_lambda(cdr(ast), env);
-                } else if (strcmp(op, "begin") == 0) 
+                } else if (strcmp(op, "begin") == 0)
                     return eval_sequence(cdr(ast), env);
                 else if(strcmp(op, "qu") == 0)
                     if (list_len(cdr(ast)) == 1) return cdr(ast);
@@ -134,6 +135,7 @@ obj_t *eval(obj_t *ast, env_t *env)
             return apply(ast, env);
     }
 }
+
 
 env_t *expand_env(obj_t *obj, obj_t *args, env_t *upper_level)
 {
@@ -168,6 +170,15 @@ obj_t *apply(obj_t *ast, env_t *env)
         return eval_sequence(proc->procedure.body, new_env);
     } else 
         err_non_procedure(proc);
+}
+
+bool not_a_keyword(char *symbol)
+{
+    return (strcmp(symbol, "def") != 0 &&
+               strcmp(symbol, "lambda") != 0 &&
+               strcmp(symbol, "if") != 0 &&
+               strcmp(symbol, "begin") != 0 &&
+               strcmp(symbol, "qu") != 0);
 }
 
 void err_non_procedure(obj_t *proc)
