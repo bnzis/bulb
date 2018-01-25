@@ -108,7 +108,7 @@ unsigned get_token(char *exp, unsigned len, unsigned *offset, obj_t *out)
             }
             acc[i] = first;
             i++;
-        }
+        } 
         prev = first;
     } 
     out = realloc(out, sizeof(obj_t));
@@ -119,14 +119,14 @@ unsigned get_token(char *exp, unsigned len, unsigned *offset, obj_t *out)
     return OTHER;
 }
 
-obj_t *generate_ast(char *exp, unsigned len, unsigned *offset)
+obj_t *generate_ast(char *exp, unsigned len, unsigned *offset, bool open)
 {
     obj_t *tree = malloc(sizeof(obj_t)), *front = tree;
     tree->type = CONS;
     unsigned ttype = get_token(exp, len, offset, front);
-    while (ttype != NIL && ttype != CLOSE_BLOCK) {
+    while (ttype != CLOSE_BLOCK && ttype != NIL) {
         if (ttype == OPEN_BLOCK) {
-            set_car(front, generate_ast(exp, len, offset));
+            set_car(front, generate_ast(exp, len, offset, true));
         } else {
             obj_t *tmp = malloc(sizeof(obj_t));
             memcpy(tmp, front, sizeof(obj_t)); 
@@ -138,6 +138,8 @@ obj_t *generate_ast(char *exp, unsigned len, unsigned *offset)
         front->type = CONS;
         ttype = get_token(exp, len, offset, front);
     }
+    if (open && ttype != CLOSE_BLOCK) err_missing_close_block();
+    else if (ttype == CLOSE_BLOCK && !open) err_missing_open_block();
     front->type = NIL;
     return tree;   
 }
@@ -145,7 +147,19 @@ obj_t *generate_ast(char *exp, unsigned len, unsigned *offset)
 obj_t *parse(char *exp)
 {
     unsigned i = 0, len = strlen(exp);
-    obj_t *ast = generate_ast(exp, len, &i);
+    obj_t *ast = generate_ast(exp, len, &i, false);
     return ast;
 }
 
+
+void err_missing_close_block()
+{
+    printf("Exception: missing \')\'.\n");
+    exit(1);
+}
+
+void err_missing_open_block()
+{
+    printf("Exception: missing \'(\'.\n");
+    exit(1);
+}

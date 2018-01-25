@@ -33,6 +33,8 @@ obj_t *eval_if(obj_t *ast, env_t *env);
 
 obj_t *eval_define(obj_t *ast, env_t *env);
 
+bool not_a_keyword(char *sym);
+
 void err_non_procedure(obj_t *proc);
 
 void err_invalid_syntax(obj_t *tree);
