@@ -25,13 +25,13 @@
 
 obj_t *eval(obj_t *ast, env_t *env);
 
-obj_t *apply(obj_t *ast, env_t *env);
-
 obj_t *eval_sequence(obj_t *ast, env_t *env);
 
 obj_t *eval_if(obj_t *ast, env_t *env);
 
 obj_t *eval_define(obj_t *ast, env_t *env);
+
+env_t *expand_env(obj_t *proc, obj_t *args, env_t *env);
 
 bool not_a_keyword(char *sym);
 

@@ -41,8 +41,7 @@ obj_t *eval_args(obj_t *ast, env_t *env)
         return eval(ast, env);
     while (ast != NULL) {
         free(car(front));
-        obj_t *val = malloc(sizeof(obj_t));
-        memcpy(val, eval(car(ast), env), sizeof(obj_t));
+        obj_t *val = eval(car(ast), env);
         set_car(front, val);
         set_cdr(front, malloc(sizeof(obj_t)));
         front = cdr(front);
@@ -89,7 +88,7 @@ obj_t *eval_if(obj_t *ast, env_t *env)
         tmp->type = NIL;
     } else
         tmp = cadddr(ast);
-    return eval(tmp, env);
+    return tmp;
 }
 
 obj_t *eval_lambda(obj_t *ast, env_t *env)
@@ -109,30 +108,41 @@ obj_t *eval(obj_t *ast, env_t *env)
         tmp->type = NIL;
         return tmp;
     }
-    switch(ast->type) {
-        case STRING: case INT: case FLOAT: case BOOL: case NIL:
-            return ast;
-        case PROCEDURE:
-            return ast;
-        case SYMBOL:
+    while (true)
+        switch(ast->type) {
+            case STRING: case INT: case FLOAT: case BOOL: case NIL:
+                return ast;
+            case PROCEDURE:
+                return ast;
+            case SYMBOL:
                 return env_get(env, ast->symbol.buff);
-        case CONS:
-            if (car(ast) == NULL) return NULL;
-            if (car(ast)->type == SYMBOL) {
-                char *op = car(ast)->symbol.buff;
-                if (strcmp(op, "def") == 0)
-                    return eval_define(ast, env);
-                else if (strcmp(op, "if") == 0) {
-                    return eval_if(ast, env);
-                } else if (strcmp(op, "lambda") == 0) {
-                    return eval_lambda(cdr(ast), env);
-                } else if (strcmp(op, "begin") == 0)
-                    return eval_sequence(cdr(ast), env);
-                else if(strcmp(op, "qu") == 0)
-                    if (list_len(cdr(ast)) == 1) return cdr(ast);
-                    else err_invalid_syntax(ast);
-            }
-            return apply(ast, env);
+            case CONS:
+                if (car(ast) == NULL) return NULL;
+                if (car(ast)->type == SYMBOL) {
+                    char *op = car(ast)->symbol.buff;
+                    if (strcmp(op, "def") == 0)
+                        return eval_define(ast, env);
+                    else if (strcmp(op, "if") == 0) {
+                        ast = eval_if(ast, env);
+                        break;
+                    } else if (strcmp(op, "lambda") == 0) {
+                        return eval_lambda(cdr(ast), env);
+                    } else if (strcmp(op, "begin") == 0)
+                        return eval_sequence(cdr(ast), env);
+                    else if(strcmp(op, "qu") == 0)
+                        if (list_len(cdr(ast)) == 1) return cdr(ast);
+                        else err_invalid_syntax(ast);
+                }
+                obj_t *proc = eval(car(ast), env);
+                obj_t *args = eval_args(cdr(ast), env);
+                if (proc->type == PRIMITIVE) {
+                    return (proc->primitive)(args, env);
+                } else if (proc->type == PROCEDURE) {
+                    env_t *new_env = expand_env(proc, args, proc->procedure.env);
+                    ast = car(proc->procedure.body);
+                    env = new_env;
+                } else
+                    err_non_procedure(proc);
     }
 }
 
@@ -157,19 +167,6 @@ env_t *expand_env(obj_t *obj, obj_t *args, env_t *upper_level)
         i++;
     }
     return new_env;
-}
-
-obj_t *apply(obj_t *ast, env_t *env)
-{
-    obj_t *proc = eval(car(ast), env);
-    obj_t *args = eval_args(cdr(ast), env);
-    if (proc->type == PRIMITIVE) {
-        return (proc->primitive)(args, env);
-    } else if (proc->type == PROCEDURE) {
-        env_t *new_env = expand_env(proc, args, proc->procedure.env);
-        return eval_sequence(proc->procedure.body, new_env);
-    } else 
-        err_non_procedure(proc);
 }
 
 bool not_a_keyword(char *symbol)
