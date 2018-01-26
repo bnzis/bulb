@@ -20,15 +20,16 @@
 
 obj_t *eval_sequence(obj_t *ast, env_t *env) 
 {
-    if (ast->type == CONS) {
-        unsigned cdr_type = cdr(ast)->type;
-        if (ast->cons.cdr != NULL && cdr_type != NIL) {
-            eval(car(ast), env);
-            return eval_sequence(cdr(ast), env); 
-        } else  
-            return eval(car(ast), env);
-    } else 
-        return eval(ast, env);
+    while (true)
+        if (ast->type == CONS) {
+            unsigned cdr_type = cdr(ast)->type;
+            if (ast->cons.cdr != NULL && cdr_type != NIL) {
+                eval(car(ast), env);
+                ast = cdr(ast); 
+            } else  
+                return eval(car(ast), env);
+        } else 
+            return eval(ast, env);
 }
 
 obj_t *eval_args(obj_t *ast, env_t *env)
@@ -139,8 +140,9 @@ obj_t *eval(obj_t *ast, env_t *env)
                     return (proc->primitive)(args, env);
                 } else if (proc->type == PROCEDURE) {
                     env_t *new_env = expand_env(proc, args, proc->procedure.env);
-                    ast = car(proc->procedure.body);
+                    ast = proc->procedure.body;
                     env = new_env;
+                    return eval_sequence(ast, env);
                 } else
                     err_non_procedure(proc);
     }
