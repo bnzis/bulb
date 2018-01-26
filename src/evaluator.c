@@ -160,9 +160,9 @@ env_t *expand_env(obj_t *obj, obj_t *args, env_t *upper_level)
     new_env->local = malloc(sizeof(hashmap_t));
     new_env->local->data = malloc(sizeof(obj_t*) * HMAP_ROWS);
     new_env->upper_level = upper_level;
-    unsigned i = 0, len = list_len(args) - 1;
+    unsigned i = 0;
     obj_t *tmp = proc->args;
-    while (i < len) {
+    while (i < params_len) {
         env_set(new_env, car(tmp)->symbol.buff, car(args));
         tmp = cdr(tmp);
         args = cdr(args);
