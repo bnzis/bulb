@@ -141,8 +141,7 @@ obj_t *eval(obj_t *ast, env_t *env)
                 } else if (proc->type == PROCEDURE) {
                     env_t *new_env = expand_env(proc, args, proc->procedure.env);
                     ast = proc->procedure.body;
-                    env = new_env;
-                    return eval_sequence(ast, env);
+                    return eval_sequence(ast, new_env);
                 } else
                     err_non_procedure(proc);
     }
@@ -154,8 +153,9 @@ env_t *expand_env(obj_t *obj, obj_t *args, env_t *upper_level)
     if (args->type == NIL) return upper_level;
     if (obj->type != PROCEDURE) err_non_procedure(obj);
     proc_t *proc = &obj->procedure;
-    // if (list_len(proc->data.procedure.args) != list_len(args)) 
-        // err_invalid_len(procedure->data.procedure.args, list_len(args)) ...
+    unsigned params_len = list_len(proc->args), args_len = list_len(args) - 1;
+    if (params_len != args_len)
+        err_invalid_len(params_len, args_len);
     env_t *new_env = malloc(sizeof(env_t));
     new_env->local = malloc(sizeof(hashmap_t));
     new_env->local->data = malloc(sizeof(obj_t*) * HMAP_ROWS);
@@ -193,5 +193,12 @@ void err_invalid_syntax(obj_t *tree)
     printf("Exception: invalid syntax: (");
     print_ast(tree);
     printf(").\n");
+    exit(1);
+}
+
+void err_invalid_len(unsigned expected, unsigned given)
+{
+    printf("Exception: incorrect number of arguments (expected %d, given %d).\n", 
+            expected, given);
     exit(1);
 }

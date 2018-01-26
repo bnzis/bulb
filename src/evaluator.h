@@ -41,4 +41,6 @@ void err_invalid_syntax(obj_t *tree);
 
 void err_invalid_parameter_bool(obj_t *tree);
 
+void err_invalid_len(unsigned expected, unsigned given);
+
 #endif
