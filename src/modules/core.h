@@ -43,4 +43,8 @@ obj_t *operator_bigger_equal(obj_t *args, env_t *env);
 
 obj_t *operator_smaller_equal(obj_t *args, env_t *env);
 
+obj_t *display(obj_t *args, env_t *env);
+
+obj_t *ex(obj_t *args, env_t *env);
+
 #endif

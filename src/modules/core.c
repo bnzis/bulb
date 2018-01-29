@@ -228,3 +228,22 @@ obj_t *operator_smaller_equal(obj_t *args, env_t *env)
     result->boolean = res;
     return result;
 }
+
+obj_t *display(obj_t *args, env_t *env)
+{
+    obj_t *result = malloc(sizeof(obj_t));
+    result->type = NIL;
+    while (car(args) != NULL) {
+        if (car(args)->type == STRING)
+            printf("%s", car(args)->string.buff);
+        else 
+            print_ast(car(args));
+        args = cdr(args);
+    }
+    return result;
+}
+
+obj_t *ex(obj_t *args, env_t *env)
+{
+    exit(car(args)->integer);
+}
