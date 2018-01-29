@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "bulb.h"
-#ifdef _WIN32
+/* #ifdef _WIN32 */
 
 static char buffer[256];
 
@@ -37,10 +37,10 @@ char* readline(char* prompt) {
 /* Fake add_history function */
 void add_history(char* unused) {}
 
-#else
-#include<readline/readline.h>
-#include<readline/history.h>
-#endif
+/* #else */
+/* #include<readline/readline.h> */
+/* #include<readline/history.h> */
+/* #endif */
 
 int main(int argc, char **argv) 
 {
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
     obj_t module = atom("core", strlen("core"));
     load_module(&module, env);
     if (argc == 1) {  
-        printf("BULB v0.0.2\n");
+        printf("BULB v0.0.3\n");
         for (;;) {
             program = readline("> ");
             add_history(program);
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
             program = malloc(size);
             size = fread(program, sizeof(char), size, f);
             obj_t *tree = parse(program);
-            print_ast(eval_sequence(tree, env));
+            eval_sequence(tree, env);
             printf("\n");
             fclose(f);
             free(program);

@@ -76,6 +76,12 @@ obj_t *load_module(obj_t *module, env_t *env)
         primitive = alloc_primitive();
         primitive->primitive = operator_smaller_equal;
         env_set(env, "<=", primitive);
+        primitive = alloc_primitive();
+        primitive->primitive = display;
+        env_set(env, "display", primitive);
+        primitive = alloc_primitive();
+        primitive->primitive = ex;
+        env_set(env, "exit", primitive);
 #else
         err_module_not_compiled(module_name);
 #endif
