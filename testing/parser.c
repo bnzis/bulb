@@ -46,11 +46,11 @@ bool bulbIsFloat(char *exp, unsigned len)
 bulbObj *bulbGenAtom(char *exp, unsigned len)
 {
     bulbObj *o = (bulbObj*) malloc(sizeof(bulbObj));
-    if (is_int(exp, len)) {
+    if (bulbIsInt(exp, len)) {
         o->data = (int*) malloc(sizeof(int)); 
         *((int*) o->data) = atoi(exp);
         o->type = BULB_INT;
-    } else if (is_float(exp, len)) {
+    } else if (bulbIsFloat(exp, len)) {
         o->data = (float*) malloc(sizeof(float));
         *((float*) o->data) = atof(exp);
         o->type = BULB_FLOAT;
@@ -116,7 +116,7 @@ unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj *out)
     if (acc[0] == 0 || i < 0)
         return BULB_TOK_NIL;    
     acc = realloc(acc, i);
-    out = atom(acc, i);
+    out = bulbGenAtom(acc, i);
     return BULB_TOK_OTHER;
 }
 
