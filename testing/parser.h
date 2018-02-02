@@ -21,7 +21,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "types.h"
-// #include "util.h"
+#include "util.h"
 
 /* Acquires the AST from string */
 bulbObj *bulbParse(char *exp);
