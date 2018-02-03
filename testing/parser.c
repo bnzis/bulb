@@ -74,10 +74,10 @@ bulbObj *bulbGenAtom(char *exp, unsigned len)
     return o;
 }
 
-unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj *out)
+unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj **out)
 {
     if (*offset >= len) { 
-        out->type = BULB_NIL;
+        (*out)->type = BULB_NIL;
         return BULB_TOK_NIL;
     }
     unsigned aclen = 16, i = 0;
@@ -119,18 +119,18 @@ unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj *out)
         prev = first;
     } 
     if (acc[0] == 0 || i < 0) {
-       out->type = BULB_NIL; 
+       (*out)->type = BULB_NIL; 
        return BULB_TOK_NIL;
     }
     acc = realloc(acc, i);
-    memcpy(out, bulbGenAtom(acc, i), sizeof(bulbObj));
+    *out = bulbGenAtom(acc, i);
     return BULB_TOK_OTHER;
 }
 
 bulbObj *bulbGenAst(char *exp, unsigned len, unsigned *offset, bool open)
 {
     bulbObj *tree = malloc(sizeof(bulbObj)), *front = tree, *tmp = malloc(sizeof(bulbObj));
-    unsigned ttype = bulbLex(exp, len, offset, tmp); 
+    unsigned ttype = bulbLex(exp, len, offset, &tmp); 
     while (ttype != BULB_TOK_NIL && ttype != BULB_TOK_CLOSE_BLOCK) {
         front->type = BULB_CONS;
         front->data = malloc(sizeof(bulbCons));
@@ -141,7 +141,7 @@ bulbObj *bulbGenAst(char *exp, unsigned len, unsigned *offset, bool open)
         ((bulbCons*) front->data)->cdr = malloc(sizeof(bulbObj));
         front = bulbGetCdr(front);
         tmp = malloc(sizeof(bulbObj));
-        ttype = bulbLex(exp, len, offset, tmp);
+        ttype = bulbLex(exp, len, offset, &tmp);
     }
     front->type = BULB_NIL;
     return tree;

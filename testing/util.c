@@ -25,43 +25,116 @@ bool bulbIsAtom(bulbObj *obj)
 
 void bulbPrintAtom(bulbObj *obj)
 {
+    bulbPrintAtomDisplay(obj, true);
+}
+
+void bulbPrintAtomDisplay(bulbObj *obj, bool display)
+{
+    if (obj->type == BULB_CONS) bulb_err_not_a_pair(obj);
     if ((obj->type) == NULL) {
         printf("#<UNKNOWN>");
         return;
     }
-    obj->type(obj);
+    if (obj->type == BULB_STRING) {
+        printf("\"");
+        obj->type(obj);
+        printf("\"");
+    } else obj->type(obj);
 }
+
 
 void bulbPrintAst(bulbObj *tree)
 {
+    bulbPrintAstDisplay(tree, true);
+}
+
+void bulbPrintAstDisplay(bulbObj *tree, bool display)
+{
     if (bulbIsAtom(tree)) {
-        bulbPrintAtom(tree);
+        bulbPrintAtomDisplay(tree, display);
     } else if (bulbGetCar(tree) != NULL) {
         if (bulbGetCar(tree)->type == BULB_CONS) { 
             printf("(");
-            bulbPrintAst(bulbGetCar(tree));
+            bulbPrintAstDisplay(bulbGetCar(tree), display);
             printf(")");
+            if (bulbGetCdr(tree)->type != BULB_NIL) printf(" ");
         } else {
-            bulbPrintAtom(bulbGetCar(tree));
+            bulbPrintAtomDisplay(bulbGetCar(tree), display);
             if (!bulbIsAtom(bulbGetCdr(tree))) printf(" ");
         }
-        bulbPrintAst(bulbGetCdr(tree));
+        bulbPrintAstDisplay(bulbGetCdr(tree), display);
     }
 }
 
-bulbCons *makeCons(bulbObj *o)
+bulbCons *bulbMakeCons(bulbObj *obj)
 {
-    return (bulbCons*) o->data;
+    if (obj == NULL || bulbIsAtom(obj)) bulb_err_not_a_pair(obj);
+    return (bulbCons*) obj->data;
+}
+
+bulbObj *bulbNewConsObj(bulbObj *car, bulbObj *cdr)
+{
+    bulbObj *cons = (bulbObj*) malloc(sizeof(bulbObj));
+    cons->type = BULB_CONS;
+    cons->data = malloc(sizeof(bulbCons));
+    bulbSetCar(cons, car);
+    bulbSetCdr(cons, cdr);
+    return cons;
+}
+
+bulbObj *bulbNewStringObj(char *text, unsigned len)
+{
+    bulbObj *string = (bulbObj*) malloc(sizeof(bulbObj));
+    string->type = BULB_STRING;
+    string->data = (bulbString*) malloc(sizeof(bulbString*));
+    ((bulbString*) string->data)->data = text;
+    ((bulbString*) string->data)->len = len;
+    return string;
+}
+
+char *bulbGetStringText(bulbObj *string)
+{
+    return ((bulbString*) string->data)->data;
 }
 
 bulbObj *bulbGetCar(bulbObj *list)
 {
-    return makeCons(list)->car;
+    return bulbMakeCons(list)->car;
+}
+
+void bulbSetCar(bulbObj *list, bulbObj *val)
+{
+    bulbMakeCons(list)->car = val;
 }
 
 bulbObj *bulbGetCdr(bulbObj *list)
 {
-    return makeCons(list)->cdr;
+    return bulbMakeCons(list)->cdr;
+}
+
+void bulbSetCdr(bulbObj *list, bulbObj *val)
+{
+    bulbMakeCons(list)->cdr = val;
+}
+
+bulbObj *bulbGetCaar(bulbObj *list)
+{
+    return bulbGetCar(bulbGetCar(list));
+}
+
+void bulbSetCaar(bulbObj *list, bulbObj *val)
+{
+    bulbSetCar(bulbGetCar(list), val);
+}
+
+bulbObj *bulbGetCddr(bulbObj *list)
+{
+    return bulbGetCdr(bulbGetCdr(list));
+}
+
+void bulbSetCddr(bulbObj *list, bulbObj *val)
+{
+    bulbSetCdr(bulbGetCdr(list), val);
 }
 
 bulbObj *bulbGetCadr(bulbObj *list)
@@ -69,84 +142,47 @@ bulbObj *bulbGetCadr(bulbObj *list)
     return bulbGetCar(bulbGetCdr(list));
 }
 
-/* WIP
-void set_car(bulbObj *list, bulbObj *val)
+void bulbSetCadr(bulbObj *list, bulbObj *val)
 {
-    list->cons.car = val;
+    bulbSetCar(bulbGetCdr(list), val);
 }
 
-bulbObj *cdr(bulbObj *list)
+bulbObj *bulbGetCdar(bulbObj *list)
 {
-    return list->cons.cdr;
+    return bulbGetCdr(bulbGetCar(list));
 }
 
-void set_cdr(bulbObj *list, bulbObj *val)
-{
-    list->cons.cdr = val;
-}
-
-bulbObj *caar(bulbObj *list)
-{
-    return list->cons.car->cons.car;
-}
-
-void set_caar(bulbObj *list, bulbObj *val)
-{
-    list->cons.car->cons.car = val;
-}
-
-bulbObj *caadr(bulbObj *list)
-{
-    return list->cons.cdr->cons.car->cons.car;
-}
-
-bulbObj *cadr(bulbObj *list)
-{
-    return list->cons.cdr->cons.car;
-}
-
-bulbObj *caddr(bulbObj *list)
-{
-    return list->cons.cdr->cons.cdr->cons.car;
-}
-
-void set_caddr(bulbObj *list, bulbObj *obj)
-{
-    list->cons.cdr->cons.cdr->cons.car = obj;
-}
-
-bulbObj *cadddr(bulbObj *list)
-{
-    return list->cons.cdr->cons.cdr->cons.cdr->cons.car;
-}
-
-bulbObj *cdar(bulbObj *list)
-{
-    return list->cons.car->cons.cdr;
-}
-
-void set_cdar(bulbObj *list, bulbObj *val)
-{
-    list->cons.car->cons.cdr = val;
-}
-
-unsigned list_len(bulbObj *list)
+unsigned bulbListLen(bulbObj *list)
 {
     unsigned len = 0;
-    while (car(list) != NIL) {
+    while (bulbGetCar(list)->type != BULB_NIL) {
         len++;
-        list = cdr(list);
+        list = bulbGetCdr(list);
     }
     return len;
 }
 
-bulbObj *list_get(bulbObj *list, unsigned index)
+bulbObj *bulbListGet(bulbObj *list, unsigned index)
 {
-    unsigned i = 0;
-    while (car(list) != NIL && i < index)
-    {
+    unsigned i = 0, len = bulbListLen(list);
+    if (index > len) bulb_err_out_of_bounds(index, len);
+    while (bulbGetCar(list)->type != BULB_NIL && i < index) {
         i++;
-        list = cdr(list);
+        list = bulbGetCdr(list);
     }
-    return car(list);
-}*/
+    return bulbGetCar(list);
+}
+
+void bulb_err_not_a_pair(bulbObj *obj)
+{
+    printf("Exception: ");
+    bulbPrintAst(obj);
+    printf(" is not a pair.\n");
+    exit(1);
+}
+
+void bulb_err_out_of_bounds(unsigned index, unsigned len)
+{
+    printf("Exception: index (%d) out of bounds (len: %d).\n", index, len);
+    exit(1);
+}

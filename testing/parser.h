@@ -40,7 +40,7 @@ bulbObj *bulbGenAtom(char *exp, unsigned len);
 /* Returns the type of the token contained in said string starting from its 
  * offset. This only works if the conversion is possible, therefore if it's not 
  * a parentesis, gets retured. */
-unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj *out);
+unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj **out);
 
 /* Generates an AST starting from the provided offset. */
 bulbObj *bulbGenAst(char *exp, unsigned len, unsigned *offset, bool open);
@@ -49,4 +49,4 @@ void bulb_err_missing_close_block();
 
 void bulb_err_missing_open_block();
 
-#endif
+#endif /* PARSER_H */

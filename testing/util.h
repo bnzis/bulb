@@ -16,18 +16,30 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef BULB_UTIL_H
+#define BULB_UTIL_H
 #include <stdio.h>
 #include "types.h"
 #include "parser.h"
 
+/* Checks if the object is an atom type. */ 
 bool isAtom(bulbObj *obj);
 
 void bulbPrintAtom(bulbObj *obj);
+void bulbPrintAtomDisplay(bulbObj *obj, bool display);
 
 void bulbPrintAst(bulbObj *obj);
+void bulbPrintAstDisplay(bulbObj *obj, bool display);
 
+bulbCons *bulbMakeCons(bulbObj *obj);
+
+bulbObj *bulbNewConsObj(bulbObj *car, bulbObj *cdr);
+
+bulbObj *bulbNewStringObj(char *text, unsigned len);
+
+char *bulbGetStringText(bulbObj *string);
+
+/* Lists operations */
 bulbObj *bulbGetCar(bulbObj *list);
 
 void bulbSetCar(bulbObj *list, bulbObj *val);
@@ -52,7 +64,9 @@ bulbObj *bulbGetCaddr(bulbObj *list);
 
 void bulbSetCaddr(bulbObj *list, bulbObj *val);
 
-bulbObj *bulbGetCadddr(bulbObj *list);
+bulbObj *bulbGetCddr(bulbObj *list);
+
+void bulbSetCddr(bulbObj *list, bulbObj *val);
 
 bulbObj *bulbGetCdar(bulbObj *list);
 
@@ -62,4 +76,8 @@ unsigned bulbListLen(bulbObj *list);
 
 bulbObj *bulbListGet(bulbObj *list, unsigned index);
 
-#endif
+void bulb_err_not_a_pair(bulbObj *obj);
+
+void bulb_err_out_of_bounds(unsigned index, unsigned len);
+
+#endif /* UTIL_H */

@@ -23,8 +23,11 @@ bulbType BULB_NIL = bulbPrintNil,  BULB_BOOL = bulbPrintBool,
             BULB_SYMBOL = bulbPrintSymbol, BULB_STRING = bulbPrintString, 
             BULB_PROCEDURE = bulbPrintProcedure, 
             BULB_PRIMITIVE = bulbPrintPrimitive;
+bulbType BULB_CONS = bulbPrintCons;
 
-void bulbPrintNil(bulbObj *o) {} 
+void bulbPrintNil(bulbObj *o) 
+{
+}
 
 void bulbPrintBool(bulbObj *o) 
 {
@@ -59,4 +62,9 @@ void bulbPrintProcedure(bulbObj *o)
 void bulbPrintPrimitive(bulbObj *o) 
 {
     printf("#<PRIMITIVE>");
+}
+
+void bulbPrintCons(bulbObj *o) 
+{
+    printf("#<PAIR>");
 }

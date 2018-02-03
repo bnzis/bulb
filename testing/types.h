@@ -16,16 +16,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef BULB_TYPES_H
+#define BULB_TYPES_H
 #include <stdbool.h>
 #include <stdio.h>
 
 /* token types */
 enum {
-    OPEN_BLOCK, 
-    CLOSE_BLOCK, 
-    OTHER, 
+    BULB_TOK_NIL = 0, 
+    BULB_TOK_OPEN_BLOCK, 
+    BULB_TOK_CLOSE_BLOCK, 
+    BULB_TOK_OTHER, 
 };
 
 typedef struct bulbObj_s {
@@ -37,14 +38,16 @@ typedef struct bulbObj_s {
 typedef void (*bulbType)(bulbObj *o);
 extern bulbType BULB_NIL, BULB_BOOL, BULB_INT, BULB_FLOAT, BULB_SYMBOL, 
         BULB_STRING, BULB_PROCEDURE, BULB_PRIMITIVE;
+extern bulbType BULB_CONS;
 
 void bulbPrintNil(bulbObj *o), bulbPrintBool(bulbObj *o), 
         bulbPrintInt(bulbObj *o), bulbPrintFloat(bulbObj *o), 
         bulbPrintSymbol(bulbObj *o), bulbPrintString(bulbObj *o), 
-        bulbPrintProcedure(bulbObj *o), bulbPrintPrimitive(bulbObj *o);
+        bulbPrintProcedure(bulbObj *o), bulbPrintPrimitive(bulbObj *o), 
+        bulbPrintCons(bulbObj *o);
 
 /* HASHMAP SECTION */
-#define HMAP_ROWS 128 /* must be a power of 2. */
+#define HMAP_ROWS 1 /* must be a power of 2. */
 
 typedef struct {
     bulbObj **data;
@@ -77,4 +80,4 @@ typedef struct {
     unsigned len;
 } bulbString;
 
-#endif
+#endif /* TYPES_H */
