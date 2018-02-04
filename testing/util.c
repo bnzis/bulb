@@ -35,7 +35,7 @@ void bulbPrintAtomDisplay(bulbObj *obj, bool display)
         printf("#<UNKNOWN>");
         return;
     }
-    if (obj->type == BULB_STRING) {
+    if (obj->type == BULB_STRING && display) {
         printf("\"");
         obj->type(obj);
         printf("\"");
@@ -52,12 +52,12 @@ void bulbPrintAstDisplay(bulbObj *tree, bool display)
 {
     if (bulbIsAtom(tree)) {
         bulbPrintAtomDisplay(tree, display);
-    } else if (bulbGetCar(tree) != NULL) {
+    } else if (bulbGetCar(tree) != bulbNil) {
         if (bulbGetCar(tree)->type == BULB_CONS) { 
             printf("(");
             bulbPrintAstDisplay(bulbGetCar(tree), display);
             printf(")");
-            if (bulbGetCdr(tree)->type != BULB_NIL) printf(" ");
+            if (bulbGetCdr(tree) != bulbNil) printf(" ");
         } else {
             bulbPrintAtomDisplay(bulbGetCar(tree), display);
             if (!bulbIsAtom(bulbGetCdr(tree))) printf(" ");
@@ -150,6 +150,11 @@ void bulbSetCadr(bulbObj *list, bulbObj *val)
 bulbObj *bulbGetCdar(bulbObj *list)
 {
     return bulbGetCdr(bulbGetCar(list));
+}
+
+void bulbSetCdar(bulbObj *list, bulbObj *val)
+{
+    bulbSetCdr(bulbGetCar(list), val);
 }
 
 unsigned bulbListLen(bulbObj *list)

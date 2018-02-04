@@ -46,6 +46,8 @@ void bulbPrintNil(bulbObj *o), bulbPrintBool(bulbObj *o),
         bulbPrintProcedure(bulbObj *o), bulbPrintPrimitive(bulbObj *o), 
         bulbPrintCons(bulbObj *o);
 
+extern bulbObj *bulbNil, *bulbTrue, *bulbFalse; 
+
 /* HASHMAP SECTION */
 #define HMAP_ROWS 1 /* must be a power of 2. */
 
@@ -53,7 +55,6 @@ typedef struct {
     bulbObj **data;
 } bulbHashmap;
 
-/* ENVIRONMENT SECTION */
 typedef struct env_s {
     bulbHashmap *local;
     struct env_s *upper_level;

@@ -25,13 +25,22 @@ bulbType BULB_NIL = bulbPrintNil,  BULB_BOOL = bulbPrintBool,
             BULB_PRIMITIVE = bulbPrintPrimitive;
 bulbType BULB_CONS = bulbPrintCons;
 
+bulbObj bulbNilObj = {&bulbPrintNil, NULL};
+bulbObj *bulbNil = &bulbNilObj;
+
+bulbObj bulbTrueObj = {&bulbPrintBool, &bulbNilObj};
+bulbObj *bulbTrue = &bulbTrueObj;
+
+bulbObj bulbFalseObj = {&bulbPrintBool, &bulbNilObj};
+bulbObj *bulbFalse = &bulbFalseObj;
+
 void bulbPrintNil(bulbObj *o) 
 {
 }
 
 void bulbPrintBool(bulbObj *o) 
 {
-    printf((*((bool *) o->data) == true) ? "#t" : "#f");
+    printf((o == bulbTrue) ? "#t" : "#f");
 } 
 
 void bulbPrintInt(bulbObj *o) 

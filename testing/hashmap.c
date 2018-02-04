@@ -30,15 +30,14 @@ void bulbHashmapAppend(bulbHashmap *map, char *key, bulbObj *obj)
     unsigned len = strlen(key), index = bulbXXHash(key, len);
     index %= HMAP_ROWS;
     bulbObj *data = bulbNewConsObj(bulbNewStringObj(key, strlen(key)), obj);
-    bulbObj *null = malloc(sizeof(bulbObj)), *pair = bulbNewConsObj(data, null);
-    null->type = BULB_NIL;
+    bulbObj *pair = bulbNewConsObj(data, bulbNil);
     if (map->data[index] == NULL)
         map->data[index] = pair;
     else {
-        bulbObj *ptr = bulbGetCdr(map->data[index]);
-        while (ptr->type != BULB_NIL)
-           ptr = bulbGetCdr(ptr);
-        *ptr = *pair;
+        bulbObj **ptr = &((bulbCons*) map->data[index]->data)->cdr;
+        while (*ptr != bulbNil)
+            ptr = &((bulbCons*) (*ptr)->data)->cdr;
+        *ptr = pair;
     }
 }
 
@@ -46,53 +45,50 @@ bulbObj *bulbHashmapGet(bulbHashmap *map, char *key)
 {
     unsigned index = bulbXXHash(key, strlen(key));
     index %= HMAP_ROWS;
-    if (map->data[index] == NULL) return NULL;
+    if (map->data[index] == NULL) return bulbNil;
     char *t = bulbGetStringText(bulbGetCaar(map->data[index]));
     if (strcmp(t, key) == 0)
         return bulbGetCadr(map->data[index]);
     else {
-        bulbObj *ptr = bulbGetCdr(map->data[index]);
-        while (strcmp(t, key) != 0 && ptr->type != BULB_NIL) {  
-            t = bulbGetStringText(bulbGetCaar(ptr));
+        bulbObj *ptr = map->data[index];
+        while (strcmp(t, key) != 0 && ptr != bulbNil) {
             ptr = bulbGetCdr(ptr);
+            t = bulbGetStringText(bulbGetCaar(ptr));
         }
-        if (ptr->type == BULB_NIL) return ptr;
-        else return bulbGetCdar(ptr);
+        if (ptr == bulbNil) return ptr;
+        return bulbGetCdar(ptr);
+    }
+}
+
+void bulbHashmapSet(bulbHashmap *map, char *key, bulbObj *obj)
+{
+    unsigned index = bulbXXHash(key, strlen(key));
+    index %= HMAP_ROWS;
+    bulbObj *data, *pair;
+    if (map->data[index] == NULL) {
+        data = bulbNewConsObj(bulbNewStringObj(key, strlen(key)), obj);
+        pair = bulbNewConsObj(data, bulbNil);
+        map->data[index] = pair;
+    } 
+    char *t = bulbGetStringText(bulbGetCaar(map->data[index]));
+    if (strcmp(t, key) == 0)
+        bulbSetCadr(map->data[index], obj);
+    else {
+        bulbObj **ptr = &((bulbCons*) map->data[index]->data)->cdr;
+        do {
+            ptr = &(((bulbCons*) (*ptr)->data)->cdr);
+            t = bulbGetStringText(bulbGetCaar(map->data[index]));
+        } while (strcmp(t, key) != 0 && *ptr != bulbNil);
+        if (*ptr == bulbNil) {
+            data = bulbNewConsObj(bulbNewStringObj(key, strlen(key)), obj);
+            pair = bulbNewConsObj(data, bulbNil);
+            *ptr = pair;
+        } else
+            ((bulbCons*) ((bulbCons*) (*ptr)->data)->car)->cdr = obj;
     }
 }
 
 /*
-void set(hashmap_t *map, char *key, obj_t *obj)
-{
-    unsigned index = hash(key, strlen(key));
-    index %= HMAP_ROWS;
-    if (map->data[index] == NULL) append(map, key, obj);
-    char *t = map->data[index]->cons.car->cons.car->symbol.buff;
-    if (strcmp(t, key) == 0)
-        map->data[index]->cons.car->cons.cdr = obj;
-    else {
-        obj_t **ptr = &map->data[index];
-        do {
-            ptr = &((*ptr)->cons.cdr);
-            if (*ptr == NULL) break;
-            t = car(car(*ptr))->symbol.buff;
-        } while (strcmp(t, key) != 0);
-        if (*ptr == NULL) {
-            *ptr = malloc(sizeof(obj_t));
-            (*ptr)->type = CONS;
-            set_car(*ptr, malloc(sizeof(obj_t)));
-            (*ptr)->cons.car->type = CONS;
-            (*ptr)->cons.car->cons.car = malloc(sizeof(obj_t));
-            (*ptr)->cons.car->cons.car->type = SYMBOL;
-            (*ptr)->cons.car->cons.car->symbol.buff = key;
-            (*ptr)->cons.car->cons.car->symbol.len = strlen(key);
-            (*ptr)->cons.car->cons.cdr = obj;
-            return;
-        }
-        set_cdar(*ptr, obj);
-    }
-}
-
 void delete(hashmap_t *map, char *key)
 {
     unsigned index = hash(key, strlen(key));
