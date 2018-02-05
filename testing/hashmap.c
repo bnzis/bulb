@@ -75,36 +75,37 @@ void bulbHashmapSet(bulbHashmap *map, char *key, bulbObj *obj)
         bulbSetCadr(map->data[index], obj);
     else {
         bulbObj **ptr = &((bulbCons*) map->data[index]->data)->cdr;
-        do {
-            ptr = &(((bulbCons*) (*ptr)->data)->cdr);
-            t = bulbGetStringText(bulbGetCaar(map->data[index]));
-        } while (strcmp(t, key) != 0 && *ptr != bulbNil);
-        if (*ptr == bulbNil) {
-            data = bulbNewConsObj(bulbNewStringObj(key, strlen(key)), obj);
-            pair = bulbNewConsObj(data, bulbNil);
-            *ptr = pair;
-        } else
-            ((bulbCons*) ((bulbCons*) (*ptr)->data)->car)->cdr = obj;
+        while (*ptr != bulbNil) {
+            t = bulbGetStringText(bulbGetCaar(*ptr));
+            if (strcmp(t, key) == 0) {
+                ((bulbCons*) ((bulbCons*) (*ptr)->data)->car->data)->cdr = obj;
+                return;
+            }
+            ptr = &((bulbCons*) (*ptr)->data)->cdr;
+        }
+        data = bulbNewConsObj(bulbNewStringObj(key, strlen(key)), obj);
+        pair = bulbNewConsObj(data, bulbNil);
+        *ptr = pair;
     }
 }
 
-/*
-void delete(hashmap_t *map, char *key)
+void bulbHashmapDelete(bulbHashmap *map, char *key)
 {
-    unsigned index = hash(key, strlen(key));
+    unsigned index = bulbXXHash(key, strlen(key));
     index %= HMAP_ROWS;
     if (map->data[index] == NULL) return;
-    char *t = map->data[index]->cons.car->cons.car->symbol.buff;
+    char *t = bulbGetStringText(bulbGetCaar(map->data[index]));
     if (strcmp(t, key) == 0) {
-        map->data[index] = map->data[index]->cons.cdr;
+        free(map->data[index]);
     } else {
-        obj_t **ptr = &map->data[index];
-        do {
-            ptr = &((*ptr)->cons.cdr);
-            if (*ptr == NULL) break;
-            t = (*ptr)->cons.car->cons.car->symbol.buff;
-        } while (strcmp(t, key) != 0);
-        if (*ptr == NULL) return;
-        (*ptr) = (*ptr)->cons.cdr;
+        bulbObj **ptr = &((bulbCons*) map->data[index]->data)->cdr;
+        while (*ptr != bulbNil) {
+            t = bulbGetStringText(bulbGetCaar(*ptr));
+            if (strcmp(t, key) == 0) {
+                ((bulbCons*) ((bulbCons*) (*ptr)->data)->car->data)->cdr = bulbNil;
+                return;
+            }
+            ptr = &((bulbCons*) (*ptr)->data)->cdr;
+        }
     }
-}*/
+}
