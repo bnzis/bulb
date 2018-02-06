@@ -16,12 +16,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifndef PARSER_H
-#define PARSER_H
+#ifndef BULB_PARSER_H
+#define BULB_PARSER_H
+#include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include "types.h"
-#include "util.h"
+#include "core.h"
 
 /* Acquires the AST from string */
 bulbObj *bulbParse(char *exp);
@@ -49,4 +49,4 @@ void bulb_err_missing_close_block();
 
 void bulb_err_missing_open_block();
 
-#endif /* PARSER_H */
+#endif /* BULB_PARSER_H */

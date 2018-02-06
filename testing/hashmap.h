@@ -16,12 +16,11 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifndef HASHMAP_H
-#define HASHMAP_H
+#ifndef BULB_HASHMAP_H
+#define BULB_HASHMAP_H
 #include <stdlib.h>
 #include <string.h>
-#include "types.h"
-#include "util.h"
+#include "core.h"
 #include "xxhash.h"
 
 /* Calculates the hash. */
@@ -45,4 +44,4 @@ void bulbHashmapSet(bulbHashmap *map, char *key, bulbObj *obj);
    NOTE: the pointers are removed, while key and object aren't touched. */
 void bulbHashmapDelete(bulbHashmap *map, char *key);
 
-#endif 
+#endif /* BULB_HASHMAP_H */
