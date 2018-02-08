@@ -34,7 +34,7 @@ void bulbEnvSet(bulbEnv *env, char *symbol, bulbObj *obj)
     bulbHashmapSet(env->local, symbol, obj);
 }
 
-void env_delete(bulbEnv *env, char *symbol)
+void bulbEnvDelete(bulbEnv *env, char *symbol)
 {
     bulbHashmapDelete(env->local, symbol);
 }
