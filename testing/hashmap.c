@@ -48,7 +48,7 @@ bulbObj *bulbHashmapGet(bulbHashmap *map, char *key)
     if (map->data[index] == NULL) return bulbNil;
     char *t = bulbGetStringText(bulbGetCaar(map->data[index]));
     if (strcmp(t, key) == 0)
-        return bulbGetCadr(map->data[index]);
+        return bulbGetCdar(map->data[index]);
     else {
         bulbObj *ptr = map->data[index];
         while (strcmp(t, key) != 0 && ptr != bulbNil) {
@@ -69,6 +69,7 @@ void bulbHashmapSet(bulbHashmap *map, char *key, bulbObj *obj)
         data = bulbNewConsObj(bulbNewStringObj(key, strlen(key)), obj);
         pair = bulbNewConsObj(data, bulbNil);
         map->data[index] = pair;
+        return;
     } 
     char *t = bulbGetStringText(bulbGetCaar(map->data[index]));
     if (strcmp(t, key) == 0)
@@ -92,20 +93,21 @@ void bulbHashmapSet(bulbHashmap *map, char *key, bulbObj *obj)
 void bulbHashmapDelete(bulbHashmap *map, char *key)
 {
     unsigned index = bulbXXHash(key, strlen(key));
+    bulbObj **ptr;
     index %= HMAP_ROWS;
     if (map->data[index] == NULL) return;
     char *t = bulbGetStringText(bulbGetCaar(map->data[index]));
     if (strcmp(t, key) == 0) {
-        free(map->data[index]);
+        ptr = &(map->data[index]);
+        ((bulbCons*) ((bulbCons*) (*ptr)->data)->car->data)->cdr = bulbNil;
     } else {
-        bulbObj **ptr = &((bulbCons*) map->data[index]->data)->cdr;
+        ptr = &((bulbCons*) map->data[index]->data)->cdr;
         while (*ptr != bulbNil) {
             t = bulbGetStringText(bulbGetCaar(*ptr));
             if (strcmp(t, key) == 0) {
                 ((bulbCons*) ((bulbCons*) (*ptr)->data)->car->data)->cdr = bulbNil;
                 return;
             }
-            ptr = &((bulbCons*) (*ptr)->data)->cdr;
         }
     }
 }
