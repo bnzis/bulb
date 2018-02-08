@@ -80,9 +80,9 @@ typedef struct {
    `(def a 10) (def (func) (def b 20))`  
    The environment of func contains b, the upper 
    enviroment contains a and func. */
-typedef struct env_s {
+typedef struct bulbEnv_s {
     bulbHashmap *local;
-    struct env_s *upper_level;
+    struct bulbEnv_s *upperEnv;
 } bulbEnv;
 
 /* bulbCons
