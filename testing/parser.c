@@ -56,17 +56,19 @@ bulbObj *bulbGenAtom(char *exp, unsigned len)
         o->type = BULB_FLOAT;
     } else if (exp[0] == '\"') {
         o->data = (bulbString*) malloc(sizeof(bulbString));
-        ((bulbString*) o->data)->data = (char*) malloc(sizeof(char) * (len - 2));
+        ((bulbString*) o->data)->data = (char*) malloc(sizeof(char) * (len - 1));
         ((bulbString*) o->data)->len = len - 2;
         memcpy(((bulbString*) o->data)->data, exp + 1, len - 2);
+        ((bulbString*) o->data)->data[len - 2] = '\0';
         o->type = BULB_STRING;
     } else if (exp[0] == '#' && (exp[1] == 't' || exp[1] == 'f')) {
         o = (exp[1] == 't')? bulbTrue : bulbFalse;
     } else {
         o->data = (bulbSymbol*) malloc(sizeof(bulbSymbol));
-        ((bulbSymbol*) o->data)->data = (char*) malloc(sizeof(char) * len);
+        ((bulbSymbol*) o->data)->data = (char*) malloc(sizeof(char) * len + 1);
         ((bulbSymbol*) o->data)->len = len;
         memcpy(((bulbSymbol*) o->data)->data, exp, len);
+        ((bulbSymbol*) o->data)->data[len] = '\0';
         o->type = BULB_SYMBOL;
     }
     return o;

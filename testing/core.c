@@ -55,12 +55,12 @@ void bulbPrintFloat(bulbObj *o)
 
 void bulbPrintSymbol(bulbObj *o) 
 {
-    printf((*((bulbSymbol *) o->data)).data);
+    printf("%s", (*((bulbSymbol *) o->data)).data);
 } 
 
 void bulbPrintString(bulbObj *o) 
 {
-    printf((*((bulbString *) o->data)).data);
+    printf("%s", (*((bulbString *) o->data)).data);
 } 
 
 void bulbPrintProcedure(bulbObj *o) 
@@ -136,7 +136,7 @@ bulbObj *bulbNewConsObj(bulbObj *car, bulbObj *cdr)
 {
     bulbObj *cons = (bulbObj*) malloc(sizeof(bulbObj));
     cons->type = BULB_CONS;
-    cons->data = malloc(sizeof(bulbCons));
+    cons->data = (bulbCons*) malloc(sizeof(bulbCons));
     bulbSetCar(cons, car);
     bulbSetCdr(cons, cdr);
     return cons;
@@ -167,7 +167,7 @@ bulbEnv *bulbNewEnv(bulbEnv *upperEnv)
 {
     bulbEnv *env = (bulbEnv*) malloc(sizeof(bulbEnv));
     env->local = (bulbHashmap*) malloc(sizeof(bulbHashmap));
-    env->local->data = (bulbObj**) malloc(sizeof(bulbObj*) * HMAP_ROWS);
+    env->local->data = (bulbObj**) calloc(HMAP_ROWS, sizeof(bulbObj*));
     env->upperEnv = upperEnv;
     return env;
 }
