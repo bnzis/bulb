@@ -167,11 +167,7 @@ bulbEnv *bulbNewEnv(bulbEnv *upperEnv)
 {
     bulbEnv *env = (bulbEnv*) malloc(sizeof(bulbEnv));
     env->local = (bulbHashmap*) malloc(sizeof(bulbHashmap));
-    env->local->data = (bulbObj**) malloc(sizeof(bulbObj*) * HMAP_ROWS);
-#if defined(_WIN32) || defined(WIN32)     
-	for (unsigned i = 0; i < HMAP_ROWS; i++)
-    	env->local->data[i] = NULL;
-#endif
+    env->local->data = (bulbObj**) calloc(HMAP_ROWS, sizeof(bulbObj*));
     env->upperEnv = upperEnv;
     return env;
 }
