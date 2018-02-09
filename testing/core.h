@@ -147,12 +147,18 @@ void bulbPrintAstDisplay(bulbObj *obj, bool display);
    Used as a shortcut for extracting by an object a bulbCons pointer. */
 bulbCons *bulbMakeCons(bulbObj *obj);
 
-/* bulbNewConsObj and bulbNewStringObj
-   -----------------------------------
-   Creating a new cons object or a new string object is a bit mechanical, I
-   prefer to use these functions for making code more clear and readable. */
+/* bulbNewConsObj,  bulbNewStringObj ...
+   -------------------------------------
+   Creating a new object is a bit mechanical, I prefer to use these functions 
+   for making code more clear and readable. */
 bulbObj *bulbNewConsObj(bulbObj *car, bulbObj *cdr);
 bulbObj *bulbNewStringObj(char *text, unsigned len);
+bulbObj *bulbNewProcObj(bulbObj *args, bulbObj *body, bulbEnv *env);
+bulbEnv *bulbNewEnv(bulbEnv *upperEnv);
+    
+/* Operations with symbols
+   ----------------------- */
+char *bulbGetSymbolText(bulbObj *symbol);
 
 /* Operations with strings
    ----------------------- */
