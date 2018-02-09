@@ -74,7 +74,8 @@ unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj **out);
 
 /* bulbGenAst
    ----------
-   Generates an AST starting from the provided offset. */
+   Generates an AST starting from the provided offset. It also 
+   checks if every open bracket matches a closed bracket. */
 bulbObj *bulbGenAst(char *exp, unsigned len, unsigned *offset, bool open);
 
 /* Exceptions
