@@ -46,14 +46,14 @@ bulbObj *bulbHashmapGet(bulbHashmap *map, char *key)
     unsigned index = bulbXXHash(key, strlen(key));
     index %= HMAP_ROWS;
     if (map->data[index] == NULL) return NULL;
-    char *t = bulbGetStringText(bulbGetCaar(map->data[index]));
-    if (strcmp(t, key) == 0)
+    char *readKey = bulbGetStringText(bulbGetCaar(map->data[index]));
+    if (strcmp(readKey, key) == 0)
         return bulbGetCdar(map->data[index]);
     else {
         bulbObj *ptr = map->data[index];
-        while (strcmp(t, key) != 0 && ptr != bulbNil) {
+        while (strcmp(readKey, key) != 0 && ptr != bulbNil) {
+            readKey = bulbGetStringText(bulbGetCaar(ptr));
             ptr = bulbGetCdr(ptr);
-            t = bulbGetStringText(bulbGetCaar(ptr));
         }
         if (ptr == bulbNil) return NULL;
         return bulbGetCdar(ptr);
