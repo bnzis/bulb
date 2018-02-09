@@ -29,7 +29,7 @@
    This process is subdivided in two parts:
     - Lexical analysis: the text is composed of tokens, which are selected by
                         the lexer.
-    - Syntatical analysis: the tokens are analysed to compose the AST.
+    - Syntatical analysis: the tokens are analysed to compose the AST.  
    Example:  
    `(def a (+ 1 2)) => ["def", "a", ["+", 1, 2]]`  
    
@@ -43,7 +43,7 @@ enum {
     BULB_TOK_OTHER, 
 };
 
-/* bulParse
+/* bulbParse
    --------
    Acquires the AST from the string, the AST is made by cons. */
 bulbObj *bulbParse(char *exp);
