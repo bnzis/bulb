@@ -152,6 +152,31 @@ bulbObj *bulbNewStringObj(char *text, unsigned len)
     return string;
 }
 
+bulbObj *bulbNewProcObj(bulbObj *args, bulbObj *body, bulbEnv *env)
+{
+    bulbObj *proc = (bulbObj*) malloc(sizeof(bulbObj));
+    proc->type = BULB_PROCEDURE;
+    proc->data = (bulbProc*) malloc(sizeof(bulbProc));
+    ((bulbProc*) proc->data)->args = args;
+    ((bulbProc*) proc->data)->body = body;
+    ((bulbProc*) proc->data)->env = env;
+    return proc;
+}
+
+bulbEnv *bulbNewEnv(bulbEnv *upperEnv)
+{
+    bulbEnv *env = (bulbEnv*) malloc(sizeof(bulbEnv));
+    env->local = (bulbHashmap*) malloc(sizeof(bulbHashmap));
+    env->local->data = (bulbObj**) malloc(sizeof(bulbObj*) * HMAP_ROWS);
+    env->upperEnv = upperEnv;
+    return env;
+}
+
+char *bulbGetSymbolText(bulbObj *symbol)
+{
+    return ((bulbSymbol*) symbol->data)->data;
+}
+
 char *bulbGetStringText(bulbObj *string)
 {
     return ((bulbString*) string->data)->data;
