@@ -172,6 +172,16 @@ bulbEnv *bulbNewEnv(bulbEnv *upperEnv)
     return env;
 }
 
+bulbObj *bulbGetProcBody(bulbObj *proc)
+{
+    return ((bulbProc*) proc->data)->body;
+}
+
+bulbObj *bulbGetProcArgs(bulbObj *proc)
+{
+    return ((bulbProc*) proc->data)->body;
+}
+
 char *bulbGetSymbolText(bulbObj *symbol)
 {
     return ((bulbSymbol*) symbol->data)->data;

@@ -1,20 +1,19 @@
 /*
- *  Bulb - the Lisp Interpreter
- *  Copyright (C) 2018-2019 bnzis (bonzisoft@protonmail.com)
- *  Copyright (C) 2012-2016, Yann Collet (xxhash)
- *  
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    Bulb - the Lisp Interpreter
+    Copyright (C) 2018-2019 bnzis (bonzisoft@protonmail.com)
+    
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+  
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #ifndef BULB_CORE_H
 #define BULB_CORE_H
@@ -67,7 +66,7 @@ extern bulbObj *bulbNil, *bulbTrue, *bulbFalse;
    find more details on hashmap.md): it contains an array of objects associated 
    to a key; to access the elements without searching them through out all the 
    array an hashing algorithm is used. */
-#define HMAP_ROWS 2 
+#define HMAP_ROWS 32 
 typedef struct {
     bulbObj **data;
 } bulbHashmap;
@@ -152,10 +151,19 @@ bulbCons *bulbMakeCons(bulbObj *obj);
    Creating a new object is a bit mechanical, I prefer to use these functions 
    for making code more clear and readable. */
 bulbObj *bulbNewConsObj(bulbObj *car, bulbObj *cdr);
+
 bulbObj *bulbNewStringObj(char *text, unsigned len);
+
 bulbObj *bulbNewProcObj(bulbObj *args, bulbObj *body, bulbEnv *env);
+
 bulbEnv *bulbNewEnv(bulbEnv *upperEnv);
-    
+
+/* Operations with procedures 
+   -------------------------- */
+bulbObj *bulbGetProcBody(bulbObj *proc);
+
+bulbObj *bulbGetProcArgs(bulbObj *proc);
+
 /* Operations with symbols
    ----------------------- */
 char *bulbGetSymbolText(bulbObj *symbol);
