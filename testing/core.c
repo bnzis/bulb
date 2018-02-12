@@ -45,12 +45,12 @@ void bulbPrintBool(bulbObj *o)
 
 void bulbPrintInt(bulbObj *o) 
 {
-    printf("%d", *((long *) o->data));
+    printf("%ld", *((bulbInt *) o->data));
 } 
 
 void bulbPrintFloat(bulbObj *o) 
 {
-    printf("%f", *((double *) o->data));
+    printf("%lf", *((bulbFloat *) o->data));
 } 
 
 void bulbPrintSymbol(bulbObj *o) 

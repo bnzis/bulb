@@ -34,8 +34,8 @@ bool bulbIsFloat(char *exp, unsigned len)
 {
     unsigned i, dots = 0;
     i = (exp[0] == '-')? 1 : 0;
-    while (i < len - 1 && ((exp[i] >= '0' && exp[i] <= '9' 
-            || exp[i] == '.' && dots < 2)))  {
+    while (i < len - 1 && ((exp[i] >= '0' && exp[i] <= '9') 
+            || (exp[i] == '.' && dots < 2)))  {
         if (exp[i] == '.') dots++;
         i++;
     }
@@ -47,12 +47,12 @@ bulbObj *bulbGenAtom(char *exp, unsigned len)
 {
     bulbObj *o = (bulbObj*) malloc(sizeof(bulbObj));
     if (bulbIsInt(exp, len)) {
-        o->data = (int*) malloc(sizeof(int)); 
-        *((int*) o->data) = atoi(exp);
+        o->data = (bulbInt*) malloc(sizeof(bulbInt)); 
+        *((bulbInt*) o->data) = atol(exp);
         o->type = BULB_INT;
     } else if (bulbIsFloat(exp, len)) {
-        o->data = (float*) malloc(sizeof(float));
-        *((float*) o->data) = atof(exp);
+        o->data = (bulbFloat*) malloc(sizeof(bulbFloat));
+        *((bulbFloat*) o->data) = atof(exp);
         o->type = BULB_FLOAT;
     } else if (exp[0] == '\"') {
         o->data = (bulbString*) malloc(sizeof(bulbString));
@@ -118,7 +118,7 @@ unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj **out)
         } 
         prev = first;
     } 
-    if (acc[0] == 0 || i < 0) {
+    if (i == 0 || acc[0] == '\0') {
        (*out) = bulbNil; 
        return BULB_TOK_NIL;
     }
