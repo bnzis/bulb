@@ -4,9 +4,10 @@
 
    This file is part of the Bulb Interpreter and is released under the terms
    of the MIT/Expat License - see LICENSE. */ 
-#include "core.h"
 #ifndef BULB_STD_H
 #define BULB_STD_H
+#include <string.h>
+#include "core.h"
 
 /* STD
    ---
