@@ -34,20 +34,16 @@ bulbObj *bulbEvalSequence(bulbObj *ast, bulbEnv *env)
 
 bulbObj *bulbEvalArgs(bulbObj *ast, bulbEnv *env)
 {
-    if (ast == NULL) return bulbNil;
-    bulbObj *args = (bulbObj*) malloc(sizeof(bulbObj));
+    if (ast == bulbNil) return bulbNil;
+    bulbObj *args = bulbNewConsObj(bulbGetCar(ast), bulbGetCdr(ast));
     bulbObj *front = args;
-    args->type = BULB_CONS;
-    if (ast->type != BULB_CONS)
-        return bulbEval(ast, env);
-    while (ast != NULL) {
-        free(bulbGetCar(front));
+    while (ast != bulbNil) {
         bulbObj *val = bulbEval(bulbGetCar(ast), env);
         bulbSetCar(front, val);
-        bulbSetCdr(front, (bulbObj*) malloc(sizeof(bulbObj)));
         front = bulbGetCdr(front);
-        front->type = BULB_CONS;
+        front = bulbNewConsObj(bulbGetCar(ast), bulbGetCdr(ast));
         ast = bulbGetCdr(ast);
+
     }
     return args;
 }
@@ -122,9 +118,9 @@ bulbObj *bulbEval(bulbObj *ast, bulbEnv *env)
                 return bulbEvalSequence(ast, newEnv);
             } else
                 bulb_err_non_procedure(proc);
-        } else if (ast->type == BULB_SYMBOL)
+        } else if (ast->type == BULB_SYMBOL) {
             return bulbEnvGet(env, bulbGetSymbolText(ast));
-        else return ast;
+        } else return ast;
 }
 
 
