@@ -39,6 +39,18 @@ void bulbEnvDelete(bulbEnv *env, char *symbol)
     bulbHashmapDelete(env->local, symbol);
 }
 
+void bulbLoadModule(bulbEnv *env, bulbModule *module)
+{
+    unsigned i = 0;
+    while (module->names[i]) {
+        bulbObj *prim = (bulbObj*) malloc(sizeof(bulbObj));
+        prim->type = BULB_PRIMITIVE;
+        prim->data = module->primitives[i];
+        bulbEnvSet(env, module->names[i], prim);
+        i++;
+    }
+}
+
 void bulb_err_variable_not_bound(char *name)
 {
     printf("Exception: variable %s is not bound.\n", name);

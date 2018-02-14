@@ -6,6 +6,22 @@
    of the MIT/Expat License - see LICENSE. */ 
 #include "std.h"
 
+bulbPrimitive bulbSTDPrimitives[13] = { bulbSTDSum, bulbSTDMul, bulbSTDSub, 
+                                bulbSTDDiv, bulbSTDOperatorEqual, 
+                                bulbSTDOperatorNotEqual, bulbSTDOperatorBigger, 
+                                bulbSTDOperatorSmaller, bulbSTDOperatorBiggerEqual, 
+                                bulbSTDOperatorSmallerEqual, bulbSTDDisplay,
+                                bulbSTDExit, NULL
+};
+
+char *bulbSTDNames[13] = { "+", "*", "-", "/", "=", "!=", ">", "<", ">=", "<=",
+                           "display", "exit", NULL
+};
+
+bulbModule bulbSTDModule = {bulbSTDPrimitives, bulbSTDNames};
+
+bulbModule *bulbSTD = &bulbSTDModule;
+
 bulbObj *bulbSTDSum(bulbObj *args, bulbEnv *env)
 {
     bulbObj *result = (bulbObj*) malloc(sizeof(bulbObj));
@@ -222,4 +238,9 @@ bulbObj *bulbSTDDisplay(bulbObj *args, bulbEnv *env)
         args = bulbGetCdr(args);
     }
     return bulbNil;
+}
+
+bulbObj *bulbSTDExit(bulbObj *args, bulbEnv *env)
+{
+    exit(*(bulbInt*) bulbGetCar(args)->data);
 }
