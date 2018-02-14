@@ -112,16 +112,15 @@ void bulbPrintAstDisplay(bulbObj *tree, bool display)
     bool nesting = false, list = false;
     if (bulbIsAtom(tree)) {
         bulbPrintAtomDisplay(tree, display);
+        return;
     } else if (bulbGetCar(tree) != bulbNil) {
         list = bulbIsAList(tree);
         bool firstDot = true;
+        printf("(");
         while (tree != bulbNil && tree->type == BULB_CONS) {
             if (bulbGetCar(tree)->type == BULB_CONS) { 
                 nesting = true;
-                printf("(");
-                if (!list) printf("(");
                 bulbPrintAstDisplay(bulbGetCar(tree), display);
-                printf(")");
                 if (bulbGetCdr(tree) != bulbNil) printf(" ");
             } else {
                 bulbPrintAtomDisplay(bulbGetCar(tree), display);
@@ -134,7 +133,7 @@ void bulbPrintAstDisplay(bulbObj *tree, bool display)
         }
     }
     bulbPrintAtom(tree); 
-    if (nesting && !list) printf(")");
+    printf(")");
 }
 
 bulbCons *bulbMakeCons(bulbObj *obj)

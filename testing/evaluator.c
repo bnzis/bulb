@@ -107,7 +107,7 @@ cicle:
                 } else if (strcmp(op, "begin") == 0)
                     return bulbEvalSequence(bulbGetCdr(ast), env);
                 else if(strcmp(op, "qu") == 0)
-                    if (bulbListLen(bulbGetCdr(ast)) == 1) return bulbGetCdr(ast);
+                    if (bulbListLen(bulbGetCdr(ast)) == 1) return bulbGetCadr(ast);
                     else bulb_err_invalid_syntax(ast);
             }
             bulbObj *proc = bulbEval(bulbGetCar(ast), env);
