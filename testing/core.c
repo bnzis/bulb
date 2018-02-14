@@ -115,7 +115,6 @@ void bulbPrintAstDisplay(bulbObj *tree, bool display)
         return;
     } else if (bulbGetCar(tree) != bulbNil) {
         list = bulbIsAList(tree);
-        bool firstDot = true;
         printf("(");
         while (tree != bulbNil && tree->type == BULB_CONS) {
             if (bulbGetCar(tree)->type == BULB_CONS) { 
@@ -124,13 +123,11 @@ void bulbPrintAstDisplay(bulbObj *tree, bool display)
                 if (bulbGetCdr(tree) != bulbNil) printf(" ");
             } else {
                 bulbPrintAtomDisplay(bulbGetCar(tree), display);
-                if (firstDot && !list) {
-                    printf(" . ");
-                    firstDot = false;
-                } else if (bulbGetCdr(tree) != bulbNil) printf(" ");
+                if (bulbGetCdr(tree) != bulbNil) printf(" ");
             }
             tree = bulbGetCdr(tree);
         }
+        if (!list) printf(". ");
     }
     bulbPrintAtom(tree); 
     printf(")");
