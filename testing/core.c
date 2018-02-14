@@ -75,7 +75,6 @@ void bulbPrintPrimitive(bulbObj *o)
 
 void bulbPrintCons(bulbObj *o) 
 {
-    printf("#<PAIR>");
 }
 
 bool bulbIsAtom(bulbObj *obj)
@@ -110,20 +109,32 @@ void bulbPrintAst(bulbObj *tree)
 
 void bulbPrintAstDisplay(bulbObj *tree, bool display)
 {
+    bool nesting = false, list = false;
     if (bulbIsAtom(tree)) {
         bulbPrintAtomDisplay(tree, display);
     } else if (bulbGetCar(tree) != bulbNil) {
-        if (bulbGetCar(tree)->type == BULB_CONS) { 
-            printf("(");
-            bulbPrintAstDisplay(bulbGetCar(tree), display);
-            printf(")");
-            if (bulbGetCdr(tree) != bulbNil) printf(" ");
-        } else {
-            bulbPrintAtomDisplay(bulbGetCar(tree), display);
-            if (!bulbIsAtom(bulbGetCdr(tree))) printf(" ");
+        list = bulbIsAList(tree);
+        bool firstDot = true;
+        while (tree != bulbNil && tree->type == BULB_CONS) {
+            if (bulbGetCar(tree)->type == BULB_CONS) { 
+                nesting = true;
+                printf("(");
+                if (!list) printf("(");
+                bulbPrintAstDisplay(bulbGetCar(tree), display);
+                printf(")");
+                if (bulbGetCdr(tree) != bulbNil) printf(" ");
+            } else {
+                bulbPrintAtomDisplay(bulbGetCar(tree), display);
+                if (firstDot && !list) {
+                    printf(" . ");
+                    firstDot = false;
+                } else if (bulbGetCdr(tree) != bulbNil) printf(" ");
+            }
+            tree = bulbGetCdr(tree);
         }
-        bulbPrintAstDisplay(bulbGetCdr(tree), display);
     }
+    bulbPrintAtom(tree); 
+    if (nesting && !list) printf(")");
 }
 
 bulbCons *bulbMakeCons(bulbObj *obj)
@@ -265,6 +276,13 @@ bulbObj *bulbGetCaddr(bulbObj *list)
 bulbObj *bulbGetCaadr(bulbObj *list)
 {
     return bulbGetCaar(bulbGetCdr(list));
+}
+
+bool bulbIsAList(bulbObj *list)
+{
+    while (list->type == BULB_CONS)
+        list = bulbGetCdr(list);
+    return list == bulbNil;
 }
 
 unsigned bulbListLen(bulbObj *list)

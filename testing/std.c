@@ -6,16 +6,16 @@
    of the MIT/Expat License - see LICENSE. */ 
 #include "std.h"
 
-bulbPrimitive bulbSTDPrimitives[13] = { bulbSTDSum, bulbSTDMul, bulbSTDSub, 
+bulbPrimitive bulbSTDPrimitives[16] = { bulbSTDSum, bulbSTDMul, bulbSTDSub, 
                                 bulbSTDDiv, bulbSTDOperatorEqual, 
                                 bulbSTDOperatorNotEqual, bulbSTDOperatorBigger, 
                                 bulbSTDOperatorSmaller, bulbSTDOperatorBiggerEqual, 
                                 bulbSTDOperatorSmallerEqual, bulbSTDDisplay,
-                                bulbSTDExit, NULL
+                                bulbSTDExit, bulbSTDCons, bulbSTDCar, bulbSTDCdr, NULL
 };
 
-char *bulbSTDNames[13] = { "+", "*", "-", "/", "=", "!=", ">", "<", ">=", "<=",
-                           "display", "exit", NULL
+char *bulbSTDNames[16] = { "+", "*", "-", "/", "=", "!=", ">", "<", ">=", "<=",
+                           "display", "exit", "cons", "car", "cdr", NULL
 };
 
 bulbModule bulbSTDModule = {bulbSTDPrimitives, bulbSTDNames};
@@ -80,7 +80,7 @@ bulbObj *bulbSTDMul(bulbObj *args, bulbEnv *env)
     bulbObj *result = (bulbObj*) malloc(sizeof(bulbObj));
     result->type = BULB_INT;
     result->data = (bulbInt*) malloc(sizeof(bulbInt));
-    *((bulbInt*) result->data) = 0;
+    *((bulbInt*) result->data) = 1;
     while (args != bulbNil) {
         if (bulbGetCar(args)->type == BULB_FLOAT) {
             if (result->type == BULB_INT) {
@@ -243,4 +243,20 @@ bulbObj *bulbSTDDisplay(bulbObj *args, bulbEnv *env)
 bulbObj *bulbSTDExit(bulbObj *args, bulbEnv *env)
 {
     exit(*(bulbInt*) bulbGetCar(args)->data);
+}
+
+bulbObj *bulbSTDCons(bulbObj *args, bulbEnv *env)
+{
+    bulbObj *cons = bulbNewConsObj(bulbGetCar(args), bulbGetCadr(args));
+    return cons;
+}
+
+bulbObj *bulbSTDCar(bulbObj *args, bulbEnv *env)
+{
+    return bulbGetCaar(args);
+}
+
+bulbObj *bulbSTDCdr(bulbObj *args, bulbEnv *env)
+{
+    return bulbGetCdar(args);
 }
