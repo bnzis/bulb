@@ -51,12 +51,12 @@ bulbObj *bulbHashmapGet(bulbHashmap *map, char *key)
         return bulbGetCdar(map->data[index]);
     else {
         bulbObj *ptr = map->data[index];
-        while (strcmp(readKey, key) != 0 && ptr != bulbNil) {
-            ptr = bulbGetCdr(ptr);
+        do {
             readKey = bulbGetStringText(bulbGetCaar(ptr));
-        }
-        if (ptr == bulbNil) return NULL;
-        return bulbGetCdar(ptr);
+            if (strcmp(readKey, key) != 0) ptr = bulbGetCdr(ptr);
+            else return bulbGetCdar(ptr);
+        } while (ptr != bulbNil);
+        return NULL;
     }
 }
 
