@@ -22,8 +22,7 @@ bulbObj *bulbEvalSequence(bulbObj *ast, bulbEnv *env)
 {
     while (true)
         if (ast->type == BULB_CONS) {
-       	    bulbType cdrType = bulbGetCdr(ast)->type;
-            if (bulbGetCdr(ast) != NULL && cdrType != BULB_NIL) {
+            if (bulbGetCdr(ast) != bulbNil) {
                 bulbEval(bulbGetCar(ast), env);
                 ast = bulbGetCdr(ast); 
             } else  
@@ -63,6 +62,7 @@ bulbObj *bulbEvalDefine(bulbObj *ast, bulbEnv *env)
         if (!bulbNotKeyword(sym)) bulb_err_invalid_syntax(ast);
         bulbObj *args = bulbGetCdr(bulbGetCadr(ast));
         bulbObj *body = bulbGetCdr(bulbGetCdr(ast));
+        bulbPrintAst(body);
         val = bulbNewProcObj(args, body, env);
         bulbEnvSet(env, sym, val);
     } else 
