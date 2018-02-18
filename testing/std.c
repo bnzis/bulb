@@ -38,11 +38,12 @@ bulbObj *bulbSTDSum(bulbObj *args, bulbEnv *env)
                 *((bulbFloat*) result->data) = tmp;
             }
             *((bulbFloat*) result->data) += *((bulbFloat*) bulbGetCar(args)->data);
-        } else if (bulbGetCar(args)->type == BULB_INT)
-            if (result->type == BULB_FLOAT)
+        } else if (bulbGetCar(args)->type == BULB_INT) {
+            if (result->type == BULB_FLOAT) 
                 *((bulbFloat*) result->data) += *((bulbInt*) bulbGetCar(args)->data);
             else
                 *((bulbInt*) result->data) += *((bulbInt*) bulbGetCar(args)->data);
+        }
         args = bulbGetCdr(args);
     }
     return result;
@@ -65,11 +66,12 @@ bulbObj *bulbSTDSub(bulbObj *args, bulbEnv *env)
                 *((bulbFloat*) result->data) = tmp;
             }
             *((bulbFloat*) result->data) -= *((bulbFloat*) bulbGetCar(args)->data);
-        } else if (bulbGetCar(args)->type == BULB_INT)
+        } else if (bulbGetCar(args)->type == BULB_INT) {
             if (result->type == BULB_FLOAT)
                 *((bulbFloat*) result->data) -= *((bulbInt*) bulbGetCar(args)->data);
             else
                 *((bulbInt*) result->data) -= *((bulbInt*) bulbGetCar(args)->data);
+        }
         args = bulbGetCdr(args);
     }
     return result;
@@ -91,11 +93,12 @@ bulbObj *bulbSTDMul(bulbObj *args, bulbEnv *env)
                 *((bulbFloat*) result->data) = tmp;
             }
             *((bulbFloat*) result->data) *= *((bulbFloat*) bulbGetCar(args)->data);
-        } else if (bulbGetCar(args)->type == BULB_INT)
+        } else if (bulbGetCar(args)->type == BULB_INT) {
             if (result->type == BULB_FLOAT)
                 *((bulbFloat*) result->data) *= *((bulbInt*) bulbGetCar(args)->data);
             else
                 *((bulbInt*) result->data) *= *((bulbInt*) bulbGetCar(args)->data);
+        }
         args = bulbGetCdr(args);
     }
     return result;
@@ -118,11 +121,12 @@ bulbObj *bulbSTDDiv(bulbObj *args, bulbEnv *env)
                 *((bulbFloat*) result->data) = tmp;
             }
             *((bulbFloat*) result->data) /= *((bulbFloat*) bulbGetCar(args)->data);
-        } else if (bulbGetCar(args)->type == BULB_INT)
+        } else if (bulbGetCar(args)->type == BULB_INT) {
             if (result->type == BULB_FLOAT)
                 *((bulbFloat*) result->data) /= *((bulbInt*) bulbGetCar(args)->data);
             else
                 *((bulbInt*) result->data) /= *((bulbInt*) bulbGetCar(args)->data);
+        }
         args = bulbGetCdr(args);
     }
     return result;

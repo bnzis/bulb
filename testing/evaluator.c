@@ -1,21 +1,9 @@
-/*
- *  Bulb - the Lisp Interpreter
- *  Copyright (C) 2018-2019 bnzis (bonzisoft@protonmail.com)
- *  Copyright (C) 2012-2016 Yann Collet (xxhash)
- *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+/* License
+   -------
+   Copyright (c) 2018 bnzis <https://github.com/bnzis>
+
+   This file is part of the Bulb Interpreter and is released under the terms
+   of the MIT/Expat License - see LICENSE. */ 
 #include "evaluator.h"
 
 bulbObj *bulbEvalSequence(bulbObj *ast, bulbEnv *env) 
@@ -49,7 +37,7 @@ bulbObj *bulbEvalArgs(bulbObj *ast, bulbEnv *env)
 
 bulbObj *bulbEvalDefine(bulbObj *ast, bulbEnv *env)
 {
-    bulbObj *val;
+    bulbObj *val = bulbNil;
     char *sym;
     unsigned len = bulbListLen(ast);
     if (len < 2) bulb_err_invalid_syntax(ast);
@@ -62,7 +50,6 @@ bulbObj *bulbEvalDefine(bulbObj *ast, bulbEnv *env)
         if (!bulbNotKeyword(sym)) bulb_err_invalid_syntax(ast);
         bulbObj *args = bulbGetCdr(bulbGetCadr(ast));
         bulbObj *body = bulbGetCdr(bulbGetCdr(ast));
-        bulbPrintAst(body);
         val = bulbNewProcObj(args, body, env);
         bulbEnvSet(env, sym, val);
     } else 
@@ -102,22 +89,24 @@ cicle:
                 else if (strcmp(op, "if") == 0) {
                     ast = bulbEvalIf(ast, env);
                     goto cicle;
-                } else if (strcmp(op, "lambda") == 0) {
+                } else if (strcmp(op, "lambda") == 0)
                     return bulbEvalLambda(bulbGetCdr(ast), env);
-                } else if (strcmp(op, "begin") == 0)
+                else if (strcmp(op, "begin") == 0)
                     return bulbEvalSequence(bulbGetCdr(ast), env);
-                else if(strcmp(op, "qu") == 0)
-                    if (bulbListLen(bulbGetCdr(ast)) == 1) return bulbGetCadr(ast);
-                    else bulb_err_invalid_syntax(ast);
+                else if(strcmp(op, "qu") == 0) {
+                    if (bulbListLen(bulbGetCdr(ast)) == 1) {
+                        return bulbGetCadr(ast);
+                    } else bulb_err_invalid_syntax(ast);
+                }
             }
             bulbObj *proc = bulbEval(bulbGetCar(ast), env);
             bulbObj *args = bulbEvalArgs(bulbGetCdr(ast), env);
             if (proc->type == BULB_PRIMITIVE) {
                 return ((bulbPrimitive) proc->data)(args, env);
             } else if (proc->type == BULB_PROCEDURE) {
-                env = bulbExpandEnv(proc, args, bulbGetProcEnv(proc));
+                bulbEnv *newEnv = bulbExpandEnv(proc, args, env);
                 ast = bulbGetProcBody(proc);
-                return bulbEvalSequence(ast, env);
+                return bulbEvalSequence(ast, newEnv);
             } else
                 bulb_err_non_procedure(proc);
         } else if (ast->type == BULB_SYMBOL) {
