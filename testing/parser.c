@@ -102,15 +102,15 @@ unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj **out)
             break;
         } else if (((first != ' ' && first != '\t' && first != '\\') || str) && !comm) {
             if (first == '\"' && prev != '\\') str = !str;
-            if (i >= len) {
-                aclen *= 2;
+            if (i >= aclen) {
+                aclen += aclen / 2;
                 acc = (char*) realloc(acc, aclen);
             }
             acc[i] = first;
             i++;
         } else if (first == '\\' && prev == '\\') {
-            if (i >= len) {
-                aclen *= 2;
+            if (i >= aclen) {
+                aclen += aclen / 2;
                 acc = (char*) realloc(acc, aclen);
             }
             acc[i] = first;
