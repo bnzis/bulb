@@ -37,7 +37,7 @@ bulbObj *bulbEvalArgs(bulbObj *ast, bulbEnv *env)
 
 bulbObj *bulbEvalDefine(bulbObj *ast, bulbEnv *env)
 {
-    bulbObj *val;
+    bulbObj *val = bulbNil;
     char *sym;
     unsigned len = bulbListLen(ast);
     if (len < 2) bulb_err_invalid_syntax(ast);
@@ -89,22 +89,24 @@ cicle:
                 else if (strcmp(op, "if") == 0) {
                     ast = bulbEvalIf(ast, env);
                     goto cicle;
-                } else if (strcmp(op, "lambda") == 0) {
+                } else if (strcmp(op, "lambda") == 0)
                     return bulbEvalLambda(bulbGetCdr(ast), env);
-                } else if (strcmp(op, "begin") == 0)
+                else if (strcmp(op, "begin") == 0)
                     return bulbEvalSequence(bulbGetCdr(ast), env);
-                else if(strcmp(op, "qu") == 0)
-                    if (bulbListLen(bulbGetCdr(ast)) == 1) return bulbGetCadr(ast);
-                    else bulb_err_invalid_syntax(ast);
+                else if(strcmp(op, "qu") == 0) {
+                    if (bulbListLen(bulbGetCdr(ast)) == 1) {
+                        return bulbGetCadr(ast);
+                    } else bulb_err_invalid_syntax(ast);
+                }
             }
             bulbObj *proc = bulbEval(bulbGetCar(ast), env);
             bulbObj *args = bulbEvalArgs(bulbGetCdr(ast), env);
             if (proc->type == BULB_PRIMITIVE) {
                 return ((bulbPrimitive) proc->data)(args, env);
             } else if (proc->type == BULB_PROCEDURE) {
-                env = bulbExpandEnv(proc, args, bulbGetProcEnv(proc));
+                bulbEnv *newEnv = bulbExpandEnv(proc, args, env);
                 ast = bulbGetProcBody(proc);
-                return bulbEvalSequence(ast, env);
+                return bulbEvalSequence(ast, newEnv);
             } else
                 bulb_err_non_procedure(proc);
         } else if (ast->type == BULB_SYMBOL) {
