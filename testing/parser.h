@@ -48,6 +48,12 @@ bool bulbIsInt(char *exp, unsigned len);
    needed). */
 bool bulbIsFloat(char *exp, unsigned len);
 
+/* bulbIsHex
+   ---------
+   Verifies if the string can be converted to an integer.
+   0xFF => 255. */
+bool bulbIsHex(char *exp, unsigned len);
+
 /* bulbGenAtom
    -----------
    Converts the string to an atom object. */
@@ -71,5 +77,7 @@ bulbObj *bulbGenAst(char *exp, unsigned len, unsigned *offset, bool open);
 void bulb_err_missing_close_block();
 
 void bulb_err_missing_open_block();
+
+void bulb_err_missing_close_string();
 
 #endif /* BULB_PARSER_H */
