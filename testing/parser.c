@@ -40,7 +40,7 @@ bool bulbIsHex(char *exp, unsigned len)
         if (exp[i] == 'x') x++;
         i++;
     }
-    return cond;
+    return cond && x == 1;
 }
 
 bulbObj *bulbGenAtom(char *exp, unsigned len)
@@ -68,7 +68,8 @@ bulbObj *bulbGenAtom(char *exp, unsigned len)
     } else if (exp[0] == '#' && (exp[1] == 't' || exp[1] == 'f')) {
         o = (exp[1] == 't')? bulbTrue : bulbFalse;
     } else if ((exp[0] >= 'a' && exp[0] <= 'z') || (exp[0] >= 'A' && exp[0] <= 'B') ||
-                exp[0] == '+' || exp[0] == '-' || exp[0] == '*' || exp[0] == '/') {
+                exp[0] == '+' || exp[0] == '-' || exp[0] == '*' || exp[0] == '/' ||
+                exp[0] == '=' || exp[0] == '>' || exp[0] == '<') {
         o->data = (bulbSymbol*) malloc(sizeof(bulbSymbol));
         ((bulbSymbol*) o->data)->data = (char*) malloc(sizeof(char) * len + 1);
         ((bulbSymbol*) o->data)->len = len;
