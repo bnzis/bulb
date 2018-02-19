@@ -115,6 +115,7 @@ unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj **out)
             else if (first == 't') acc[--i] = '\t';
             else if (first == 'v') acc[--i] = '\v';
             else if (first == 'f') acc[--i] = '\f';
+            else if (first == '\"') acc[--i] = '\"';
             else acc[i] = first;
             i++;
             prev = 0;
