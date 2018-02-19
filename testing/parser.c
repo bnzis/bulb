@@ -88,24 +88,39 @@ unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj **out)
         else if (!str && !comm && (first == '(' || first == ')')) {
             (*offset)--;
             break;
-        } else if (((first != ' ' && first != '\t' && first != '\\') || str) && !comm) {
-            if (first == '\"' && prev != '\\') str = !str;
+        } else if (((first != ' ' && first != '\t' && first != '\\') || str) && !comm
+            && prev != '\\') {
+            if (first == '\"') str = !str;
             if (i >= aclen) {
                 aclen += aclen / 2;
                 acc = (char*) realloc(acc, aclen);
             }
             acc[i] = first;
             i++;
+            prev = first;
         } else if (first == '\\' && prev == '\\') {
             if (i >= aclen) {
                 aclen += aclen / 2;
                 acc = (char*) realloc(acc, aclen);
             }
-            acc[i] = first;
+            acc[--i] = first;
             i++;
+            prev = 0;
+        } else if (prev == '\\') {
+            if (i >= aclen) {
+                aclen += aclen / 2;
+                acc = (char*) realloc(acc, aclen);
+            }
+            if (first == 'n') acc[--i] = '\n';
+            else if (first == 't') acc[--i] = '\t';
+            else if (first == 'v') acc[--i] = '\v';
+            else if (first == 'f') acc[--i] = '\f';
+            else acc[i] = first;
+            i++;
+            prev = 0;
         } 
-        prev = first;
     } 
+    if (str) bulb_err_missing_close_string();
     if (i == 0 || acc[0] == '\0') {
        (*out) = bulbNil; 
        return BULB_TOK_NIL;
@@ -159,5 +174,11 @@ void bulb_err_missing_close_block()
 void bulb_err_missing_open_block()
 {
     printf("Exception: missing \'(\'.\n");
+    exit(1);
+}
+
+void bulb_err_missing_close_string()
+{
+    printf("Exception: missing \'\"\'.\n");
     exit(1);
 }

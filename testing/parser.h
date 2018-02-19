@@ -72,4 +72,6 @@ void bulb_err_missing_close_block();
 
 void bulb_err_missing_open_block();
 
+void bulb_err_missing_close_string();
+
 #endif /* BULB_PARSER_H */
