@@ -34,6 +34,7 @@ bool bulbIsHex(char *exp, unsigned len)
 {
     unsigned i = 0, x = 0;
     bool cond;
+    if (exp[0] != '0') return false;
     while (i < len && (cond = ((exp[i] >= '0' && exp[i] <= '9') || 
             (exp[i] >= 'a' && exp[i] <= 'f') || (exp[i] >= 'A' && exp[i] <= 'F') 
             || (exp[i] == 'x' && x < 1))))  {
