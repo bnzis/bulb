@@ -10,7 +10,6 @@ SRC = core.c \
 	environment.c \
 	evaluator.c \
 	std.c \
- 	bulb.c \
 
 OBJ = $(SRC:.c=.o)
 
@@ -18,23 +17,23 @@ all: bulb libbulb.a
 
 .c.o:
 	@echo CC $< 
-	@${CC} -c ${CFLAGS} $<
+	@${CC} -c ${CFLAGS} ${INCS} $<
 
 clean: 
 	@echo cleaning
-	@rm -f bulb ${OBJ} bulb-${VERSION}.tar.gz
+	@rm -f bulb ${OBJ} bulb.o bulb-${VERSION}${OS}.tar.gz
 
 dist: clean
 	@echo creating dist tarball
 	@mkdir -p bulb-${VERSION}
-	@cp -R LICENSE Makefile README.md ${SRC} bulb-${VERSION}
+	@cp -R include/ LICENSE Makefile README.md ${SRC} bulb-${VERSION}
 	@tar -cf bulb-${VERSION}.tar bulb-${VERSION}
 	@gzip bulb-${VERSION}.tar
 	@rm -rf bulb-${VERSION}
 
-bulb: ${OBJ}
+bulb: bulb.o ${OBJ} 
 	@echo CC -o $@
-	@${CC} -o $@ ${OBJ} ${LDFLAGS}
+	@${CC} -o $@ ${OBJ} bulb.o ${LDFLAGS}
 
 libbulb.a: ${OBJ}
 	@echo ar rcs $@

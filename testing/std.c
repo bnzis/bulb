@@ -54,7 +54,7 @@ bulbObj *bulbSTDSub(bulbObj *args, bulbEnv *env)
     bulbObj *result = (bulbObj*) malloc(sizeof(bulbObj));
     result->type = BULB_INT;
     result->data = (bulbInt*) malloc(sizeof(bulbInt));
-    memcpy(result, bulbGetCar(args), sizeof(bulbObj));
+    memcpy(result->data, bulbGetCar(args)->data, sizeof(bulbObj));
     args = bulbGetCdr(args);
     while (args != bulbNil) {
         if (bulbGetCar(args)->type == BULB_FLOAT) {

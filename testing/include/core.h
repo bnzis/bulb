@@ -205,7 +205,7 @@ void bulbSetCaadr(bulbObj *list, bulbObj *val);
 
 bulbObj *bulbGetCadr(bulbObj *list);
 
-void bulbSetCadr(bulbObj *list, bulbObj *val);;
+void bulbSetCadr(bulbObj *list, bulbObj *val);
 
 bulbObj *bulbGetCaddr(bulbObj *list);
 

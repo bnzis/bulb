@@ -104,7 +104,7 @@ cicle:
             if (proc->type == BULB_PRIMITIVE) {
                 return ((bulbPrimitive) proc->data)(args, env);
             } else if (proc->type == BULB_PROCEDURE) {
-                bulbEnv *newEnv = bulbExpandEnv(proc, args, env);
+                bulbEnv *newEnv = bulbExpandEnv(proc, args, bulbGetProcEnv(proc));
                 ast = bulbGetProcBody(proc);
                 return bulbEvalSequence(ast, newEnv);
             } else
