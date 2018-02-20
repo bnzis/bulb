@@ -61,7 +61,7 @@ void bulbHashmapSet(bulbHashmap *map, char *key, bulbObj *obj)
     }
     char *t = bulbGetStringText(bulbGetCaar(map->data[index]));
     if (strcmp(t, key) == 0) {
-        bulbSetCadr(map->data[index], obj);
+        bulbSetCdar(map->data[index], obj);
     } else {
         bulbObj **ptr = &((bulbCons*) map->data[index]->data)->cdr;
         while (*ptr != bulbNil) {

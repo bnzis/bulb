@@ -7,7 +7,11 @@ VERSION = 0.1
 PREFIX = /usr/local
 
 # flags
-CFLAGS = -std=c99 -Wall -O3
+CFLAGS = -std=c99 -Wall -O3 -pedantic
+
+# includes
+
+INCS = -Iinclude/
 
 # compiler and linker
 CC = cc
