@@ -32,7 +32,9 @@ Here are some examples of the syntax:
 ## How to install
 First of all, you need the source code.
 Download the tarball or clone the repository: 
-```git clone https://github.com/bnzis/bulb```
+```
+git clone https://github.com/bnzis/bulb
+```
 Now, you need a c compiler and make installed, for Linux and BSD users it probably 
 comes pre-installed, if not, refer to the manual of the package manager of your
 distro and install it. For Windows users, I suggest to install MinGW.
