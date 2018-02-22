@@ -8,9 +8,9 @@ PREFIX = /usr/local
 
 # flags
 CFLAGS = -std=c99 -Wall -O3 -pedantic
+LDFLAGS = -lm
 
 # includes
-
 INCS = -Iinclude/
 
 # compiler and linker
