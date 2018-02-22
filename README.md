@@ -19,8 +19,7 @@ Here are some examples of the syntax:
 
 ; more complex example of code
 (def (print-list l)
-    (if (null? l) (exit))
-    (if (list? l)
+    (if (and (list? l) (not (null? l)))
         (begin 
             (print (car l) " ")
             (print-list (cdr l)))))
