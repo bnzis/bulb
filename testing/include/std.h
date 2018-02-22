@@ -8,6 +8,7 @@
 #define BULB_STD_H
 #include <string.h>
 #include "core.h"
+#include "evaluator.h"
 
 /* STD
    ---
@@ -25,7 +26,7 @@ bulbObj *bulbSTDSub(bulbObj *args, bulbEnv *env);
 
 bulbObj *bulbSTDDiv(bulbObj *args, bulbEnv *env);
 
-/* Comparative Operations with numbers
+/* Relational Operations with numbers
    ----------------------------------- 
    =, !=, >, <, >=, <= */
 bulbObj *bulbSTDOperatorEqual(bulbObj *args, bulbEnv *env);
@@ -42,7 +43,7 @@ bulbObj *bulbSTDOperatorSmallerEqual(bulbObj *args, bulbEnv *env);
 
 /* Other functions
    --------------- */
-bulbObj *bulbSTDDisplay(bulbObj *args, bulbEnv *env);
+bulbObj *bulbSTDPrint(bulbObj *args, bulbEnv *env);
 
 bulbObj *bulbSTDExit(bulbObj *args, bulbEnv *env);
 
@@ -51,5 +52,9 @@ bulbObj *bulbSTDCons(bulbObj *args, bulbEnv *env);
 bulbObj *bulbSTDCar(bulbObj *args, bulbEnv *env);
 
 bulbObj *bulbSTDCdr(bulbObj *args, bulbEnv *env);
+
+/* Exceptions
+   ---------- */
+void bulb_err_expected_number(char *name, bulbObj *o);
 
 #endif /* BULB_STD_H */

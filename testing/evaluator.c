@@ -22,12 +22,16 @@ bulbObj *bulbEvalSequence(bulbObj *ast, bulbEnv *env)
 bulbObj *bulbEvalArgs(bulbObj *ast, bulbEnv *env)
 {
     if (ast == bulbNil) return bulbNil;
-    bulbObj *args = bulbNewConsObj(malloc(sizeof(bulbObj)), malloc(sizeof(bulbObj)));
+    bulbObj *args = bulbNewConsObj(
+    (bulbObj*) malloc(sizeof(bulbObj)), 
+    (bulbObj*) malloc(sizeof(bulbObj)));
     bulbObj **front = &args;
     while (ast != bulbNil) {
         bulbObj *val = bulbEval(bulbGetCar(ast), env);
         bulbSetCar(*front, val);
-        bulbSetCdr(*front, bulbNewConsObj(malloc(sizeof(bulbObj)), malloc(sizeof(bulbObj))));
+        bulbSetCdr(*front, bulbNewConsObj(
+        (bulbObj*) malloc(sizeof(bulbObj)), 
+        (bulbObj*) malloc(sizeof(bulbObj))));
         front = &bulbMakeCons(*front)->cdr;
         ast = bulbGetCdr(ast);
     }

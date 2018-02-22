@@ -15,7 +15,7 @@
 /* Description
    ===========
    This file contains the definition of data structures used by the interpreter 
-   to represent objects and the used base types and some important functions 
+   to represent objects, the used base types and some important functions 
    which are used almost everywhere.
    
    bulbObj
@@ -103,9 +103,9 @@ typedef struct {
 
 /* bulbProc
    --------
-   Procedures are contains two lists, args and body, which contains the code
-   of the procedure; for keeping track of the environment where the procedure
-   were declared there is a pointer. */
+   Procedures contain two lists, args and body, which contain the code
+   of the procedure; to keep track of the environment where the procedures
+   were declared, a pointer is used. */
 typedef struct {
     bulbObj *args;
     bulbObj *body;
@@ -131,7 +131,7 @@ typedef struct {
 
 /* bulbModule
    ----------
-   A Module is collection of primitives, defined in C. */
+   A Module is a collection of primitives, defined in C. */
 typedef struct {
     bulbPrimitive *primitives;
     char **names;
@@ -144,8 +144,8 @@ bool isAtom(bulbObj *obj);
 
 /* Functions used for printing
    ---------------------------
-   `bulbPrintAtomDisplay` and `bulbPrintAstDisplay` allow to choose if diplay 
-   the double quotes when printing a string; `bulbPrintAtom` and `bulbPrintAst` 
+   `bulbPrintAtomDisplay` and `bulbPrintAstDisplay` allow to choose whether to display 
+   the double quotes when printing a string or not; `bulbPrintAtom` and `bulbPrintAst` 
    automatically do this. */
 void bulbPrintAtom(bulbObj *obj);
 void bulbPrintAtomDisplay(bulbObj *obj, bool display);
@@ -154,13 +154,13 @@ void bulbPrintAstDisplay(bulbObj *obj, bool display);
 
 /* bulbMakeCons
    ------------
-   Used as a shortcut for extracting by an object a bulbCons pointer. */
+   Used as a shortcut to extract a bulbCons pointer from an object */
 bulbCons *bulbMakeCons(bulbObj *obj);
 
 /* bulbNewConsObj,  bulbNewStringObj ...
    -------------------------------------
    Creating a new object is a bit mechanical, I prefer to use these functions 
-   for making code more clear and readable. */
+   to make the code more clear and readable. */
 bulbObj *bulbNewConsObj(bulbObj *car, bulbObj *cdr);
 
 bulbObj *bulbNewStringObj(char *text, unsigned len);
