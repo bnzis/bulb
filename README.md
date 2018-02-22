@@ -43,3 +43,9 @@ cd /path/of/bulb
 make all # please check config.mk before building
 sudo make install # only works for Linux and BSD users.
 ```
+
+## How to use it
+```
+bulb # open the repl
+bulb /path/to/file # execute the code in the file
+```
