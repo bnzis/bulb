@@ -108,7 +108,8 @@ cicle:
             if (proc->type == BULB_PRIMITIVE) {
                 return ((bulbPrimitive) proc->data)(args, env);
             } else if (proc->type == BULB_PROCEDURE) {
-                bulbEnv *newEnv = bulbExpandEnv(proc, args, bulbGetProcEnv(proc));
+                bulbEnv *newEnv = bulbExpandEnv(bulbGetCar(ast), proc, 
+                args, bulbGetProcEnv(proc));
                 ast = bulbGetProcBody(proc);
                 return bulbEvalSequence(ast, newEnv);
             } else
@@ -119,18 +120,18 @@ cicle:
 }
 
 
-bulbEnv *bulbExpandEnv(bulbObj *obj, bulbObj *args, bulbEnv *upperEnv)
+bulbEnv *bulbExpandEnv(bulbObj *ast, bulbObj *obj, bulbObj *args, bulbEnv *upperEnv)
 {
     if (args == bulbNil) return upperEnv;
     if (obj->type != BULB_PROCEDURE) bulb_err_non_procedure(obj);
-    unsigned params_len = bulbListLen(bulbGetProcArgs(obj)), 
-             args_len = bulbListLen(args);
-    if (params_len != args_len)
-        bulb_err_invalid_len(params_len, args_len);
+    unsigned paramsLen = bulbListLen(bulbGetProcArgs(obj)), 
+             argsLen = bulbListLen(args);
+    if (paramsLen != argsLen)
+        bulb_err_invalid_len(ast, paramsLen, argsLen);
     bulbEnv *newEnv = bulbNewEnv(upperEnv);
     unsigned i = 0;
     bulbObj *tmp = bulbGetProcArgs(obj);
-    while (i < params_len) {
+    while (i < paramsLen) {
         bulbEnvSet(newEnv, bulbGetSymbolText(bulbGetCar(tmp)), bulbGetCar(args));
         tmp = bulbGetCdr(tmp);
         args = bulbGetCdr(args);
@@ -164,9 +165,11 @@ void bulb_err_invalid_syntax(bulbObj *tree)
     exit(1);
 }
 
-void bulb_err_invalid_len(unsigned expected, unsigned given)
+void bulb_err_invalid_len(bulbObj *ast, unsigned expected, unsigned given)
 {
-    printf("Exception: incorrect number of arguments (expected %d, given %d).\n", 
+    printf("Exception: ");
+    bulbPrintAst(ast);
+    printf(": incorrect number of arguments (expected %d, given %d).\n", 
             expected, given);
     exit(1);
 }
