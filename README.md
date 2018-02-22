@@ -19,8 +19,7 @@ Here are some examples of the syntax:
 
 ; more complex example of code
 (def (print-list l)
-    (if (null? l) (exit))
-    (if (list? l)
+    (if (and (list? l) (not (null? l)))
         (begin 
             (print (car l) " ")
             (print-list (cdr l)))))
@@ -41,6 +40,12 @@ distro and install it. For Windows users, I suggest to install MinGW.
 Finally, compile and install: 
 ```
 cd /path/of/bulb
-make all
+make all # please check config.mk before building
 sudo make install # only works for Linux and BSD users.
+```
+
+## How to use it
+```
+bulb # open the repl
+bulb /path/to/file # execute the code in the file
 ```
