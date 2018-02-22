@@ -24,6 +24,7 @@ bulbObj *bulbFalse = &bulbFalseObj;
 
 void bulbPrintNil(bulbObj *o) 
 {
+    printf("\b");
 }
 
 void bulbPrintBool(bulbObj *o) 
@@ -117,6 +118,7 @@ void bulbPrintAstDisplay(bulbObj *tree, bool display)
         }
         if (!list) printf(". ");
     }
+    if (tree->type == BULB_NIL) printf(" ");
     bulbPrintAtom(tree); 
     printf(")");
 }
