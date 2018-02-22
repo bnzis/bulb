@@ -40,6 +40,6 @@ distro and install it. For Windows users, I suggest to install MinGW.
 Finally, compile and install: 
 ```
 cd /path/of/bulb
-make all
+make all # please check config.mk before building
 sudo make install # only works for Linux and BSD users.
 ```
