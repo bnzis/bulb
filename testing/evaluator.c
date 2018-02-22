@@ -21,7 +21,6 @@ bulbObj *bulbEvalSequence(bulbObj *ast, bulbEnv *env)
 
 bulbObj *bulbEvalArgs(bulbObj *ast, bulbEnv *env)
 {
-    if (ast == bulbNil) return bulbNil;
     bulbObj *args = bulbNewConsObj(
     (bulbObj*) malloc(sizeof(bulbObj)), 
     (bulbObj*) malloc(sizeof(bulbObj)));
@@ -35,6 +34,7 @@ bulbObj *bulbEvalArgs(bulbObj *ast, bulbEnv *env)
         front = &bulbMakeCons(*front)->cdr;
         ast = bulbGetCdr(ast);
     }
+    free(*front);
     *front = bulbNil;
     return args;
 }
