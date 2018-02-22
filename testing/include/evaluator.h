@@ -19,7 +19,7 @@ bulbObj *bulbEvalIf(bulbObj *ast, bulbEnv *env);
 
 bulbObj *bulbEvalDefine(bulbObj *ast, bulbEnv *env);
 
-bulbEnv *bulbExpandEnv(bulbObj *proc, bulbObj *args, bulbEnv *env);
+bulbEnv *bulbExpandEnv(bulbObj *ast, bulbObj *proc, bulbObj *args, bulbEnv *env);
 
 bool bulbNotKeyword(char *sym);
 
@@ -29,6 +29,6 @@ void bulb_err_invalid_syntax(bulbObj *tree);
 
 void bulb_err_invalid_parameter_bool(bulbObj *tree);
 
-void bulb_err_invalid_len(unsigned expected, unsigned given);
+void bulb_err_invalid_len(bulbObj *ast, unsigned expected, unsigned given);
 
 #endif /* BULB_EVALUATOR_H */
