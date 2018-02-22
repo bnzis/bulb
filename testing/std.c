@@ -6,19 +6,22 @@
    of the MIT/Expat License - see LICENSE. */ 
 #include "std.h"
 
-bulbPrimitive bulbSTDPrimitives[22] = { bulbSTDSum, bulbSTDMul, bulbSTDSub, 
-                                bulbSTDDiv, bulbSTDOperatorEqual, 
+bulbPrimitive bulbSTDPrimitives[29] = { bulbSTDSum, bulbSTDMul, bulbSTDSub, 
+                                bulbSTDDiv, bulbSTDSqrt, bulbSTDOperatorEqual, 
                                 bulbSTDOperatorNotEqual, bulbSTDOperatorBigger, 
                                 bulbSTDOperatorSmaller, bulbSTDOperatorBiggerEqual, 
                                 bulbSTDOperatorSmallerEqual, bulbSTDAnd, 
                                 bulbSTDOr, bulbSTDNot, bulbSTDPrint,
                                 bulbSTDExit, bulbSTDCons, bulbSTDCar, bulbSTDCdr, 
-                                bulbSTDSetCar, bulbSTDSetCdr, bulbSTDList, NULL
+                                bulbSTDSetCar, bulbSTDSetCdr, bulbSTDList, 
+                                bulbSTDIsNull, bulbSTDIsList, bulbSTDIsAtom,
+                                bulbSTDIsString, bulbSTDIsNumber, NULL
 };
 
-char *bulbSTDNames[22] = { "+", "*", "-", "/", "=", "!=", ">", "<", ">=", "<=",
+char *bulbSTDNames[29] = { "+", "*", "-", "/", "sqrt", "=", "!=", ">", "<", ">=", "<=",
                            "and", "or", "not", "print", "exit", "cons", "car", "cdr", 
-                           "set-car", "set-cdr", "list", NULL
+                           "set-car!", "set-cdr!", "list", "null?", "list?", "atom?", 
+                           "string?", "number?", NULL
 };
 
 bulbModule bulbSTDModule = {bulbSTDPrimitives, bulbSTDNames};
@@ -27,7 +30,7 @@ bulbModule *bulbSTD = &bulbSTDModule;
 
 bulbObj *bulbSTDSum(bulbObj *args, bulbEnv *env)
 {
-    if (args == bulbNil) bulb_err_expected_number("+", args);
+    if (args == bulbNil) bulb_err_invalid_len_name("+", 1, 0);
     bulbObj *result = (bulbObj*) malloc(sizeof(bulbObj));
     result->type = bulbGetCar(args)->type;
     if (result->type == BULB_INT)
@@ -60,7 +63,7 @@ bulbObj *bulbSTDSum(bulbObj *args, bulbEnv *env)
 
 bulbObj *bulbSTDSub(bulbObj *args, bulbEnv *env)
 {
-    if (args == bulbNil) bulb_err_expected_number("-", args);
+    if (args == bulbNil) bulb_err_invalid_len_name("-", 1, 0);
     bulbObj *result = (bulbObj*) malloc(sizeof(bulbObj));
     result->type = bulbGetCar(args)->type;
     if (result->type == BULB_INT)
@@ -93,7 +96,7 @@ bulbObj *bulbSTDSub(bulbObj *args, bulbEnv *env)
 
 bulbObj *bulbSTDMul(bulbObj *args, bulbEnv *env)
 {
-    if (args == bulbNil) bulb_err_expected_number("*", args);
+    if (args == bulbNil) bulb_err_invalid_len_name("*", 1, 0);
     bulbObj *result = (bulbObj*) malloc(sizeof(bulbObj));
     result->type = bulbGetCar(args)->type;
     if (result->type == BULB_INT)
@@ -126,7 +129,7 @@ bulbObj *bulbSTDMul(bulbObj *args, bulbEnv *env)
 
 bulbObj *bulbSTDDiv(bulbObj *args, bulbEnv *env)
 {
-    if (args == bulbNil) bulb_err_expected_number("/", args);
+    if (args == bulbNil) bulb_err_invalid_len_name("/", 1, 0);
     bulbObj *result = (bulbObj*) malloc(sizeof(bulbObj));
     result->type = bulbGetCar(args)->type;
     if (result->type == BULB_INT)
@@ -157,10 +160,26 @@ bulbObj *bulbSTDDiv(bulbObj *args, bulbEnv *env)
     return result;
 }
 
+bulbObj *bulbSTDSqrt(bulbObj *args, bulbEnv *env) 
+{
+    if (args == bulbNil) bulb_err_expected_number("sqrt", args);
+    bulbObj *result = (bulbObj*) malloc(sizeof(bulbObj));
+    result->type = bulbGetCar(args)->type;
+    if (result->type == BULB_INT) {
+        result->data = (bulbInt*) malloc(sizeof(bulbInt));
+        memcpy(result->data, bulbGetCar(args)->data, sizeof(bulbObj));
+        *((bulbInt*) result->data) = sqrt(*((bulbInt*) result->data)); 
+    } else if (result->type == BULB_FLOAT) {
+        result->data = (bulbFloat*) malloc(sizeof(bulbFloat));
+        memcpy(result->data, bulbGetCar(args)->data, sizeof(bulbObj));
+        *((bulbFloat*) result->data) = sqrt(*((bulbFloat*) result->data)); 
+    } else bulb_err_expected_number("sqrt", bulbGetCar(args));
+    return result;
+}
 
 bulbObj *bulbSTDOperatorEqual(bulbObj *args, bulbEnv *env)
 {
-    if (args == bulbNil) bulb_err_expected_number("=", args);
+    if (args == bulbNil) bulb_err_invalid_len_name("=", 1, 0);
     bool res = true;
     while (bulbGetCdr(args) != bulbNil && res) {
         if (bulbGetCar(args)->type == BULB_INT && bulbGetCadr(args)->type == BULB_INT)
@@ -181,7 +200,7 @@ bulbObj *bulbSTDOperatorEqual(bulbObj *args, bulbEnv *env)
 
 bulbObj *bulbSTDOperatorNotEqual(bulbObj *args, bulbEnv *env)
 {
-    if (args == bulbNil) bulb_err_expected_number("!=", args);
+    if (args == bulbNil) bulb_err_invalid_len_name("!=", 1, 0);
     bool res = true;
     while (bulbGetCdr(args) != bulbNil && res) {
         if (bulbGetCar(args)->type == BULB_INT && bulbGetCadr(args)->type == BULB_INT)
@@ -202,7 +221,7 @@ bulbObj *bulbSTDOperatorNotEqual(bulbObj *args, bulbEnv *env)
 
 bulbObj *bulbSTDOperatorBigger(bulbObj *args, bulbEnv *env)
 {
-    if (args == bulbNil) bulb_err_expected_number(">", args);
+    if (args == bulbNil) bulb_err_invalid_len_name(">", 1, 0);
     bool res = true;
     while (bulbGetCdr(args) != bulbNil && res) {
         if (bulbGetCar(args)->type == BULB_INT && bulbGetCadr(args)->type == BULB_INT)
@@ -223,7 +242,7 @@ bulbObj *bulbSTDOperatorBigger(bulbObj *args, bulbEnv *env)
 
 bulbObj *bulbSTDOperatorSmaller(bulbObj *args, bulbEnv *env)
 {
-    if (args == bulbNil) bulb_err_expected_number("<", args);
+    if (args == bulbNil) bulb_err_invalid_len_name("<", 1, 0);
     bool res = true;
     while (bulbGetCdr(args) != bulbNil && res) {
         if (bulbGetCar(args)->type == BULB_INT && bulbGetCadr(args)->type == BULB_INT)
@@ -244,7 +263,7 @@ bulbObj *bulbSTDOperatorSmaller(bulbObj *args, bulbEnv *env)
 
 bulbObj *bulbSTDOperatorBiggerEqual(bulbObj *args, bulbEnv *env)
 {
-    if (args == bulbNil) bulb_err_expected_number(">=", args);
+    if (args == bulbNil) bulb_err_invalid_len_name(">=", 1, 0);
     bool res = true;
     while (bulbGetCdr(args) != bulbNil && res) {
         if (bulbGetCar(args)->type == BULB_INT && bulbGetCadr(args)->type == BULB_INT)
@@ -265,7 +284,7 @@ bulbObj *bulbSTDOperatorBiggerEqual(bulbObj *args, bulbEnv *env)
 
 bulbObj *bulbSTDOperatorSmallerEqual(bulbObj *args, bulbEnv *env)
 {
-    if (args == bulbNil) bulb_err_expected_number("<=", args);
+    if (args == bulbNil) bulb_err_invalid_len_name("<=", 1, 0);
     bool res = true;
     while (bulbGetCdr(args) != bulbNil && res) {
         if (bulbGetCar(args)->type == BULB_INT && bulbGetCadr(args)->type == BULB_INT)
@@ -286,7 +305,7 @@ bulbObj *bulbSTDOperatorSmallerEqual(bulbObj *args, bulbEnv *env)
 
 bulbObj *bulbSTDAnd(bulbObj *args, bulbEnv *env) 
 {
-    if (args == bulbNil) bulb_err_expected_bool("and", args);
+    if (args == bulbNil) bulb_err_invalid_len_name("and", 1, 0);
     bulbObj *result = bulbTrue;
     while (args != bulbNil && result == bulbTrue) {
         if (bulbGetCar(args)->type == BULB_BOOL) 
@@ -299,7 +318,7 @@ bulbObj *bulbSTDAnd(bulbObj *args, bulbEnv *env)
 
 bulbObj *bulbSTDOr(bulbObj *args, bulbEnv *env) 
 {
-    if (args == bulbNil) bulb_err_expected_bool("or", args);
+    if (args == bulbNil) bulb_err_invalid_len_name("or", 1, 0);
     bulbObj *result = bulbFalse;
     while (args != bulbNil && result == bulbFalse) {
         if (bulbGetCar(args)->type == BULB_BOOL) 
@@ -312,7 +331,7 @@ bulbObj *bulbSTDOr(bulbObj *args, bulbEnv *env)
 
 bulbObj *bulbSTDNot(bulbObj *args, bulbEnv *env) 
 {
-    if (args == bulbNil) bulb_err_expected_bool("not", args);
+    if (args == bulbNil) bulb_err_invalid_len_name("not", 1, 0);
     unsigned len = bulbListLen(args);
     if (len != 1) bulb_err_invalid_len_name("not", 1, len);
     if (bulbGetCar(args) == bulbTrue) return bulbFalse;
@@ -366,9 +385,9 @@ bulbObj *bulbSTDCdr(bulbObj *args, bulbEnv *env)
 bulbObj *bulbSTDSetCar(bulbObj *args, bulbEnv *env)
 {
     unsigned len = bulbListLen(args);
-    if (len != 2) bulb_err_invalid_len_name("set-car", 2, len);
+    if (len != 2) bulb_err_invalid_len_name("set-car!", 2, len);
     if (bulbGetCar(args)->type != BULB_CONS) 
-        bulb_err_expected_cons("set-car", bulbGetCar(args));
+        bulb_err_expected_cons("set-car!", bulbGetCar(args));
     bulbSetCar(bulbGetCar(args), bulbGetCadr(args));
     return bulbGetCar(args);
 }
@@ -377,9 +396,9 @@ bulbObj *bulbSTDSetCar(bulbObj *args, bulbEnv *env)
 bulbObj *bulbSTDSetCdr(bulbObj *args, bulbEnv *env)
 {
     unsigned len = bulbListLen(args);
-    if (len != 2) bulb_err_invalid_len_name("set-cdr", 2, len);
+    if (len != 2) bulb_err_invalid_len_name("set-cdr!", 2, len);
     if (bulbGetCar(args)->type != BULB_CONS) 
-        bulb_err_expected_cons("set-cdr", bulbGetCar(args));
+        bulb_err_expected_cons("set-cdr!", bulbGetCar(args));
     bulbSetCdr(bulbGetCar(args), bulbGetCadr(args));
     return bulbGetCar(args);
 }
@@ -387,6 +406,47 @@ bulbObj *bulbSTDSetCdr(bulbObj *args, bulbEnv *env)
 bulbObj *bulbSTDList(bulbObj *args, bulbEnv *env)
 {
     return args;
+}
+
+bulbObj *bulbSTDIsNull(bulbObj *args, bulbEnv *env)
+{   
+    if (args == bulbNil) bulb_err_invalid_len_name("null?", 1, 0);
+    unsigned len = bulbListLen(args);
+    if (len != 1) bulb_err_invalid_len_name("null?", 1, len);
+    return (bulbGetCar(args) == bulbNil)? bulbTrue : bulbFalse;
+}
+
+bulbObj *bulbSTDIsList(bulbObj *args, bulbEnv *env)
+{   
+    if (args == bulbNil) bulb_err_invalid_len_name("list?", 1, 0);
+    unsigned len = bulbListLen(args);
+    if (len != 1) bulb_err_invalid_len_name("list?", 1, len);
+    return (bulbIsAList(bulbGetCar(args)))? bulbTrue : bulbFalse;
+}
+
+bulbObj *bulbSTDIsAtom(bulbObj *args, bulbEnv *env)
+{   
+    if (args == bulbNil) bulb_err_invalid_len_name("atom?", 1, 0);
+    unsigned len = bulbListLen(args);
+    if (len != 1) bulb_err_invalid_len_name("atom?", 1, len);
+    return (bulbGetCar(args)->type != BULB_CONS)? bulbTrue : bulbFalse;
+}
+
+bulbObj *bulbSTDIsString(bulbObj *args, bulbEnv *env)
+{   
+    if (args == bulbNil) bulb_err_invalid_len_name("string?", 1, 0);
+    unsigned len = bulbListLen(args);
+    if (len != 1) bulb_err_invalid_len_name("string?", 1, len);
+    return (bulbGetCar(args)->type == BULB_STRING)? bulbTrue : bulbFalse;
+}
+
+bulbObj *bulbSTDIsNumber(bulbObj *args, bulbEnv *env)
+{   
+    if (args == bulbNil) bulb_err_invalid_len_name("number?", 1, 0);
+    unsigned len = bulbListLen(args);
+    if (len != 1) bulb_err_invalid_len_name("number?", 1, len);
+    return (bulbGetCar(args)->type == BULB_INT ||
+            bulbGetCar(args)->type == BULB_FLOAT)? bulbTrue : bulbFalse;
 }
 
 void bulb_err_expected_number(char *name, bulbObj *o)
