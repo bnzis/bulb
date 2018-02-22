@@ -34,7 +34,7 @@ void bulbPrintBool(bulbObj *o)
 
 void bulbPrintInt(bulbObj *o) 
 {
-    printf("%ld", *((bulbInt *) o->data));
+    printf("%lld", *((bulbInt *) o->data));
 } 
 
 void bulbPrintFloat(bulbObj *o) 
