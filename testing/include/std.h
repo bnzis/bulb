@@ -77,4 +77,6 @@ void bulb_err_invalid_len_name(char *name, unsigned expected, unsigned given);
 
 void bulb_err_expected_bool(char *name, bulbObj *o);
 
+void bulb_err_expected_cons(char *name, bulbObj *o);
+
 #endif /* BULB_STD_H */

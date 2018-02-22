@@ -349,6 +349,8 @@ bulbObj *bulbSTDCar(bulbObj *args, bulbEnv *env)
 {
     unsigned len = bulbListLen(args);
     if (len != 1) bulb_err_invalid_len_name("car", 1, len);
+    if (bulbGetCar(args)->type != BULB_CONS) 
+        bulb_err_expected_cons("car", bulbGetCar(args));
     return bulbGetCaar(args);
 }
 
@@ -356,6 +358,8 @@ bulbObj *bulbSTDCdr(bulbObj *args, bulbEnv *env)
 {
     unsigned len = bulbListLen(args);
     if (len != 1) bulb_err_invalid_len_name("cdr", 1, len);
+    if (bulbGetCar(args)->type != BULB_CONS) 
+        bulb_err_expected_cons("cdr", bulbGetCar(args));
     return bulbGetCdar(args);
 }
 
@@ -363,6 +367,8 @@ bulbObj *bulbSTDSetCar(bulbObj *args, bulbEnv *env)
 {
     unsigned len = bulbListLen(args);
     if (len != 2) bulb_err_invalid_len_name("set-car", 2, len);
+    if (bulbGetCar(args)->type != BULB_CONS) 
+        bulb_err_expected_cons("set-car", bulbGetCar(args));
     bulbSetCar(bulbGetCar(args), bulbGetCadr(args));
     return bulbGetCar(args);
 }
@@ -372,6 +378,8 @@ bulbObj *bulbSTDSetCdr(bulbObj *args, bulbEnv *env)
 {
     unsigned len = bulbListLen(args);
     if (len != 2) bulb_err_invalid_len_name("set-cdr", 2, len);
+    if (bulbGetCar(args)->type != BULB_CONS) 
+        bulb_err_expected_cons("set-cdr", bulbGetCar(args));
     bulbSetCdr(bulbGetCar(args), bulbGetCadr(args));
     return bulbGetCar(args);
 }
@@ -399,6 +407,14 @@ void bulb_err_invalid_len_name(char *name, unsigned expected, unsigned given)
 void bulb_err_expected_bool(char *name, bulbObj *o)
 {
     printf("Exception: %s: expected a boolean, but got ", name);
+    bulbPrintAst(o);
+    printf(".\n");
+    exit(1);
+}
+
+void bulb_err_expected_cons(char *name, bulbObj *o)
+{
+    printf("Exception: %s: expected a pair, but got ", name);
     bulbPrintAst(o);
     printf(".\n");
     exit(1);
