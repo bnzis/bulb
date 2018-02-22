@@ -7,4 +7,4 @@
         y)))
 
 (def a (cons 1 (cons 2 3)))
-((a 1) 0) ;; should print 2
+(print ((a 1) 0)) ;; should print 2
