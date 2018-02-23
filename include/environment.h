@@ -12,7 +12,9 @@
 
 bulbObj *bulbEnvGet(bulbEnv *env, char *symbol);
 
-void bulbEnvSet(bulbEnv *env, char *symbol, bulbObj *obj);
+void bulbEnvSet(bulbEnv *env, char *symbol, bulbObj *newObj);
+
+void bulbEnvDef(bulbEnv *env, char *symbol, bulbObj *obj);
 
 void bulbEnvDelete(bulbEnv *env, char *symbol);
 
