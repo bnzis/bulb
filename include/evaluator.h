@@ -19,6 +19,8 @@ bulbObj *bulbEvalIf(bulbObj *ast, bulbEnv *env);
 
 bulbObj *bulbEvalDefine(bulbObj *ast, bulbEnv *env);
 
+bulbObj *bulbEvalSet(bulbObj *ast, bulbEnv *env);
+
 bulbEnv *bulbExpandEnv(bulbObj *ast, bulbObj *proc, bulbObj *args, bulbEnv *env);
 
 bool bulbNotKeyword(char *sym);

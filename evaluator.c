@@ -48,6 +48,28 @@ bulbObj *bulbEvalDefine(bulbObj *ast, bulbEnv *env)
     if (bulbGetCadr(ast)->type == BULB_SYMBOL) {
         sym = bulbGetSymbolText(bulbGetCadr(ast));
         val = bulbEval(bulbGetCaddr(ast), env);
+        bulbEnvDef(env, sym, val);
+    } else if (bulbGetCadr(ast)->type == BULB_CONS) {
+        sym = bulbGetSymbolText(bulbGetCaadr(ast));
+        if (!bulbNotKeyword(sym)) bulb_err_invalid_syntax(ast);
+        bulbObj *args = bulbGetCdr(bulbGetCadr(ast));
+        bulbObj *body = bulbGetCdr(bulbGetCdr(ast));
+        val = bulbNewProcObj(args, body, env);
+        bulbEnvDef(env, sym, val);
+    } else 
+        bulb_err_invalid_syntax(ast);
+    return val;
+}
+
+bulbObj *bulbEvalSet(bulbObj *ast, bulbEnv *env)
+{
+    bulbObj *val = bulbNil;
+    char *sym;
+    unsigned len = bulbListLen(ast);
+    if (len < 2) bulb_err_invalid_syntax(ast);
+    if (bulbGetCadr(ast)->type == BULB_SYMBOL) {
+        sym = bulbGetSymbolText(bulbGetCadr(ast));
+        val = bulbEval(bulbGetCaddr(ast), env);
         bulbEnvSet(env, sym, val);
     } else if (bulbGetCadr(ast)->type == BULB_CONS) {
         sym = bulbGetSymbolText(bulbGetCaadr(ast));
@@ -90,6 +112,8 @@ cicle:
                 char *op = bulbGetSymbolText(bulbGetCar(ast));
                 if (strcmp(op, "def") == 0)
                     return bulbEvalDefine(ast, env);
+                else if (strcmp(op, "set!") == 0)
+                    return bulbEvalSet(ast, env);
                 else if (strcmp(op, "if") == 0) {
                     ast = bulbEvalIf(ast, env);
                     goto cicle;

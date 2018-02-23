@@ -17,7 +17,17 @@ bulbObj *bulbEnvGet(bulbEnv *env, char *symbol)
     return obj;
 }
 
-void bulbEnvSet(bulbEnv *env, char *symbol, bulbObj *obj)
+void bulbEnvSet(bulbEnv *env, char *symbol, bulbObj *newObj)
+{
+    bulbObj *obj = NULL;
+    while (env->upperEnv != NULL && obj == NULL) {
+        obj = bulbHashmapGet(env->local, symbol);
+        env = env->upperEnv;
+    }
+    bulbHashmapSet(env->local, symbol, newObj);
+}
+
+void bulbEnvDef(bulbEnv *env, char *symbol, bulbObj *obj)
 {
     bulbHashmapSet(env->local, symbol, obj);
 }
@@ -34,7 +44,7 @@ void bulbLoadModule(bulbEnv *env, bulbModule *module)
         bulbObj *prim = (bulbObj*) malloc(sizeof(bulbObj));
         prim->type = BULB_PRIMITIVE;
         prim->data = (bulbPrimitive*) module->primitives[i];
-        bulbEnvSet(env, module->names[i], prim);
+        bulbEnvDef(env, module->names[i], prim);
         i++;
     }
 }
