@@ -160,7 +160,7 @@ bulbEnv *bulbExpandEnv(bulbObj *ast, bulbObj *obj, bulbObj *args, bulbEnv *upper
     unsigned i = 0;
     bulbObj *tmp = bulbGetProcArgs(obj);
     while (i < paramsLen) {
-        bulbEnvSet(newEnv, bulbGetSymbolText(bulbGetCar(tmp)), bulbGetCar(args));
+        bulbEnvDef(newEnv, bulbGetSymbolText(bulbGetCar(tmp)), bulbGetCar(args));
         tmp = bulbGetCdr(tmp);
         args = bulbGetCdr(args);
         i++;
@@ -174,7 +174,8 @@ bool bulbNotKeyword(char *symbol)
                strcmp(symbol, "lambda") != 0 &&
                strcmp(symbol, "if") != 0 &&
                strcmp(symbol, "begin") != 0 &&
-               strcmp(symbol, "qu") != 0);
+               strcmp(symbol, "qu") != 0 &&
+               strcmp(symbol, "set!") != 0);
 }
 
 void bulb_err_non_procedure(bulbObj *proc)
