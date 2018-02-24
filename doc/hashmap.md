@@ -1,12 +1,11 @@
 Description
 =========== 
-An hashmap is used in the representation of environments, 
-(you can find more details on hashmap.md): it contains an array of objects 
-associated to a key; to access the elements without searching them through out 
-all the array an hashing algorithm is used. Obviously, we have to deal with
+An hashmap is used in the representation of environments: it contains an array of 
+objects associated to a key; to access the elements without searching them through 
+out  all the array an hashing algorithm is used. Obviously, we have to deal with
 collisions, a "cell" of the hashmap can contain more than one insertions so
 a cell is a list.  
-```(("name" value) ("name1" value1) ...)```
+```(("name" value) ("name1" value1) ...)```  
  bulbXXHash
 ---------- 
 Calculates the hash.
