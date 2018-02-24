@@ -42,44 +42,48 @@ bulbObj *bulbEvalArgs(bulbObj *ast, bulbEnv *env)
 bulbObj *bulbEvalDefine(bulbObj *ast, bulbEnv *env)
 {
     bulbObj *val = bulbNil;
-    char *sym;
+    char *sym = "meme";
     unsigned len = bulbListLen(ast);
     if (len < 2) bulb_err_invalid_syntax(ast);
     if (bulbGetCadr(ast)->type == BULB_SYMBOL) {
         sym = bulbGetSymbolText(bulbGetCadr(ast));
-        val = bulbEval(bulbGetCaddr(ast), env);
-        bulbEnvDef(env, sym, val);
+        if (!bulbNotKeyword(sym)) bulb_err_invalid_syntax(ast);
+        if (len > 2) val = bulbEval(bulbGetCaddr(ast), env);
     } else if (bulbGetCadr(ast)->type == BULB_CONS) {
         sym = bulbGetSymbolText(bulbGetCaadr(ast));
         if (!bulbNotKeyword(sym)) bulb_err_invalid_syntax(ast);
-        bulbObj *args = bulbGetCdr(bulbGetCadr(ast));
-        bulbObj *body = bulbGetCdr(bulbGetCdr(ast));
-        val = bulbNewProcObj(args, body, env);
-        bulbEnvDef(env, sym, val);
+        if (len > 2) {
+            bulbObj *args = bulbGetCdr(bulbGetCadr(ast));
+            bulbObj *body = bulbGetCdr(bulbGetCdr(ast));
+            val = bulbNewProcObj(args, body, env);
+        }
     } else 
         bulb_err_invalid_syntax(ast);
+    bulbEnvDef(env, sym, val);
     return val;
 }
 
 bulbObj *bulbEvalSet(bulbObj *ast, bulbEnv *env)
 {
     bulbObj *val = bulbNil;
-    char *sym;
+    char *sym = "meme";
     unsigned len = bulbListLen(ast);
     if (len < 2) bulb_err_invalid_syntax(ast);
     if (bulbGetCadr(ast)->type == BULB_SYMBOL) {
         sym = bulbGetSymbolText(bulbGetCadr(ast));
-        val = bulbEval(bulbGetCaddr(ast), env);
-        bulbEnvSet(env, sym, val);
+        if (!bulbNotKeyword(sym)) bulb_err_invalid_syntax(ast);
+        if (len > 2) val = bulbEval(bulbGetCaddr(ast), env);
     } else if (bulbGetCadr(ast)->type == BULB_CONS) {
         sym = bulbGetSymbolText(bulbGetCaadr(ast));
         if (!bulbNotKeyword(sym)) bulb_err_invalid_syntax(ast);
-        bulbObj *args = bulbGetCdr(bulbGetCadr(ast));
-        bulbObj *body = bulbGetCdr(bulbGetCdr(ast));
-        val = bulbNewProcObj(args, body, env);
-        bulbEnvSet(env, sym, val);
+        if (len > 2) {
+            bulbObj *args = bulbGetCdr(bulbGetCadr(ast));
+            bulbObj *body = bulbGetCdr(bulbGetCdr(ast));
+            val = bulbNewProcObj(args, body, env);
+        }
     } else 
         bulb_err_invalid_syntax(ast);
+    bulbEnvSet(env, sym, val);
     return val;
 }
 
