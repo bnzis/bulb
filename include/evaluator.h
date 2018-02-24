@@ -16,7 +16,7 @@
    - Eval: the expression is interpreted in its sub-expressions up until 
            there's nothing to decompose, such as numbers;
    - Apply: executes the requested procedures to the arguments is given in a 
-            separate environment, using eval.
+            separate environment, using eval.  
 
    bulbEval
    --------

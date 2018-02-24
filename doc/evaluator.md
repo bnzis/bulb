@@ -5,6 +5,7 @@ The evaluator perfoms two tasks for evaluating an expression:
         there's nothing to decompose, such as numbers;
 - Apply: executes the requested procedures to the arguments is given in a 
          separate environment, using eval.
+
  bulbEval
 --------
 Evaluates the expression given int the environment passed.
