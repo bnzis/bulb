@@ -1,0 +1,92 @@
+STD
+---
+This module contains all basic functions available on bulb.
+```c   
+extern bulbModule *bulbSTD;
+```
+Mathematical Operations with numbers 
+------------------------------------ 
++, *, -, /, sqrt
+```c
+bulbObj *bulbSTDSum(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDMul(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDSub(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDDiv(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDSqrt(bulbObj *args, bulbEnv *env);
+```
+Relational Operations with numbers
+----------------------------------- 
+=, !=, >, <, >=, <=
+```c
+bulbObj *bulbSTDOperatorEqual(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDOperatorNotEqual(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDOperatorBigger(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDOperatorSmaller(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDOperatorBiggerEqual(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDOperatorSmallerEqual(bulbObj *args, bulbEnv *env);
+```
+Operations with Booleans 
+------------------------ 
+and, or, not
+```c
+bulbObj *bulbSTDAnd(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDOr(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDNot(bulbObj *args, bulbEnv *env);
+```
+I/O functions
+-------------
+```c
+bulbObj *bulbSTDPrint(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDExit(bulbObj *args, bulbEnv *env);
+```
+Pairs and Lists 
+---------------
+```c
+bulbObj *bulbSTDCons(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDCar(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDCdr(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDSetCar(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDSetCdr(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDList(bulbObj *args, bulbEnv *env);
+```
+Type-check functions
+---------------
+```c
+bulbObj *bulbSTDIsNull(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDIsList(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDIsAtom(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDIsString(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDIsNumber(bulbObj *args, bulbEnv *env);
+```
+Exceptions
+----------
+```c
+void bulb_err_expected_number(char *name, bulbObj *o);
+
+void bulb_err_invalid_len_name(char *name, unsigned expected, unsigned given);
+
+void bulb_err_expected_bool(char *name, bulbObj *o);
+
+void bulb_err_expected_cons(char *name, bulbObj *o);
+```

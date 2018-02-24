@@ -15,12 +15,12 @@
    The evaluator perfoms two tasks for evaluating an expression:  
    - Eval: the expression is interpreted in its sub-expressions up until 
            there's nothing to decompose, such as numbers;
-   - Apply: executes the requested procedures to the arguments is given in a 
-            separate environment, using eval.
+   - Apply: applies the procedure to the arguments given in a 
+            separate environment, using eval.     
 
    bulbEval
    --------
-   Evaluates the expression given int the environment passed. */
+   Evaluates the expression given in the environment passed. */
 bulbObj *bulbEval(bulbObj *ast, bulbEnv *env);
 
 /* bulbEvalSequence
@@ -49,8 +49,10 @@ bulbObj *bulbEvalSet(bulbObj *ast, bulbEnv *env);
 /* bulbExpandEnv
    ------------- 
    Expand the environment binding the arguments passed to the formal arguments. 
+   ```
    (def f (lambda (x y) ...))
-   (f 10 20) ; x => 10, y => 20 */
+   (f 10 20) ; x => 10, y => 20 
+   ``` */
 bulbEnv *bulbExpandEnv(bulbObj *ast, bulbObj *proc, bulbObj *args, bulbEnv *env);
 
 /* Exceptions 
