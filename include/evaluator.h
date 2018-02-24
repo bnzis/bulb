@@ -49,8 +49,10 @@ bulbObj *bulbEvalSet(bulbObj *ast, bulbEnv *env);
 /* bulbExpandEnv
    ------------- 
    Expand the environment binding the arguments passed to the formal arguments. 
+   ```
    (def f (lambda (x y) ...))
-   (f 10 20) ; x => 10, y => 20 */
+   (f 10 20) ; x => 10, y => 20 
+   ``` */
 bulbEnv *bulbExpandEnv(bulbObj *ast, bulbObj *proc, bulbObj *args, bulbEnv *env);
 
 /* Exceptions 
