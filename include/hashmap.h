@@ -18,7 +18,7 @@
    collisions, a "cell" of the hashmap can contain more than one insertions so
    a cell is a list.  
    ```(("name" value) ("name1" value1) ...)```  
-
+    
    bulbXXHash
    ---------- 
    Calculates the hash. */
