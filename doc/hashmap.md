@@ -6,7 +6,8 @@ out  all the array an hashing algorithm is used. Obviously, we have to deal with
 collisions, a "cell" of the hashmap can contain more than one insertions so
 a cell is a list.  
 ```(("name" value) ("name1" value1) ...)```  
- bulbXXHash
+
+bulbXXHash
 ---------- 
 Calculates the hash.
 ```c
