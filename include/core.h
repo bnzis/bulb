@@ -29,6 +29,7 @@
 typedef struct bulbObj_s {
     void (*type)(struct bulbObj_s *o);
     void *data;
+    bool reached; /* Used by the GC */
 } bulbObj;
 
 typedef void (*bulbType)(bulbObj *o);
@@ -156,18 +157,6 @@ void bulbPrintAstDisplay(bulbObj *obj, bool display);
    ------------
    Used as a shortcut to extract a bulbCons pointer from an object */
 bulbCons *bulbMakeCons(bulbObj *obj);
-
-/* bulbNewConsObj,  bulbNewStringObj ...
-   -------------------------------------
-   Creating a new object is a bit mechanical, I prefer to use these functions 
-   to make the code more clear and readable. */
-bulbObj *bulbNewConsObj(bulbObj *car, bulbObj *cdr);
-
-bulbObj *bulbNewStringObj(char *text, unsigned len);
-
-bulbObj *bulbNewProcObj(bulbObj *args, bulbObj *body, bulbEnv *env);
-
-bulbEnv *bulbNewEnv(bulbEnv *upperEnv);
 
 /* Operations with procedures 
    -------------------------- */

@@ -32,9 +32,13 @@ int main(int argc, char **argv)
         for (;;) {
             program = readline("> ");
             add_history(program);
+            puts("parsing...");
             bulbObj *ast = bulbParse(program);
+            puts("finishing parsing...");
             bulbPrintAst(bulbEvalSequence(ast, env));
             printf("\n");
+            bulbGCMarkEnv(env);
+            bulbGCSweep();
             free(program);
         }
     } else {

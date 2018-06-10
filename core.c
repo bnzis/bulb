@@ -93,11 +93,13 @@ void bulbPrintAtomDisplay(bulbObj *obj, bool display)
 
 void bulbPrintAst(bulbObj *tree)
 {
+    if (!tree) return;
     bulbPrintAstDisplay(tree, true);
 }
 
 void bulbPrintAstDisplay(bulbObj *tree, bool display)
 {
+    if (!tree) return;
     bool list = false;
     if (bulbIsAtom(tree)) {
         bulbPrintAtomDisplay(tree, display);
@@ -126,46 +128,6 @@ bulbCons *bulbMakeCons(bulbObj *obj)
 {
     if (obj == NULL || bulbIsAtom(obj)) bulb_err_not_a_pair(obj);
     return (bulbCons*) obj->data;
-}
-
-bulbObj *bulbNewConsObj(bulbObj *car, bulbObj *cdr)
-{
-    bulbObj *cons = (bulbObj*) malloc(sizeof(bulbObj));
-    cons->type = BULB_CONS;
-    cons->data = (bulbCons*) malloc(sizeof(bulbCons));
-    bulbSetCar(cons, car);
-    bulbSetCdr(cons, cdr);
-    return cons;
-}
-
-bulbObj *bulbNewStringObj(char *text, unsigned len)
-{
-    bulbObj *string = (bulbObj*) malloc(sizeof(bulbObj));
-    string->type = BULB_STRING;
-    string->data = (bulbString*) malloc(sizeof(bulbString*));
-    ((bulbString*) string->data)->data = text;
-    ((bulbString*) string->data)->len = len;
-    return string;
-}
-
-bulbObj *bulbNewProcObj(bulbObj *args, bulbObj *body, bulbEnv *env)
-{
-    bulbObj *proc = (bulbObj*) malloc(sizeof(bulbObj));
-    proc->type = BULB_PROCEDURE;
-    proc->data = (bulbProc*) malloc(sizeof(bulbProc));
-    ((bulbProc*) proc->data)->args = args;
-    ((bulbProc*) proc->data)->body = body;
-    ((bulbProc*) proc->data)->env = env;
-    return proc;
-}
-
-bulbEnv *bulbNewEnv(bulbEnv *upperEnv)
-{
-    bulbEnv *env = (bulbEnv*) malloc(sizeof(bulbEnv));
-    env->local = (bulbHashmap*) malloc(sizeof(bulbHashmap));
-    env->local->data = (bulbObj**) calloc(HMAP_ROWS, sizeof(bulbObj*));
-    env->upperEnv = upperEnv;
-    return env;
 }
 
 bulbObj *bulbGetProcBody(bulbObj *proc)

@@ -21,16 +21,12 @@ bulbObj *bulbEvalSequence(bulbObj *ast, bulbEnv *env)
 
 bulbObj *bulbEvalArgs(bulbObj *ast, bulbEnv *env)
 {
-    bulbObj *args = bulbNewConsObj(
-    (bulbObj*) malloc(sizeof(bulbObj)), 
-    (bulbObj*) malloc(sizeof(bulbObj)));
+    bulbObj *args = bulbNewConsObj(bulbNewObj(), bulbNewObj());
     bulbObj **front = &args;
     while (ast != bulbNil) {
         bulbObj *val = bulbEval(bulbGetCar(ast), env);
         bulbSetCar(*front, val);
-        bulbSetCdr(*front, bulbNewConsObj(
-        (bulbObj*) malloc(sizeof(bulbObj)), 
-        (bulbObj*) malloc(sizeof(bulbObj))));
+        bulbSetCdr(*front, bulbNewConsObj(bulbNewObj(), bulbNewObj()));
         front = &bulbMakeCons(*front)->cdr;
         ast = bulbGetCdr(ast);
     }
@@ -42,7 +38,7 @@ bulbObj *bulbEvalArgs(bulbObj *ast, bulbEnv *env)
 bulbObj *bulbEvalDefine(bulbObj *ast, bulbEnv *env)
 {
     bulbObj *val = bulbNil;
-    char *sym = "meme";
+    char *sym;
     unsigned len = bulbListLen(ast);
     if (len < 2) bulb_err_invalid_syntax(ast);
     if (bulbGetCadr(ast)->type == BULB_SYMBOL) {
@@ -66,7 +62,7 @@ bulbObj *bulbEvalDefine(bulbObj *ast, bulbEnv *env)
 bulbObj *bulbEvalSet(bulbObj *ast, bulbEnv *env)
 {
     bulbObj *val = bulbNil;
-    char *sym = "meme";
+    char *sym;
     unsigned len = bulbListLen(ast);
     if (len < 2) bulb_err_invalid_syntax(ast);
     if (bulbGetCadr(ast)->type == BULB_SYMBOL) {

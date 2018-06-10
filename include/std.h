@@ -9,6 +9,7 @@
 #include <math.h>
 #include <string.h>
 #include "core.h"
+#include "gc.h"
 
 /* STD
    ---

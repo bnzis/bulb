@@ -31,7 +31,7 @@ bulbModule *bulbSTD = &bulbSTDModule;
 bulbObj *bulbSTDSum(bulbObj *args, bulbEnv *env)
 {
     if (args == bulbNil) bulb_err_invalid_len_name("+", 1, 0);
-    bulbObj *result = (bulbObj*) malloc(sizeof(bulbObj));
+    bulbObj *result = bulbNewObj();
     result->type = bulbGetCar(args)->type;
     if (result->type == BULB_INT)
         result->data = (bulbInt*) malloc(sizeof(bulbInt));
@@ -64,7 +64,7 @@ bulbObj *bulbSTDSum(bulbObj *args, bulbEnv *env)
 bulbObj *bulbSTDSub(bulbObj *args, bulbEnv *env)
 {
     if (args == bulbNil) bulb_err_invalid_len_name("-", 1, 0);
-    bulbObj *result = (bulbObj*) malloc(sizeof(bulbObj));
+    bulbObj *result = bulbNewObj();
     result->type = bulbGetCar(args)->type;
     if (result->type == BULB_INT)
         result->data = (bulbInt*) malloc(sizeof(bulbInt));
@@ -97,7 +97,7 @@ bulbObj *bulbSTDSub(bulbObj *args, bulbEnv *env)
 bulbObj *bulbSTDMul(bulbObj *args, bulbEnv *env)
 {
     if (args == bulbNil) bulb_err_invalid_len_name("*", 1, 0);
-    bulbObj *result = (bulbObj*) malloc(sizeof(bulbObj));
+    bulbObj *result = bulbNewObj();
     result->type = bulbGetCar(args)->type;
     if (result->type == BULB_INT)
         result->data = (bulbInt*) malloc(sizeof(bulbInt));
@@ -130,7 +130,7 @@ bulbObj *bulbSTDMul(bulbObj *args, bulbEnv *env)
 bulbObj *bulbSTDDiv(bulbObj *args, bulbEnv *env)
 {
     if (args == bulbNil) bulb_err_invalid_len_name("/", 1, 0);
-    bulbObj *result = (bulbObj*) malloc(sizeof(bulbObj));
+    bulbObj *result = bulbNewObj();
     result->type = bulbGetCar(args)->type;
     if (result->type == BULB_INT)
         result->data = (bulbInt*) malloc(sizeof(bulbInt));
@@ -163,7 +163,7 @@ bulbObj *bulbSTDDiv(bulbObj *args, bulbEnv *env)
 bulbObj *bulbSTDSqrt(bulbObj *args, bulbEnv *env) 
 {
     if (args == bulbNil) bulb_err_expected_number("sqrt", args);
-    bulbObj *result = (bulbObj*) malloc(sizeof(bulbObj));
+    bulbObj *result = bulbNewObj();
     result->type = bulbGetCar(args)->type;
     if (result->type == BULB_INT) {
         result->data = (bulbInt*) malloc(sizeof(bulbInt));

@@ -46,7 +46,7 @@ bool bulbIsHex(char *exp, unsigned len)
 
 bulbObj *bulbGenAtom(char *exp, unsigned len)
 {
-    bulbObj *o = (bulbObj*) malloc(sizeof(bulbObj));
+    bulbObj *o = bulbNewObj();
     if (bulbIsInt(exp, len)) {
         o->data = (bulbInt*) malloc(sizeof(bulbInt)); 
         *((bulbInt*) o->data) = atol(exp);
@@ -155,20 +155,21 @@ unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj **out)
 
 bulbObj *bulbGenAst(char *exp, unsigned len, unsigned *offset, bool open)
 {
-    bulbObj *tree = (bulbObj*) malloc(sizeof(bulbObj)), *front = tree, 
-            *tmp = (bulbObj*) malloc(sizeof(bulbObj));
+    puts("generating ast...");
+    bulbObj *tree = bulbNewObj(), *front = tree, *tmp = bulbNewObj();
+    puts("generating ast (1)...");
     unsigned ttype = bulbLex(exp, len, offset, &tmp); 
     while (ttype != BULB_TOK_CLOSE_BLOCK && ttype != BULB_TOK_NIL) {
         front->type = BULB_CONS;
-        front->data = malloc(sizeof(bulbCons));
+        front->data = (bulbCons*) malloc(sizeof(bulbCons));
         if (ttype == BULB_TOK_OPEN_BLOCK)
             ((bulbCons*) front->data)->car = bulbGenAst(exp, len, offset, true);
         else    
             ((bulbCons*) front->data)->car = tmp;
-        tmp = (bulbObj*) malloc(sizeof(bulbObj));
+        tmp = bulbNewObj();
         ttype = bulbLex(exp, len, offset, &tmp);
         if (ttype != BULB_TOK_NIL && ttype != BULB_TOK_CLOSE_BLOCK) {
-            ((bulbCons*) front->data)->cdr = (bulbObj*) malloc(sizeof(bulbObj));
+            ((bulbCons*) front->data)->cdr = bulbNewObj();
             front = bulbGetCdr(front);
         } else {
             ((bulbCons*) front->data)->cdr = bulbNil;

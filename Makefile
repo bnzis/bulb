@@ -4,6 +4,7 @@
 include config.mk
 
 SRC = core.c \
+    gc.c \
 	parser.c \
 	xxhash.c \
 	hashmap.c \

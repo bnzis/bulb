@@ -10,6 +10,7 @@
 #include "core.h"
 #include "hashmap.h"
 #include "environment.h"
+#include "gc.h"
 #include "parser.h"
 #include "evaluator.h"
 #include "std.h"
