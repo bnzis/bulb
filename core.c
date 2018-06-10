@@ -98,7 +98,7 @@ void bulbPrintAst(bulbObj *tree)
 
 void bulbPrintAstDisplay(bulbObj *tree, bool display)
 {
-    bool nesting = false, list = false;
+    bool list = false;
     if (bulbIsAtom(tree)) {
         bulbPrintAtomDisplay(tree, display);
         return;
@@ -107,7 +107,6 @@ void bulbPrintAstDisplay(bulbObj *tree, bool display)
         printf("(");
         while (tree != bulbNil && tree->type == BULB_CONS) {
             if (bulbGetCar(tree)->type == BULB_CONS) { 
-                nesting = true;
                 bulbPrintAstDisplay(bulbGetCar(tree), display);
                 if (bulbGetCdr(tree) != bulbNil) printf(" ");
             } else {

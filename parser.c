@@ -36,7 +36,7 @@ bool bulbIsHex(char *exp, unsigned len)
     bool cond;
     if (exp[0] != '0') return false;
     while (i < len && (cond = ((exp[i] >= '0' && exp[i] <= '9') || 
-            (exp[i] >= 'a' && exp[i] <= 'f') || (exp[i] >= 'A' && exp[i] <= 'F') 
+            (exp[i] >= 'a' && exp[i] <= 'f') || (exp[i] >= 'A' && exp[i] <= 'F')
             || (exp[i] == 'x' && x < 1))))  {
         if (exp[i] == 'x') x++;
         i++;
@@ -90,13 +90,13 @@ unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj **out)
         (*out) = bulbNil;
         return BULB_TOK_NIL;
     }
+    exp = exp + *offset;
+    len -= (*offset);
     unsigned aclen = 16, i = 0;
     char first, prev = 0;
     char *acc = (char*) malloc(aclen);
     bool str = false, comm = false;
-    exp = exp + *offset;
-    len -= (*offset);
-    while (len > 0 && ((first != ' ' && first != '\t') || i == 0 || comm || str)) {
+    do {
         first = exp[0];
         exp++;
         (*offset)++;
@@ -142,7 +142,7 @@ unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj **out)
             i++;
             prev = 0;
         } 
-    } 
+    } while (len > 0 && ((first != ' ' && first != '\t') || i == 0 || comm || str));
     if (str) bulb_err_missing_close_string();
     if (i == 0 || acc[0] == '\0') {
        (*out) = bulbNil; 

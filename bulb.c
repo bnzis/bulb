@@ -54,6 +54,7 @@ int main(int argc, char **argv)
             fseek(f, 0L, SEEK_SET);
             program = (char*) malloc(size);
             size = fread(program, sizeof(char), size, f);
+            program[size - 1] = '\0';
             bulbObj *ast = bulbParse(program);
             bulbEvalSequence(ast, env);
             printf("\n");
