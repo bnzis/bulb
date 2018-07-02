@@ -6,6 +6,7 @@
    of the MIT/Expat License - see LICENSE. */ 
 #ifndef BULB_CORE_H
 #define BULB_CORE_H
+#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 #ifndef __cplusplus

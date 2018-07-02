@@ -8,7 +8,7 @@ PREFIX = /usr/local
 
 # flags
 CFLAGS = -std=c99 -Wall -O3
-LDFLAGS = -lm
+LDFLAGS = -lm -lpthread
 
 # includes
 INCS = -Iinclude/

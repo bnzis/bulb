@@ -3,24 +3,49 @@
    Copyright (c) 2018 bnzis <https://github.com/bnzis>
 
    This file is part of the Bulb Interpreter and is released under the terms
-   of the MIT/Expat License - see LICENSE. */ 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+   of the MIT/Expat License - see LICENSE. */  
 #include "bulb.h"
 
-static char buffer[256];
-
 char* readline(char* prompt) {
-  fputs(prompt, stdout);
-  fgets(buffer, 256, stdin);
-  char* cpy = (char*) malloc(strlen(buffer) + 1);
-  strcpy(cpy, buffer);
-  cpy[strlen(cpy)-1] = '\0';
-  return cpy;
+    fputs(prompt, stdout);
+    unsigned len = 256, i = 0, bc = 0;
+    bool n = false, comment = false, string = false;
+    char *buffer = (char*) malloc(len), c, prev = '\0';
+    do {
+        c = getc(stdin);
+        if (comment || ((c == '\n' || c == ' ') && i == 0)) n = true;
+        else if (!comment && c != '\n' && c != ' ' && n) n = false;
+        if (c == '(') bc++;
+        else if (c == ')') bc--;
+        else if (c == '\b' && i > 0) i--;
+        else if (c == '\"' && prev != '\\') string = !string;
+        else if (!string && c == ';') comment = true;
+        else if (comment && c == '\n') comment = false;
+        buffer[i] = c;
+        prev = c;
+        i++;
+        if (i >= len) {
+            len *= 2;
+            buffer = (char*) realloc(buffer, len);
+        }
+    } while (bc > 0 || c != '\n' || n || string || comment);
+    buffer[i] = '\0';
+    buffer = (char*) realloc(buffer, i + 1);
+    return buffer;
 }
 
-void add_history(char* unused) {}
+void *bulbNewInstance(void *envp)
+{
+    bulbEnv *env = *((bulbEnv**) envp);
+    for (;;) { 
+        char *program = readline("> ");
+        bulbObj *ast = bulbParse(program);
+        bulbPrintAst(bulbEvalSequence(ast, env));
+        printf("\n");
+        free(program);
+    }
+    return NULL;
+}
 
 int main(int argc, char **argv) 
 {
@@ -30,17 +55,11 @@ int main(int argc, char **argv)
     if (argc == 1) {  
         printf("BULB v%s\n", BULB_VERSION);
         for (;;) {
-            program = readline("> ");
-            add_history(program);
-            puts("parsing...");
-            bulbObj *ast = bulbParse(program);
-            puts("finishing parsing...");
-            bulbPrintAst(bulbEvalSequence(ast, env));
-            printf("\n");
-            bulbGCMarkEnv(env);
-            bulbGCSweep();
-            free(program);
+            pthread_t instance;
+            pthread_create(&instance, NULL, bulbNewInstance, &env);
+            pthread_join(instance, NULL);
         }
+        puts("Why am I here????");
     } else {
         if (strcmp(argv[1], "-h") == 0) {   
             printf("BULB v%s\n", BULB_VERSION);

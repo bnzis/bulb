@@ -179,7 +179,7 @@ void bulb_err_non_procedure(bulbObj *proc)
     printf("Exception: attemp to apply non-procedure ");
     bulbPrintAst(proc);
     printf(".\n");
-    exit(1);
+    pthread_exit(NULL);
 }
 
 void bulb_err_invalid_syntax(bulbObj *tree)
@@ -187,7 +187,7 @@ void bulb_err_invalid_syntax(bulbObj *tree)
     printf("Exception: invalid syntax: (");
     bulbPrintAst(tree);
     printf(").\n");
-    exit(1);
+    pthread_exit(NULL);
 }
 
 void bulb_err_invalid_len(bulbObj *ast, unsigned expected, unsigned given)
@@ -196,5 +196,5 @@ void bulb_err_invalid_len(bulbObj *ast, unsigned expected, unsigned given)
     bulbPrintAst(ast);
     printf(": incorrect number of arguments (expected %d, given %d).\n", 
             expected, given);
-    exit(1);
+    pthread_exit(NULL);
 }

@@ -52,5 +52,5 @@ void bulbLoadModule(bulbEnv *env, bulbModule *module)
 void bulb_err_variable_not_bound(char *name)
 {
     printf("Exception: variable %s is not bound.\n", name);
-    exit(1);
+    pthread_exit(NULL);
 }

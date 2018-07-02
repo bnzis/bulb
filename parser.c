@@ -79,7 +79,7 @@ bulbObj *bulbGenAtom(char *exp, unsigned len)
         o->type = BULB_SYMBOL;
     } else {
         printf("Exception: %s: Identifiers must start with a letter.\n", exp);
-        exit(1);
+        pthread_exit(NULL);
     }
     return o;
 }
@@ -101,8 +101,18 @@ unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj **out)
         exp++;
         (*offset)++;
         len--;
-        if (first == '\n') comm = false;
-        else if (!str && first == ';') comm = true;
+        if (first == '\n') {
+            comm = false;
+            if (str) {
+                if (i >= aclen) {
+                    aclen += aclen / 2;
+                    acc = (char*) realloc(acc, aclen);
+                }
+                acc[i] = first;
+                i++;
+                prev = first;
+            }
+        } else if (!str && first == ';') comm = true;
         else if (!comm && !str && (i == 0 || len == 1) && first == '(') 
             return BULB_TOK_OPEN_BLOCK;
         else if (!comm && !str && i == 0  && first == ')')
@@ -155,9 +165,7 @@ unsigned bulbLex(char *exp, unsigned len, unsigned *offset, bulbObj **out)
 
 bulbObj *bulbGenAst(char *exp, unsigned len, unsigned *offset, bool open)
 {
-    puts("generating ast...");
     bulbObj *tree = bulbNewObj(), *front = tree, *tmp = bulbNewObj();
-    puts("generating ast (1)...");
     unsigned ttype = bulbLex(exp, len, offset, &tmp); 
     while (ttype != BULB_TOK_CLOSE_BLOCK && ttype != BULB_TOK_NIL) {
         front->type = BULB_CONS;
@@ -192,17 +200,17 @@ bulbObj *bulbParse(char *exp)
 void bulb_err_missing_close_block()
 {
     printf("Exception: missing \')\'.\n");
-    exit(1);
+    pthread_exit(NULL);
 }
 
 void bulb_err_missing_open_block()
 {
     printf("Exception: missing \'(\'.\n");
-    exit(1);
+    pthread_exit(NULL);
 }
 
 void bulb_err_missing_close_string()
 {
     printf("Exception: missing \'\"\'.\n");
-    exit(1);
+    pthread_exit(NULL);
 }

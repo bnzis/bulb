@@ -258,11 +258,11 @@ void bulb_err_not_a_pair(bulbObj *obj)
     printf("Exception: ");
     bulbPrintAst(obj);
     printf(" is not a pair.\n");
-    exit(1);
+    pthread_exit(NULL);
 }
 
 void bulb_err_out_of_bounds(unsigned index, unsigned len)
 {
     printf("Exception: index (%d) out of bounds (len: %d).\n", index, len);
-    exit(1);
+    pthread_exit(NULL);
 }

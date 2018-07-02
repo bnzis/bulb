@@ -454,14 +454,14 @@ void bulb_err_expected_number(char *name, bulbObj *o)
     printf("Exception: %s: expected a number, but got ", name);
     bulbPrintAst(o);
     printf(".\n");
-    exit(1);
+    pthread_exit(NULL);
 }
 
 void bulb_err_invalid_len_name(char *name, unsigned expected, unsigned given)
 {
     printf("Exception: %s: incorrect number of arguments (expected %d, given %d).\n", 
             name, expected, given);
-    exit(1);
+    pthread_exit(NULL);
 }
 
 void bulb_err_expected_bool(char *name, bulbObj *o)
@@ -469,7 +469,7 @@ void bulb_err_expected_bool(char *name, bulbObj *o)
     printf("Exception: %s: expected a boolean, but got ", name);
     bulbPrintAst(o);
     printf(".\n");
-    exit(1);
+    pthread_exit(NULL);
 }
 
 void bulb_err_expected_cons(char *name, bulbObj *o)
@@ -477,5 +477,5 @@ void bulb_err_expected_cons(char *name, bulbObj *o)
     printf("Exception: %s: expected a pair, but got ", name);
     bulbPrintAst(o);
     printf(".\n");
-    exit(1);
+    pthread_exit(NULL);
 }
