@@ -34,19 +34,14 @@ bulbObj *bulbEvalSequence(bulbObj *ast, bulbEnv *env)
 
 bulbObj *bulbEvalArgs(bulbObj *ast, bulbEnv *env)
 {
-    if (ast == NULL) return bulbNil;
-    bulbObj *args = (bulbObj*) malloc(sizeof(bulbObj));
+    if (ast == bulbNil) return bulbNil;
+    bulbObj *args = bulbNewConsObj(bulbGetCar(ast), bulbGetCdr(ast));
     bulbObj *front = args;
-    args->type = BULB_CONS;
-    if (ast->type != BULB_CONS)
-        return bulbEval(ast, env);
-    while (ast != NULL) {
-        free(bulbGetCar(front));
+    while (ast != bulbNil) {
         bulbObj *val = bulbEval(bulbGetCar(ast), env);
         bulbSetCar(front, val);
-        bulbSetCdr(front, (bulbObj*) malloc(sizeof(bulbObj)));
         front = bulbGetCdr(front);
-        front->type = BULB_CONS;
+        front = bulbNewConsObj(bulbGetCar(ast), bulbGetCdr(ast));
         ast = bulbGetCdr(ast);
     }
     return args;
@@ -95,6 +90,7 @@ bulbObj *bulbEval(bulbObj *ast, bulbEnv *env)
 {
     if (!ast)
         return bulbNil;
+cicle:
     while (true)
         if(ast->type == BULB_CONS) {
             if (bulbGetCar(ast) == NULL) return bulbNil;
@@ -103,7 +99,8 @@ bulbObj *bulbEval(bulbObj *ast, bulbEnv *env)
                 if (strcmp(op, "def") == 0)
                     return bulbEvalDefine(ast, env);
                 else if (strcmp(op, "if") == 0) {
-                    return bulbEval(bulbEvalIf(ast, env), env);
+                    ast = bulbEvalIf(ast, env);
+                    goto cicle;
                 } else if (strcmp(op, "lambda") == 0) {
                     return bulbEvalLambda(bulbGetCdr(ast), env);
                 } else if (strcmp(op, "begin") == 0)
@@ -117,14 +114,14 @@ bulbObj *bulbEval(bulbObj *ast, bulbEnv *env)
             if (proc->type == BULB_PRIMITIVE) {
                 return ((bulbPrimitive) proc->data)(args, env);
             } else if (proc->type == BULB_PROCEDURE) {
-                bulbEnv *newEnv = bulbExpandEnv(proc, args, bulbGetProcEnv(proc));
+                env = bulbExpandEnv(proc, args, bulbGetProcEnv(proc));
                 ast = bulbGetProcBody(proc);
-                return bulbEvalSequence(ast, newEnv);
+                return bulbEvalSequence(ast, env);
             } else
                 bulb_err_non_procedure(proc);
-        } else if (ast->type == BULB_SYMBOL)
+        } else if (ast->type == BULB_SYMBOL) {
             return bulbEnvGet(env, bulbGetSymbolText(ast));
-        else return ast;
+        } else return ast;
 }
 
 
@@ -133,7 +130,7 @@ bulbEnv *bulbExpandEnv(bulbObj *obj, bulbObj *args, bulbEnv *upperEnv)
     if (args == bulbNil) return upperEnv;
     if (obj->type != BULB_PROCEDURE) bulb_err_non_procedure(obj);
     unsigned params_len = bulbListLen(bulbGetProcArgs(obj)), 
-             args_len = bulbListLen(args) - 1;
+             args_len = bulbListLen(args);
     if (params_len != args_len)
         bulb_err_invalid_len(params_len, args_len);
     bulbEnv *newEnv = bulbNewEnv(upperEnv);

@@ -28,6 +28,8 @@ void bulbEnvSet(bulbEnv *env, char *symbol, bulbObj *obj);
 
 void bulbEnvDelete(bulbEnv *env, char *symbol);
 
+void bulbLoadModule(bulbEnv *env, bulbModule *module);
+
 void bulb_err_variable_not_bound(char *name);
 
 #endif /* BULB_ENVIRONMENT_H */

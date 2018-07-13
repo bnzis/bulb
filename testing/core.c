@@ -179,7 +179,7 @@ bulbObj *bulbGetProcBody(bulbObj *proc)
 
 bulbObj *bulbGetProcArgs(bulbObj *proc)
 {
-    return ((bulbProc*) proc->data)->body;
+    return ((bulbProc*) proc->data)->args;
 }
 
 bulbEnv *bulbGetProcEnv(bulbObj *proc)
@@ -270,7 +270,7 @@ bulbObj *bulbGetCaadr(bulbObj *list)
 unsigned bulbListLen(bulbObj *list)
 {
     unsigned len = 0;
-    while (list->type == BULB_CONS && bulbGetCar(list)->type != BULB_NIL) {
+    while (list->type == BULB_CONS) {
         len++;
         list = bulbGetCdr(list);
     }
