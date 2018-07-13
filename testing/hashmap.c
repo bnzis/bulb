@@ -52,8 +52,8 @@ bulbObj *bulbHashmapGet(bulbHashmap *map, char *key)
     else {
         bulbObj *ptr = map->data[index];
         while (strcmp(readKey, key) != 0 && ptr != bulbNil) {
-            readKey = bulbGetStringText(bulbGetCaar(ptr));
             ptr = bulbGetCdr(ptr);
+            readKey = bulbGetStringText(bulbGetCaar(ptr));
         }
         if (ptr == bulbNil) return NULL;
         return bulbGetCdar(ptr);
@@ -70,11 +70,11 @@ void bulbHashmapSet(bulbHashmap *map, char *key, bulbObj *obj)
         pair = bulbNewConsObj(data, bulbNil);
         map->data[index] = pair;
         return;
-    } 
+    }
     char *t = bulbGetStringText(bulbGetCaar(map->data[index]));
-    if (strcmp(t, key) == 0)
+    if (strcmp(t, key) == 0) {
         bulbSetCadr(map->data[index], obj);
-    else {
+    } else {
         bulbObj **ptr = &((bulbCons*) map->data[index]->data)->cdr;
         while (*ptr != bulbNil) {
             t = bulbGetStringText(bulbGetCaar(*ptr));
