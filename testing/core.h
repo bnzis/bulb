@@ -18,8 +18,11 @@
 #ifndef BULB_CORE_H
 #define BULB_CORE_H
 #include <stdlib.h>
-#include <stdbool.h>
 #include <stdio.h>
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
+#include <stdint.h>
 /* Description
    ===========
    This file contains the definition of data structures used by the interpreter 
@@ -60,8 +63,14 @@ void bulbPrintNil(bulbObj *o), bulbPrintBool(bulbObj *o),
    the interpreter re-use these: */
 extern bulbObj *bulbNil, *bulbTrue, *bulbFalse; 
 
+/* bulbInt and bulbFloat 
+   --------------------- 
+   For the moment the interpreter doesn't support bignums. */
+typedef int64_t bulbInt;
+typedef double bulbFloat;
+
 /* bulbHashmap
-   -------
+   -----------
    This data structure is used in the representation of environments, (you can 
    find more details on hashmap.md): it contains an array of objects associated 
    to a key; to access the elements without searching them through out all the 
