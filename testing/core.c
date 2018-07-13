@@ -182,6 +182,11 @@ bulbObj *bulbGetProcArgs(bulbObj *proc)
     return ((bulbProc*) proc->data)->body;
 }
 
+bulbEnv *bulbGetProcEnv(bulbObj *proc)
+{
+    return ((bulbProc*) proc->data)->env;
+}
+
 char *bulbGetSymbolText(bulbObj *symbol)
 {
     return ((bulbSymbol*) symbol->data)->data;
@@ -252,10 +257,20 @@ void bulbSetCdar(bulbObj *list, bulbObj *val)
     bulbSetCdr(bulbGetCar(list), val);
 }
 
+bulbObj *bulbGetCaddr(bulbObj *list)
+{
+    return bulbGetCadr(bulbGetCdr(list));
+}
+
+bulbObj *bulbGetCaadr(bulbObj *list)
+{
+    return bulbGetCaar(bulbGetCdr(list));
+}
+
 unsigned bulbListLen(bulbObj *list)
 {
     unsigned len = 0;
-    while (bulbGetCar(list)->type != BULB_NIL) {
+    while (list->type == BULB_CONS && bulbGetCar(list)->type != BULB_NIL) {
         len++;
         list = bulbGetCdr(list);
     }

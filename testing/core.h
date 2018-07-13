@@ -114,6 +114,11 @@ typedef struct {
     bulbEnv *env;
 } bulbProc;
 
+/* bulbPrimitive
+   -------------
+   Primitives are procedures declared in C inside modules. */
+typedef bulbObj* (*bulbPrimitive)(bulbObj *args, bulbEnv *env);
+
 /* bulbSymbol and bulbString
    ------------------------- */
 typedef struct {
@@ -163,6 +168,8 @@ bulbEnv *bulbNewEnv(bulbEnv *upperEnv);
 bulbObj *bulbGetProcBody(bulbObj *proc);
 
 bulbObj *bulbGetProcArgs(bulbObj *proc);
+
+bulbEnv *bulbGetProcEnv(bulbObj *proc);
 
 /* Operations with symbols
    ----------------------- */
