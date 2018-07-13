@@ -64,7 +64,7 @@ typedef double bulbFloat;
    find more details on hashmap.md): it contains an array of objects associated 
    to a key; to access the elements without searching them through out all the 
    array an hashing algorithm is used. */
-#define HMAP_ROWS 32 
+#define HMAP_ROWS 32
 typedef struct {
     bulbObj **data;
 } bulbHashmap;
@@ -97,8 +97,8 @@ typedef struct bulbEnv_s {
    `(cons "def" (cons "a" (cons (cons "+" ...) '()))`  
    So cons is the universal building block of data structures. */
 typedef struct {
-   bulbObj *car;
-   bulbObj *cdr;
+    bulbObj *car;
+    bulbObj *cdr;
 } bulbCons;
 
 /* bulbProc
@@ -218,6 +218,8 @@ void bulbSetCddr(bulbObj *list, bulbObj *val);
 bulbObj *bulbGetCdar(bulbObj *list);
 
 void bulbSetCdar(bulbObj *list, bulbObj* val);
+
+bool bulbIsAList(bulbObj *obj);
 
 unsigned bulbListLen(bulbObj *list);
 

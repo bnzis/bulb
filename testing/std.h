@@ -46,4 +46,10 @@ bulbObj *bulbSTDDisplay(bulbObj *args, bulbEnv *env);
 
 bulbObj *bulbSTDExit(bulbObj *args, bulbEnv *env);
 
+bulbObj *bulbSTDCons(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDCar(bulbObj *args, bulbEnv *env);
+
+bulbObj *bulbSTDCdr(bulbObj *args, bulbEnv *env);
+
 #endif /* BULB_STD_H */

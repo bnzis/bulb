@@ -75,7 +75,6 @@ void bulbPrintPrimitive(bulbObj *o)
 
 void bulbPrintCons(bulbObj *o) 
 {
-    printf("#<PAIR>");
 }
 
 bool bulbIsAtom(bulbObj *obj)
@@ -110,20 +109,28 @@ void bulbPrintAst(bulbObj *tree)
 
 void bulbPrintAstDisplay(bulbObj *tree, bool display)
 {
+    bool nesting = false, list = false;
     if (bulbIsAtom(tree)) {
         bulbPrintAtomDisplay(tree, display);
+        return;
     } else if (bulbGetCar(tree) != bulbNil) {
-        if (bulbGetCar(tree)->type == BULB_CONS) { 
-            printf("(");
-            bulbPrintAstDisplay(bulbGetCar(tree), display);
-            printf(")");
-            if (bulbGetCdr(tree) != bulbNil) printf(" ");
-        } else {
-            bulbPrintAtomDisplay(bulbGetCar(tree), display);
-            if (!bulbIsAtom(bulbGetCdr(tree))) printf(" ");
+        list = bulbIsAList(tree);
+        printf("(");
+        while (tree != bulbNil && tree->type == BULB_CONS) {
+            if (bulbGetCar(tree)->type == BULB_CONS) { 
+                nesting = true;
+                bulbPrintAstDisplay(bulbGetCar(tree), display);
+                if (bulbGetCdr(tree) != bulbNil) printf(" ");
+            } else {
+                bulbPrintAtomDisplay(bulbGetCar(tree), display);
+                if (bulbGetCdr(tree) != bulbNil) printf(" ");
+            }
+            tree = bulbGetCdr(tree);
         }
-        bulbPrintAstDisplay(bulbGetCdr(tree), display);
+        if (!list) printf(". ");
     }
+    bulbPrintAtom(tree); 
+    printf(")");
 }
 
 bulbCons *bulbMakeCons(bulbObj *obj)
@@ -265,6 +272,13 @@ bulbObj *bulbGetCaddr(bulbObj *list)
 bulbObj *bulbGetCaadr(bulbObj *list)
 {
     return bulbGetCaar(bulbGetCdr(list));
+}
+
+bool bulbIsAList(bulbObj *list)
+{
+    while (list->type == BULB_CONS)
+        list = bulbGetCdr(list);
+    return list == bulbNil;
 }
 
 unsigned bulbListLen(bulbObj *list)
