@@ -42,7 +42,7 @@ void bulbLoadModule(bulbEnv *env, bulbModule *module)
     unsigned i = 0;
     while (module->names[i]) {
         bulbObj *prim = (bulbObj*) malloc(sizeof(bulbObj));
-        prim->type = BULB_PRIMITIVE;
+        prim->type = BULB_PRIMITIVE_TAG;
         prim->data = (bulbPrimitive*) module->primitives[i];
         bulbEnvDef(env, module->names[i], prim);
         i++;

@@ -9,7 +9,7 @@
 bulbObj *bulbEvalSequence(bulbObj *ast, bulbEnv *env) 
 {
     while (true)
-        if (ast->type == BULB_CONS) {
+        if (ast->type == BULB_CONS_TAG) {
             if (bulbGetCdr(ast) != bulbNil) {
                 bulbEval(bulbGetCar(ast), env);
                 ast = bulbGetCdr(ast); 
@@ -41,11 +41,11 @@ bulbObj *bulbEvalDefine(bulbObj *ast, bulbEnv *env)
     char *sym;
     unsigned len = bulbListLen(ast);
     if (len < 2) bulb_err_invalid_syntax(ast);
-    if (bulbGetCadr(ast)->type == BULB_SYMBOL) {
+    if (bulbGetCadr(ast)->type == BULB_SYMBOL_TAG) {
         sym = bulbGetSymbolText(bulbGetCadr(ast));
         if (!bulbNotKeyword(sym)) bulb_err_invalid_syntax(ast);
         if (len > 2) val = bulbEval(bulbGetCaddr(ast), env);
-    } else if (bulbGetCadr(ast)->type == BULB_CONS) {
+    } else if (bulbGetCadr(ast)->type == BULB_CONS_TAG) {
         sym = bulbGetSymbolText(bulbGetCaadr(ast));
         if (!bulbNotKeyword(sym)) bulb_err_invalid_syntax(ast);
         if (len > 2) {
@@ -65,11 +65,11 @@ bulbObj *bulbEvalSet(bulbObj *ast, bulbEnv *env)
     char *sym;
     unsigned len = bulbListLen(ast);
     if (len < 2) bulb_err_invalid_syntax(ast);
-    if (bulbGetCadr(ast)->type == BULB_SYMBOL) {
+    if (bulbGetCadr(ast)->type == BULB_SYMBOL_TAG) {
         sym = bulbGetSymbolText(bulbGetCadr(ast));
         if (!bulbNotKeyword(sym)) bulb_err_invalid_syntax(ast);
         if (len > 2) val = bulbEval(bulbGetCaddr(ast), env);
-    } else if (bulbGetCadr(ast)->type == BULB_CONS) {
+    } else if (bulbGetCadr(ast)->type == BULB_CONS_TAG) {
         sym = bulbGetSymbolText(bulbGetCaadr(ast));
         if (!bulbNotKeyword(sym)) bulb_err_invalid_syntax(ast);
         if (len > 2) {
@@ -106,9 +106,9 @@ bulbObj *bulbEval(bulbObj *ast, bulbEnv *env)
         return bulbNil;
 cicle:
     while (true)
-        if(ast->type == BULB_CONS) {
+        if(ast->type == BULB_CONS_TAG) {
             if (bulbGetCar(ast) == NULL) return bulbNil;
-            if (bulbGetCar(ast)->type == BULB_SYMBOL) {
+            if (bulbGetCar(ast)->type == BULB_SYMBOL_TAG) {
                 char *op = bulbGetSymbolText(bulbGetCar(ast));
                 if (strcmp(op, "def") == 0)
                     return bulbEvalDefine(ast, env);
@@ -129,16 +129,16 @@ cicle:
             }
             bulbObj *proc = bulbEval(bulbGetCar(ast), env);
             bulbObj *args = bulbEvalArgs(bulbGetCdr(ast), env);
-            if (proc->type == BULB_PRIMITIVE) {
+            if (proc->type == BULB_PRIMITIVE_TAG) {
                 return ((bulbPrimitive) proc->data)(args, env);
-            } else if (proc->type == BULB_PROCEDURE) {
+            } else if (proc->type == BULB_PROCEDURE_TAG) {
                 bulbEnv *newEnv = bulbExpandEnv(bulbGetCar(ast), proc, 
                 args, bulbGetProcEnv(proc));
                 ast = bulbGetProcBody(proc);
                 return bulbEvalSequence(ast, newEnv);
             } else
                 bulb_err_non_procedure(proc);
-        } else if (ast->type == BULB_SYMBOL) {
+        } else if (ast->type == BULB_SYMBOL_TAG) {
             return bulbEnvGet(env, bulbGetSymbolText(ast));
         } else return ast;
 }
@@ -147,7 +147,7 @@ cicle:
 bulbEnv *bulbExpandEnv(bulbObj *ast, bulbObj *obj, bulbObj *args, bulbEnv *upperEnv)
 {
     if (args == bulbNil) return upperEnv;
-    if (obj->type != BULB_PROCEDURE) bulb_err_non_procedure(obj);
+    if (obj->type != BULB_PROCEDURE_TAG) bulb_err_non_procedure(obj);
     unsigned paramsLen = bulbListLen(bulbGetProcArgs(obj)), 
              argsLen = bulbListLen(args);
     if (paramsLen != argsLen)

@@ -6,69 +6,145 @@
    of the MIT/Expat License - see LICENSE. */ 
 #include "core.h"
 
-bulbType BULB_NIL = bulbPrintNil,  BULB_BOOL = bulbPrintBool, 
-            BULB_INT = bulbPrintInt, BULB_FLOAT = bulbPrintFloat, 
-            BULB_SYMBOL = bulbPrintSymbol, BULB_STRING = bulbPrintString, 
-            BULB_PROCEDURE = bulbPrintProcedure, 
-            BULB_PRIMITIVE = bulbPrintPrimitive;
-bulbType BULB_CONS = bulbPrintCons;
+unsigned char bulbLoadType(bulbType type)
+{
+    if (!bulbTypeTable) {
+        bulbTypeTableCount = 0;
+        bulbTypeTableSize = BULB_DEFAULT_TYPE_TABLE_SIZE;
+        size_t newSize = sizeof(bulbType) * bulbTypeTableSize;
+        bulbTypeTable = (bulbType *) malloc(newSize);
+    }
+    if (bulbTypeTableCount == bulbTypeTableSize - 1) {
+        bulbTypeTableSize *= 2;
+        size_t newSize = sizeof(bulbType) * bulbTypeTableSize;
+        bulbTypeTable = (bulbType *) realloc(bulbTypeTable, newSize);
+    }
+    bulbTypeTable[++bulbTypeTableCount] = type;
+    return bulbTypeTableCount;
+}
 
-bulbObj bulbNilObj = {&bulbPrintNil, NULL};
+
+bulbType BULB_NIL = {bulbNilToString, NULL},  
+         BULB_BOOL = {bulbBoolToString, NULL}, 
+         BULB_INT = {bulbIntToString, bulbFreeInt}, 
+         BULB_FLOAT = {bulbFloatToString, bulbFreeFloat}, 
+         BULB_SYMBOL = {bulbSymbolToString, bulbFreeSymbol}, 
+         BULB_STRING = {bulbStringToString, bulbFreeString}, 
+         BULB_PROCEDURE = {bulbProcedureToString, bulbFreeProcedure}, 
+         BULB_PRIMITIVE = {bulbPrimitiveToString, NULL},
+         BULB_CONS = {bulbConsToString, bulbFreeCons};
+
+bulbObj bulbNilObj = {&bulbNilToString, 0};
 bulbObj *bulbNil = &bulbNilObj;
 
-bulbObj bulbTrueObj = {&bulbPrintBool, &bulbNilObj};
+bulbObj bulbTrueObj = {&bulbBoolToString,  0};
 bulbObj *bulbTrue = &bulbTrueObj;
 
-bulbObj bulbFalseObj = {&bulbPrintBool, &bulbNilObj};
+bulbObj bulbFalseObj = {&bulbBoolToString, 0};
 bulbObj *bulbFalse = &bulbFalseObj;
 
-void bulbPrintNil(bulbObj *o) 
+char *bulbNilToString(bulbObj *o) 
 {
-    printf("\b");
+    char *out = (char*) malloc(strlen("\b")); 
+    strcpy(out, "\b");
+    return out;
 }
 
-void bulbPrintBool(bulbObj *o) 
+char *bulbBoolToString(bulbObj *o) 
 {
-    printf((o == bulbTrue) ? "#t" : "#f");
+    char *out = (char*) malloc(strlen("#t")); 
+    strcpy(out, (o == bulbTrue) ? "#t" : "#f");
+    return out;
 } 
 
-void bulbPrintInt(bulbObj *o) 
+char *bulbIntToString(bulbObj *o) 
 {
-    printf("%ld", *((bulbInt *) o->data));
+    /* checks the size before allocating the string */
+    size_t size = snprintf(NULL, 0, "%ld", *((bulbInt *) o->data)) + 1;
+    char *out = (char*) malloc(size);
+    snprintf(out, size, "%ld", *((bulbInt *) o->data));
+    return out;
 } 
 
-void bulbPrintFloat(bulbObj *o) 
+char *bulbFloatToString(bulbObj *o) 
 {
-    printf("%lf", *((bulbFloat *) o->data));
+    /* checks the size before allocating the string */
+    size_t size = snprintf(NULL, 0, "%lf", *((bulbFloat *) o->data)) + 1;
+    char *out = (char*) malloc(size);
+    snprintf(out, size, "%lf", *((bulbFloat *) o->data));
+    return out;
 } 
 
-void bulbPrintSymbol(bulbObj *o) 
+char *bulbSymbolToString(bulbObj *o) 
 {
-    printf("%s", (*((bulbSymbol *) o->data)).data);
+    char *out = (char*) malloc(strlen((*((bulbSymbol *) o->data)).data));
+    strcpy(out, (*((bulbSymbol *) o->data)).data);
+    return out;
 } 
 
-void bulbPrintString(bulbObj *o) 
+char *bulbStringToString(bulbObj *o) 
 {
-    printf("%s", (*((bulbString *) o->data)).data);
+    char *out = (char*) malloc(strlen((*((bulbSymbol *) o->data)).data));
+    strcpy(out, (*((bulbSymbol *) o->data)).data);
+    return out;
 } 
 
-void bulbPrintProcedure(bulbObj *o) 
+char *bulbProcedureToString(bulbObj *o) 
 {
-    printf("#<PROCEDURE>");
+    char *out = (char*) malloc(strlen("#<PROCEDURE>"));
+    strcpy(out, "#<PROCEDURE>");
+    return out;
 }
 
-void bulbPrintPrimitive(bulbObj *o) 
+char *bulbPrimitiveToString(bulbObj *o) 
 {
-    printf("#<PRIMITIVE>");
+    char *out = (char*) malloc(strlen("#<PRIMITIVE>")); 
+    strcpy(out, "#<PRIMITIVE>");
+    return out;
 }
 
-void bulbPrintCons(bulbObj *o) 
+char *bulbConsToString(bulbObj *o) 
 {
+    return NULL;
+}
+
+void bulbFreeInt(bulbObj *o)
+{
+   free(o->data);     
+} 
+
+void bulbFreeFloat(bulbObj *o)
+{
+    free(o->data);
+}
+
+void bulbFreeSymbol(bulbObj *o)
+{
+    free(((bulbSymbol *) o->data)->data);
+    free(o->data);
+} 
+
+void bulbFreeString(bulbObj *o)
+{
+    free(((bulbString *) o->data)->data);
+    free(o->data);
+}
+
+void bulbFreeProcedure(bulbObj *o)
+{
+    free(bulbGetProcEnv(o)->local);
+    free(bulbGetProcEnv(o));
+    free(o->data);
+} 
+
+void bulbFreeCons(bulbObj *o)
+{
+   free(o->data); 
 }
 
 bool bulbIsAtom(bulbObj *obj)
 {
-    return obj->type != BULB_CONS;
+    return obj->type != BULB_CONS_TAG;
 }
 
 void bulbPrintAtom(bulbObj *obj)
@@ -78,16 +154,22 @@ void bulbPrintAtom(bulbObj *obj)
 
 void bulbPrintAtomDisplay(bulbObj *obj, bool display)
 {
-    if (obj->type == BULB_CONS) bulb_err_not_a_pair(obj);
-    if ((obj->type) == NULL) {
+    if (obj->type == BULB_CONS_TAG) bulb_err_not_a_pair(obj);
+    if ((obj->type) == 0) {
         printf("#<UNKNOWN>");
         return;
     }
-    if (obj->type == BULB_STRING && display) {
+    if (obj->type == BULB_STRING_TAG && display) {
         printf("\"");
-        obj->type(obj);
+        char *str = bulbTypeTable[obj->type].toString(obj);
+        printf("%s", str);
+        free(str);
         printf("\"");
-    } else obj->type(obj);
+    } else {
+        char *str = bulbTypeTable[obj->type].toString(obj);
+        printf("%s", str);
+        free(str);
+    }
 }
 
 
@@ -107,8 +189,8 @@ void bulbPrintAstDisplay(bulbObj *tree, bool display)
     } else if (bulbGetCar(tree) != bulbNil) {
         list = bulbIsAList(tree);
         printf("(");
-        while (tree != bulbNil && tree->type == BULB_CONS) {
-            if (bulbGetCar(tree)->type == BULB_CONS) { 
+        while (tree != bulbNil && tree->type == BULB_CONS_TAG) {
+            if (bulbGetCar(tree)->type == BULB_CONS_TAG) { 
                 bulbPrintAstDisplay(bulbGetCar(tree), display);
                 if (bulbGetCdr(tree) != bulbNil) printf(" ");
             } else {
@@ -119,7 +201,7 @@ void bulbPrintAstDisplay(bulbObj *tree, bool display)
         }
         if (!list) printf(". ");
     }
-    if (tree->type == BULB_NIL) printf(" ");
+    if (tree->type == BULB_NIL_TAG) printf(" ");
     bulbPrintAtom(tree); 
     printf(")");
 }
@@ -227,7 +309,7 @@ bulbObj *bulbGetCaadr(bulbObj *list)
 
 bool bulbIsAList(bulbObj *list)
 {
-    while (list->type == BULB_CONS)
+    while (list->type == BULB_CONS_TAG)
         list = bulbGetCdr(list);
     return list == bulbNil;
 }
@@ -235,7 +317,7 @@ bool bulbIsAList(bulbObj *list)
 unsigned bulbListLen(bulbObj *list)
 {
     unsigned len = 0;
-    while (list->type == BULB_CONS) {
+    while (list->type == BULB_CONS_TAG) {
         len++;
         list = bulbGetCdr(list);
     }
@@ -246,7 +328,7 @@ bulbObj *bulbListGet(bulbObj *list, unsigned index)
 {
     unsigned i = 0, len = bulbListLen(list);
     if (index > len) bulb_err_out_of_bounds(index, len);
-    while (bulbGetCar(list)->type != BULB_NIL && i < index) {
+    while (bulbGetCar(list)->type != BULB_NIL_TAG && i < index) {
         i++;
         list = bulbGetCdr(list);
     }

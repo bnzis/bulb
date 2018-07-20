@@ -50,8 +50,26 @@ void *bulbNewInstance(void *envp)
 int main(int argc, char **argv) 
 {
     char *program;
+
+    /* initalizes the base types and internals*/
+    BULB_NIL_TAG = bulbLoadType(BULB_NIL);
+    BULB_BOOL_TAG = bulbLoadType(BULB_BOOL);
+    BULB_INT_TAG = bulbLoadType(BULB_INT);
+    BULB_FLOAT_TAG = bulbLoadType(BULB_FLOAT);
+    BULB_SYMBOL_TAG = bulbLoadType(BULB_SYMBOL);
+    BULB_STRING_TAG = bulbLoadType(BULB_STRING);
+    BULB_PROCEDURE_TAG = bulbLoadType(BULB_PROCEDURE);
+    BULB_PRIMITIVE_TAG = bulbLoadType(BULB_PRIMITIVE);
+    BULB_CONS_TAG = bulbLoadType(BULB_CONS);
+    bulbObjPool->type = BULB_CONS_TAG;
+    bulbNil->type = BULB_NIL_TAG;
+    bulbTrue->type = BULB_BOOL_TAG;
+    bulbFalse->type = BULB_BOOL_TAG;
     bulbEnv *env = bulbNewEnv(NULL);
+    
+    /* loads the STD */
     bulbLoadModule(env, bulbSTD);
+    
     if (argc == 1) {  
         printf("BULB v%s\n", BULB_VERSION);
         for (;;) {
@@ -59,7 +77,6 @@ int main(int argc, char **argv)
             pthread_create(&instance, NULL, bulbNewInstance, &env);
             pthread_join(instance, NULL);
         }
-        puts("Why am I here????");
     } else {
         if (strcmp(argv[1], "-h") == 0) {   
             printf("BULB v%s\n", BULB_VERSION);

@@ -7,7 +7,7 @@
 #include "gc.h"
 
 bulbCons bulbObjPoolCons = {NULL, NULL};
-bulbObj bulbObjPoolObj = {bulbPrintCons, &bulbObjPoolCons};
+bulbObj bulbObjPoolObj = {&bulbObjPoolCons, 0};
 bulbObj *bulbObjPool = &bulbObjPoolObj;
 bulbObj *bulbObjPoolFront = &bulbObjPoolObj;
 
@@ -17,7 +17,7 @@ bulbObj *bulbNewObj()
     obj->reached = false;
     bulbSetCar(bulbObjPoolFront, obj);
     bulbObj *newFront = (bulbObj*) malloc(sizeof(bulbObj));
-    newFront->type = BULB_CONS;
+    newFront->type = BULB_CONS_TAG;
     newFront->data = (bulbCons*) malloc(sizeof(bulbCons));;
     bulbSetCdr(bulbObjPoolFront, newFront); 
     bulbObjPoolFront = bulbGetCdr(bulbObjPoolFront);
@@ -26,18 +26,17 @@ bulbObj *bulbNewObj()
 
 void bulbGCMarkObj(bulbObj *obj)
 {
-    if (obj == bulbNil || obj == bulbTrue || obj == bulbFalse
-            || obj->type == BULB_PRIMITIVE) return;
+    if (!obj || !bulbTypeTable[obj->type].free) return;
     if (obj->reached == true) return;
     obj->reached = true;
     printf("marking: ");
     bulbPrintAst(obj);
     puts("");
-    if (obj->type == BULB_PROCEDURE) {
+    if (obj->type == BULB_PROCEDURE_TAG) {
         bulbGCMarkObj(bulbGetProcArgs(obj));
         bulbGCMarkObj(bulbGetProcBody(obj));
         bulbGCMarkEnv(bulbGetProcEnv(obj));
-    } else if (obj->type == BULB_CONS) {
+    } else if (obj->type == BULB_CONS_TAG) {
         bulbGCMarkObj(bulbGetCar(obj));
         bulbGCMarkObj(bulbGetCdr(obj));
     }
@@ -53,41 +52,22 @@ void bulbGCMarkEnv(bulbEnv *env)
 
 void bulbGCFreeObj(bulbObj *obj)
 {
-    if (!obj || obj->type == BULB_PRIMITIVE || obj == bulbNil || obj == bulbTrue
-             || obj == bulbFalse) return;
-    printf("freeing: \n");
-    if (obj->type == BULB_CONS) {
-        printf("cons\n");
-        bulbGCFreeObj(bulbGetCar(obj));
-        bulbGCFreeObj(bulbGetCdr(obj));
-    } else if (obj->type == BULB_PROCEDURE) {
-        printf("proc\n");
-        bulbGCFreeObj(bulbGetProcArgs(obj));
-        bulbGCFreeObj(bulbGetProcBody(obj));
-    } else if (obj->data) {
-        printf("other\n");
-        free(obj->data);
-    }
+    if (!obj || !bulbTypeTable[obj->type].free) return;
+    printf("freeing (addr %p):", obj);
+    bulbPrintAst(obj);
+    puts("");
+    bulbTypeTable[obj->type].free(obj);
     free(obj);
 }
 
 void bulbGCUnmarkObj(bulbObj *obj)
 {
-    if (!obj || obj == bulbNil || obj == bulbTrue || obj == bulbFalse
-             || obj->type == BULB_PRIMITIVE) return;
+    if (!bulbTypeTable[obj->type].free) return;
     if (obj->reached == false) return;
     obj->reached = false;
     printf("unmarking: ");
     bulbPrintAst(obj);
     puts("");
-    if (obj->type == BULB_PROCEDURE) {
-        bulbGCUnmarkObj(bulbGetProcArgs(obj));
-        bulbGCUnmarkObj(bulbGetProcBody(obj));
-        bulbGCMarkEnv(bulbGetProcEnv(obj));
-    } else if (obj->type == BULB_CONS) {
-        bulbGCUnmarkObj(bulbGetCar(obj));
-        bulbGCUnmarkObj(bulbGetCdr(obj));
-    }
 }
 
 void bulbGCSweep()
@@ -109,7 +89,7 @@ void bulbGCSweep()
 bulbObj *bulbNewConsObj(bulbObj *car, bulbObj *cdr)
 {
     bulbObj *cons = bulbNewObj();
-    cons->type = BULB_CONS;
+    cons->type = BULB_CONS_TAG;
     cons->data = (bulbCons*) malloc(sizeof(bulbCons));
     bulbSetCar(cons, car);
     bulbSetCdr(cons, cdr);
@@ -119,7 +99,7 @@ bulbObj *bulbNewConsObj(bulbObj *car, bulbObj *cdr)
 bulbObj *bulbNewStringObj(char *text, unsigned len)
 {
     bulbObj *string = bulbNewObj();
-    string->type = BULB_STRING;
+    string->type = BULB_STRING_TAG;
     string->data = (bulbString*) malloc(sizeof(bulbString*));
     ((bulbString*) string->data)->data = text;
     ((bulbString*) string->data)->len = len;
@@ -129,7 +109,7 @@ bulbObj *bulbNewStringObj(char *text, unsigned len)
 bulbObj *bulbNewProcObj(bulbObj *args, bulbObj *body, bulbEnv *env)
 {
     bulbObj *proc = bulbNewObj();
-    proc->type = BULB_PROCEDURE;
+    proc->type = BULB_PROCEDURE_TAG;
     proc->data = (bulbProc*) malloc(sizeof(bulbProc));
     ((bulbProc*) proc->data)->args = args;
     ((bulbProc*) proc->data)->body = body;

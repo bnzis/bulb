@@ -50,22 +50,22 @@ bulbObj *bulbGenAtom(char *exp, unsigned len)
     if (bulbIsInt(exp, len)) {
         o->data = (bulbInt*) malloc(sizeof(bulbInt)); 
         *((bulbInt*) o->data) = atol(exp);
-        o->type = BULB_INT;
+        o->type = BULB_INT_TAG;
     } else if (bulbIsFloat(exp, len)) {
         o->data = (bulbFloat*) malloc(sizeof(bulbFloat));
         *((bulbFloat*) o->data) = atof(exp);
-        o->type = BULB_FLOAT;
+        o->type = BULB_FLOAT_TAG;
     } else if (bulbIsHex(exp, len)) {
         o->data = (bulbInt*) malloc(sizeof(bulbInt)); 
         *((bulbInt*) o->data) = strtol(exp, (char**) exp + len, 16);
-        o->type = BULB_INT;
+        o->type = BULB_INT_TAG;
     } else if (exp[0] == '\"') {
         o->data = (bulbString*) malloc(sizeof(bulbString));
         ((bulbString*) o->data)->data = (char*) malloc(sizeof(char) * (len - 1));
         ((bulbString*) o->data)->len = len - 2;
         memcpy(((bulbString*) o->data)->data, exp + 1, len - 2);
         ((bulbString*) o->data)->data[len - 2] = '\0';
-        o->type = BULB_STRING;
+        o->type = BULB_STRING_TAG;
     } else if (exp[0] == '#' && (exp[1] == 't' || exp[1] == 'f')) {
         o = (exp[1] == 't')? bulbTrue : bulbFalse;
     } else if ((exp[0] >= 'a' && exp[0] <= 'z') || (exp[0] >= 'A' && exp[0] <= 'B') ||
@@ -76,7 +76,7 @@ bulbObj *bulbGenAtom(char *exp, unsigned len)
         ((bulbSymbol*) o->data)->len = len;
         memcpy(((bulbSymbol*) o->data)->data, exp, len);
         ((bulbSymbol*) o->data)->data[len] = '\0';
-        o->type = BULB_SYMBOL;
+        o->type = BULB_SYMBOL_TAG;
     } else {
         printf("Exception: %s: Identifiers must start with a letter.\n", exp);
         pthread_exit(NULL);
@@ -168,7 +168,7 @@ bulbObj *bulbGenAst(char *exp, unsigned len, unsigned *offset, bool open)
     bulbObj *tree = bulbNewObj(), *front = tree, *tmp = bulbNewObj();
     unsigned ttype = bulbLex(exp, len, offset, &tmp); 
     while (ttype != BULB_TOK_CLOSE_BLOCK && ttype != BULB_TOK_NIL) {
-        front->type = BULB_CONS;
+        front->type = BULB_CONS_TAG;
         front->data = (bulbCons*) malloc(sizeof(bulbCons));
         if (ttype == BULB_TOK_OPEN_BLOCK)
             ((bulbCons*) front->data)->car = bulbGenAst(exp, len, offset, true);

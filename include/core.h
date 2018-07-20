@@ -13,6 +13,7 @@
 #include <stdbool.h>
 #endif
 #include <stdint.h>
+#include <string.h>
 /* Description
    ===========
    This file contains the definition of data structures used by the interpreter 
@@ -25,15 +26,30 @@
    thanks to the fact that data is a generic pointer, we can easily create new 
    types in C to be used by the interpreter. 
    C is a low-level programming language so to distinguish the various types we 
-   need a tag, type, which is set to a function (pointer) 
-   that prints the object. */
-typedef struct bulbObj_s {
-    void (*type)(struct bulbObj_s *o);
+   need a tag, type. */
+typedef struct {
     void *data;
+    unsigned char type;
     bool reached; /* Used by the GC */
 } bulbObj;
 
-typedef void (*bulbType)(bulbObj *o);
+/* bulbType
+   ------- */
+typedef struct {
+    char *(*toString)(bulbObj *o);
+    void (*free)(bulbObj *o);
+} bulbType;
+
+/* bulbTypeTable 
+   ------------- */
+#define BULB_DEFAULT_TYPE_TABLE_SIZE 16
+bulbType *bulbTypeTable;
+size_t bulbTypeTableSize;
+size_t bulbTypeTableCount;
+
+/* bulbLoadType
+   ------------ */
+unsigned char bulbLoadType(bulbType type);
 
 /* Base types
    ----------
@@ -41,14 +57,23 @@ typedef void (*bulbType)(bulbObj *o);
    variables and functions), string, procedure(s defined in bulb) and
    primitive(s defined in C). */
 extern bulbType BULB_NIL, BULB_BOOL, BULB_INT, BULB_FLOAT, BULB_SYMBOL, 
-        BULB_STRING, BULB_PROCEDURE, BULB_PRIMITIVE;
-extern bulbType BULB_CONS;
+        BULB_STRING, BULB_PROCEDURE, BULB_PRIMITIVE, BULB_CONS;
 
-void bulbPrintNil(bulbObj *o), bulbPrintBool(bulbObj *o), 
-        bulbPrintInt(bulbObj *o), bulbPrintFloat(bulbObj *o), 
-        bulbPrintSymbol(bulbObj *o), bulbPrintString(bulbObj *o), 
-        bulbPrintProcedure(bulbObj *o), bulbPrintPrimitive(bulbObj *o), 
-        bulbPrintCons(bulbObj *o);
+/* Base types tags
+   --------------- */
+unsigned char BULB_NIL_TAG, BULB_BOOL_TAG, BULB_INT_TAG, BULB_FLOAT_TAG, 
+              BULB_SYMBOL_TAG, BULB_STRING_TAG, BULB_PROCEDURE_TAG, 
+              BULB_PRIMITIVE_TAG, BULB_CONS_TAG;
+
+char *bulbNilToString(bulbObj *o), *bulbBoolToString(bulbObj *o), 
+        *bulbIntToString(bulbObj *o), *bulbFloatToString(bulbObj *o), 
+        *bulbSymbolToString(bulbObj *o), *bulbStringToString(bulbObj *o), 
+        *bulbProcedureToString(bulbObj *o), *bulbPrimitiveToString(bulbObj *o), 
+        *bulbConsToString(bulbObj *o);
+
+void bulbFreeInt(bulbObj *o), bulbFreeFloat(bulbObj *o), 
+     bulbFreeSymbol(bulbObj *o), bulbFreeString(bulbObj *o), 
+     bulbFreeProcedure(bulbObj *o), bulbFreeCons(bulbObj *o);
 
 /* Instead of allocating every single time an object for nil, true and false
    the interpreter re-use these: */
