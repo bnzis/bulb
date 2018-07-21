@@ -34,14 +34,15 @@ Download the tarball or clone the repository:
 ```
 git clone https://github.com/bnzis/bulb
 ```
-Now, you need a c compiler and make installed, for Linux and BSD users it probably 
-comes pre-installed, if not, refer to the manual of the package manager of your
-distro and install it. For Windows users, I suggest to install MinGW.
-Finally, compile and install: 
+You need **make** and a **C compiler**. If you're a 
+**Linux** or **BSD** user, you probably already have both; 
+if not, consult the manual of your distribution to install 
+them. If you use Windows instead, I recommend installing **MinGW**.
+Compile and install: 
 ```
 cd /path/of/bulb
 make all # please check config.mk before building
-sudo make install # only works for Linux and BSD users.
+sudo make install # works only on Linux and BSD.
 ```
 
 ## How to use it
