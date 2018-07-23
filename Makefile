@@ -3,14 +3,14 @@
 
 include config.mk
 
-SRC = core.c \
-    gc.c \
-	parser.c \
-	xxhash.c \
-	hashmap.c \
-	environment.c \
-	evaluator.c \
-	std.c \
+SRC = src/core.c \
+      src/gc.c \
+      src/parser.c \
+      src/xxhash.c \
+      src/hashmap.c \
+      src/environment.c \
+      src/evaluator.c \
+      src/std.c \
 
 OBJ = $(SRC:.c=.o)
 
@@ -19,10 +19,11 @@ all: bulb libbulb.a
 .c.o:
 	@echo CC $< 
 	@${CC} -c ${CFLAGS} ${INCS} $<
-
+	@mv *.o src/
+	
 clean: 
 	@echo cleaning
-	@rm -f bulb ${OBJ} bulb.o libbulb.a bulb-${VERSION}${OS}.tar.gz
+	@rm -f bulb ${OBJ} src/bulb.o libbulb.a bulb-${VERSION}${OS}.tar.gz
 
 dist: clean
 	@echo creating dist tarball
@@ -32,9 +33,9 @@ dist: clean
 	@gzip bulb-${VERSION}.tar
 	@rm -rf bulb-${VERSION}
 
-bulb: bulb.o ${OBJ} 
+bulb: src/bulb.o ${OBJ} 
 	@echo CC -o $@
-	@${CC} -o $@ ${OBJ} bulb.o ${LDFLAGS}
+	@${CC} -o $@ ${OBJ} src/bulb.o ${LDFLAGS}
 
 libbulb.a: ${OBJ}
 	@echo ar rcs $@

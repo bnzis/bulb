@@ -17,7 +17,7 @@ extern bulbObj *bulbObjPoolFront;
 
 /* bulbNewObj 
    ---------- 
-   Allocates a new object and insert it to the pool for tracking. */
+   Allocates a new object and insert it in to the pool for tracking. */
 bulbObj *bulbNewObj();
 
 /* bulbGCMarkObj
